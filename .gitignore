@@ -9,3 +9,4 @@ _build/
 .*
 !.gitignore
 !.coveragerc
+!.travis.yml

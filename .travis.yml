@@ -1,0 +1,27 @@
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.pip-cache/
+    - .tox
+
+language: python
+
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+
+notifications:
+  email: false
+
+install:
+  - pip install tox-travis
+  - pip install coveralls
+
+script:
+  - tox
+
+after_script:
+  - coveralls
