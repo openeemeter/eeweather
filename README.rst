@@ -75,6 +75,10 @@ Autobuild docs::
 
     make -C docs livehtml
 
+Check spelling in docs::
+
+    make -C docs spelling
+
 Run tests::
 
     pytest
