@@ -24,9 +24,11 @@ notifications:
 install:
   - pip install tox-travis
   - pip install coveralls
+  - pip install codecov
 
 script:
   - tox
 
 after_script:
   - coveralls
+  - codecov
