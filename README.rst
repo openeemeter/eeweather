@@ -10,6 +10,9 @@ EEweather: Weather station wrangling for EEmeter
 .. image:: https://readthedocs.org/projects/eeweather/badge/?version=latest
     :target: http://eeweather.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://img.shields.io/pypi/v/eeweather.svg
+    :target: https://img.shields.io/pypi/v/eeweather.svg
+
 ---------------
 
 **EEweather** — tools for matching to and fetching data from NCDC ISD, TMY3, or CZ2010 weather stations.
@@ -61,6 +64,7 @@ Dev installation::
 
     $ pipenv --python 3.6.4  # create virtualenv with python 3.6.4
     $ pipenv install --dev   # install dev requirements with pipenv
+    $ pipenv install -e .    # install package in editable mode
     $ pipenv shell           # activate pipenv virtual environment
 
 Build docs::
@@ -78,3 +82,7 @@ Run tests::
 Run tests on multiple python versions::
 
     tox
+
+Upload to pypi (using twine)::
+
+    python setup.py upload
