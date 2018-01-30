@@ -1,0 +1,11 @@
+*.py[cod]
+__pycache__/
+*.egg-info/
+
+.ipynb_checkpoints/
+
+_build/
+
+.*
+!.gitignore
+!.coveragerc

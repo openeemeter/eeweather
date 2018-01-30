@@ -1,0 +1,29 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+"e1839a8" = {path = ".", editable = true}
+"beautifulsoup4" = "*"
+pyproj = "*"
+shapely = {extras = ["vectorized"]}
+simplejson = "*"
+funcsigs = "*"
+pandas = "*"
+sqlalchemy = "*"
+
+
+[dev-packages]
+
+pytest = "*"
+coverage = "*"
+pytest-cov = "*"
+tox = "*"
+twine = "*"
+pytest-xdist = "*"
+sphinx = "*"
+sphinx-autobuild = "*"

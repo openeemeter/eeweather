@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# requires mapshaper (npm install -g mapshaper)
+# requires ogr2ogr (brew install gdal)
+
+# Reference materials
+# http://energy.gov/sites/prod/files/2015/02/f19/ba_climate_guide_2013.pdf
+# http://www2.census.gov/geo/docs/reference/codes/files/national_county.txt
+
+
+# make script work independent of working directory
+PARENT_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$PARENT_PATH"
+
+DATA_DIR=${1:-data}
+mkdir -p $DATA_DIR
+
+echo Downloading primary source files to $DATA_DIR
+
+echo Downloading cb_2016_us_zcta510_500k.json
+./create_zipcode_geojson.sh $DATA_DIR
+
+echo Downloading cb_2016_us_county_500k.json
+./create_county_geojson.sh $DATA_DIR
+
+echo Downloading CA_Building_Standards_Climate_Zones.json
+./create_ca_climate_zone_geojson.sh $DATA_DIR
+
+# IECC/Building America climate zone csv. Custom; assembled and corrected from primary source
+echo Downloading climate_zones.csv
+wget -N https://gist.githubusercontent.com/philngo/d3e251040569dba67942/raw/0c98f906f452b9c80d42aec3c8c3e1aafab9add8/climate_zones.csv -P $DATA_DIR -q --show-progress
+
+# NCDC station lat lngs and metadata
+echo Downloading isd-history.csv
+wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv -P $DATA_DIR -q --show-progress
+
+# NCDC weather data quality
+echo Downloading isd-inventory.csv
+wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-inventory.csv -P $DATA_DIR -q --show-progress
+
+# Scrape-friendly TMY3 station list
+echo Downloading tmy3-stations.html
+wget -O $DATA_DIR/tmy3-stations.html -N http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/by_USAFN.html -q --show-progress
+
+# Add CZ2010 mapping
+echo Downloading zipcode_to_cz2010.csv
+wget -N https://gist.githubusercontent.com/philngo/45a049284fc2a4aeadef2fb7201bc845/raw/12f5dd3659a818fdd208defe221f8a46c76e8064/zipcode_to_cz2010.csv -P $DATA_DIR -q --show-progress
+
+echo Finished downloading primary source files
