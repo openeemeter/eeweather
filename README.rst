@@ -11,7 +11,7 @@ EEweather: Weather station wrangling for EEmeter
     :target: http://eeweather.readthedocs.io/en/latest/?badge=latest
 
 .. image:: https://img.shields.io/pypi/v/eeweather.svg
-    :target: https://img.shields.io/pypi/v/eeweather.svg
+    :target: https://pypi.python.org/pypi/eeweather
 
 ---------------
 
