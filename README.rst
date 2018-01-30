@@ -7,6 +7,9 @@ EEweather: Weather station wrangling for EEmeter
 .. image:: https://img.shields.io/github/license/openeemeter/eeweather.svg
     :target: https://github.com/openeemeter/eeweather
 
+.. image:: https://readthedocs.org/projects/eeweather/badge/?version=latest
+    :target: http://eeweather.readthedocs.io/en/latest/?badge=latest
+
 ---------------
 
 **EEweather** — tools for matching to and fetching data from NCDC ISD, TMY3, or CZ2010 weather stations.
