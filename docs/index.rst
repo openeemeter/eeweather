@@ -19,6 +19,9 @@ EEweather: Weather station wrangling for EEmeter
 .. image:: https://img.shields.io/pypi/v/eeweather.svg
     :target: https://pypi.python.org/pypi/eeweather
 
+.. image:: https://codecov.io/gh/openeemeter/eeweather/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/openeemeter/eeweather
+
 ---------------
 
 **EEweather** — tools for matching to and fetching data from NCDC ISD, TMY3, or CZ2010 weather stations.
