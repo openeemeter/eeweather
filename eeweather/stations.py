@@ -610,7 +610,7 @@ class ISDStation(object):
     usaf_id : str
         ISD station USAF ID
     load_metatdata : bool, optional
-        Whether or not to autoload metadata for this station
+        Whether or not to auto-load metadata for this station
 
     Attributes
     ----------
@@ -637,11 +637,11 @@ class ISDStation(object):
     quality : str
         "high", "medium", "low"
     wban_ids : list of str
-        List of WBAN IDs, or "99999" which have been used to identify the station.
+        list of WBAN IDs, or "99999" which have been used to identify the station.
     recent_wban_id = None
         WBAN ID most recently used to identify the station.
     climate_zones = {}
-        Dict of all climate zones.
+        dict of all climate zones.
     '''
 
     def __init__(self, usaf_id, load_metadata=True):
@@ -734,15 +734,15 @@ class ISDStation(object):
 
     # fetch raw data then frequency-normalize
     def fetch_isd_hourly_temp_data(self, year):
-        ''' Pull raw ISD temperature data for the given year directly from FTP and resample to hourly timeseries. '''
+        ''' Pull raw ISD temperature data for the given year directly from FTP and resample to hourly time series. '''
         return fetch_isd_hourly_temp_data(self.usaf_id, year)
 
     def fetch_isd_daily_temp_data(self, year):
-        ''' Pull raw ISD temperature data for the given year directly from FTP and resample to daily timeseries. '''
+        ''' Pull raw ISD temperature data for the given year directly from FTP and resample to daily time series. '''
         return fetch_isd_daily_temp_data(self.usaf_id, year)
 
     def fetch_gsod_daily_temp_data(self, year):
-        ''' Pull raw GSOD temperature data for the given year directly from FTP and resample to daily timeseries. '''
+        ''' Pull raw GSOD temperature data for the given year directly from FTP and resample to daily time series. '''
         return fetch_gsod_daily_temp_data(self.usaf_id, year)
 
     # get key-value store key
@@ -784,33 +784,33 @@ class ISDStation(object):
         ''' Delete cached resampled daily GSOD temperature data if it has expired for the given year. '''
         return validate_gsod_daily_temp_data_cache(self.usaf_id, year)
 
-    # pandas timeseries to json
+    # pandas time series to json
     def serialize_isd_hourly_temp_data(self, ts):
-        ''' Serialize resampled hourly ISD pandas timeseries as JSON for caching. '''
+        ''' Serialize resampled hourly ISD pandas time series as JSON for caching. '''
         return serialize_isd_hourly_temp_data(ts)
 
     def serialize_isd_daily_temp_data(self, ts):
-        ''' Serialize resampled daily ISD pandas timeseries as JSON for caching. '''
+        ''' Serialize resampled daily ISD pandas time series as JSON for caching. '''
         return serialize_isd_daily_temp_data(ts)
 
     def serialize_gsod_daily_temp_data(self, ts):
-        ''' Serialize resampled daily GSOD pandas timeseries as JSON for caching. '''
+        ''' Serialize resampled daily GSOD pandas time series as JSON for caching. '''
         return serialize_gsod_daily_temp_data(ts)
 
-    # json to pandas timeseries
+    # json to pandas time series
     def deserialize_isd_hourly_temp_data(self, data):
-        ''' Deserialize JSON representation of resampled hourly ISD into pandas timeseries. '''
+        ''' Deserialize JSON representation of resampled hourly ISD into pandas time series. '''
         return deserialize_isd_hourly_temp_data(data)
 
     def deserialize_isd_daily_temp_data(self, data):
-        ''' Deserialize JSON representation of resampled daily ISD into pandas timeseries. '''
+        ''' Deserialize JSON representation of resampled daily ISD into pandas time series. '''
         return deserialize_isd_daily_temp_data(data)
 
     def deserialize_gsod_daily_temp_data(self, data):
-        ''' Deserialize JSON representation of resampled daily GSOD into pandas timeseries. '''
+        ''' Deserialize JSON representation of resampled daily GSOD into pandas time series. '''
         return deserialize_gsod_daily_temp_data(data)
 
-    # return pandas timeseries of data from cache
+    # return pandas time series of data from cache
     def read_isd_hourly_temp_data_from_cache(self, year):
         ''' Get cached version of resampled hourly ISD temperature data for given year. '''
         return read_isd_hourly_temp_data_from_cache(self.usaf_id, year)
@@ -823,7 +823,7 @@ class ISDStation(object):
         ''' Get cached version of resampled daily GSOD temperature data for given year. '''
         return read_gsod_daily_temp_data_from_cache(self.usaf_id, year)
 
-    # write pandas timeseries of data to cache for a particular year
+    # write pandas time series of data to cache for a particular year
     def write_isd_hourly_temp_data_to_cache(self, year, ts):
         ''' Write resampled hourly ISD temperature data to cache for given year. '''
         return write_isd_hourly_temp_data_to_cache(self.usaf_id, year, ts)

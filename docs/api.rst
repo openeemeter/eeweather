@@ -1,3 +1,21 @@
+.. spelling::
+
+   EmptyMapping
+   ISDStationMapping
+   eeweather
+   resampled
+   oee
+   zcta
+   metadata
+   resample
+   matplotlib
+   cartopy
+   Deserialize
+   UnrecognizedZCTAError
+   UnrecognizedUSAFIDError
+   Validators
+   isd
+
 API Docs
 ========
 

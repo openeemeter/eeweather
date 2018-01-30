@@ -1,3 +1,8 @@
+.. spelling::
+
+   jupyter
+   metadata
+
 Advanced Usage
 ==============
 
@@ -28,7 +33,7 @@ Example with dict::
     >>> eeweather.match_zcta('93505', mapping=mapping)
     ISDStationMapping('723171')
 
-Example with function returning usaf_id::
+Example with function returning ISDStationMapping::
 
     >>> mapping = lambda zcta: '722860'
     >>> eeweather.match_zcta('93505', mapping=mapping)
@@ -122,7 +127,7 @@ List top ten closest ISD stations for a particular ZCTA:
     order by
       rank
 
-Find closest high quality USAF_ID station in the same climate zones with high quality data, reporting distance to that station, and the lat/long coordinates of the target ZCTA:
+Find closest high quality ISD station in the same climate zones with high quality data, reporting distance to that station, and the lat/long coordinates of the target ZCTA:
 
 .. code-block:: sql
 

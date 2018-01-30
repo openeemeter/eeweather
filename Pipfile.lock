@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "006c1b990b1668dbd1d308a50b1dcfb58933c1e318be7356528c1e48273654c2"
+            "sha256": "cd566f855b52f912f4d7109092f74032fc16a4edb988a95dedbe62c583feef23"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -352,6 +352,15 @@
             ],
             "version": "==1.5.2"
         },
+        "pyenchant": {
+            "hashes": [
+                "sha256:e8000144e61551fcab9cd1b6fdccdded20e577e8d6d0985533f0b2b9c38fd952",
+                "sha256:b9526fc2c5f1ba0637e50200b645a7c20fb6644dbc6f6322027e7d2fbf1084a5",
+                "sha256:fc31cda72ace001da8fe5d42f11c26e514a91fa8c70468739216ddd8de64e2a0",
+                "sha256:9a66aa441535e27d228baca320f7feed1b08d0c5e6167d5e5cf455b545b7c2cd"
+            ],
+            "version": "==2.0.0"
+        },
         "pygments": {
             "hashes": [
                 "sha256:78f3f434bcc5d6ee09020f92ba487f95ba50f1e3ef83ae96b9d5ffa1bab25c5d",
@@ -361,10 +370,10 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:b84878865558194630c6147f44bdaef27222a9f153bbd4a08908b16bf285e0b1",
-                "sha256:53548280ede7818f4dc2ad96608b9f08ae2cc2ca3874f2ceb6f97e3583f25bc4"
+                "sha256:95fa025cd6deb5d937e04e368a00552332b58cae23f63b76c8c540ff1733ab6d",
+                "sha256:6074ea3b9c999bd6d0df5fa9d12dd95ccd23550df2a582f5f5b848331d2e82ca"
             ],
-            "version": "==3.3.2"
+            "version": "==3.4.0"
         },
         "pytest-cov": {
             "hashes": [
@@ -461,6 +470,13 @@
                 "sha256:66388f81884666e3821edbe05dd53a0cfb68093873d17320d0610de8db28c74e"
             ],
             "version": "==0.7.1"
+        },
+        "sphinxcontrib-spelling": {
+            "hashes": [
+                "sha256:93ca048e192c10ea9e7010d56d9d7ced81402c87062ef8af004055ea106c5347",
+                "sha256:4bc23c3f001e4edc4c36265fab9ba6c251d5fca7c88b97876454d4f261ec826b"
+            ],
+            "version": "==4.0.1"
         },
         "sphinxcontrib-websupport": {
             "hashes": [

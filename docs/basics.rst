@@ -1,3 +1,7 @@
+.. spelling::
+
+    metadata
+
 Basic Usage
 ===========
 
@@ -32,7 +36,7 @@ This ``ISDStationMapping`` object captures some information about the mapping::
     >>> result.warnings
     []
 
-That particular result has no associated warnings, but other mappings may have associated warnings, such as the mapping from this point which is in the middle of the gulf of mexico, 700km away from the nearest weather station and outside of the climate zone boundary::
+That particular result has no associated warnings, but other mappings may have associated warnings, such as the mapping from this point which is in the middle of the Gulf of Mexico, 700km away from the nearest weather station and outside of the climate zone boundary::
 
     >>> result = eeweather.match_lat_long(20, -95)
     >>> result.distance_meters
@@ -40,8 +44,8 @@ That particular result has no associated warnings, but other mappings may have a
     >>> result.warnings
     ['Distance from target to weather station is greater than 50km.', 'Mapped weather station is not in the same climate zone as the provided lat/long point.']
 
-ZIP Code Tabuluation Areas (ZCTAs)
-//////////////////////////////////
+ZIP Code Tabulation Areas (ZCTAs)
+/////////////////////////////////
 
 ZIP codes are often abused as rough geographic markers. They are not particularly well set up be used as the basis of a GIS system - some ZIP codes correspond to single buildings or post-offices, some cover thousands of square miles of land. The US Census Bureau transforms census blocks into what they call ZIP Code Tabulation Areas, and use these instead. There are roughly 10k ZIP codes that are not used as ZCTAs, and ZCTAs do not correspond directly to ZIP codes, but for matching to weather stations, which are much sparser than ZIP codes, this rough mapping is usually sufficient. Often tens or hundreds of ZCTAs will be matched to the same weather station.
 
@@ -65,8 +69,8 @@ This ``ISDStationMapping`` object also captures some information about the mappi
     >>> result.warnings
     []
 
-Obtaining temperture data
--------------------------
+Obtaining temperature data
+--------------------------
 
 These matching results carry a reference to a weather station object. The weather station object has some associated metadata and - most importantly - has methods for obtaining weather data.
 
@@ -120,7 +124,7 @@ In addition to these simple attributes there are a host of methods that can be u
 Note that this temperature data is given in degrees *Celsius*, not Fahrenheit. (:math:`T_F = T_C \cdot 1.8 + 32`), and that the ``pd.Timestamp`` index is given in UTC.
 
 
-ISD temperature data as an hourly timeseries::
+ISD temperature data as an hourly time series::
 
     >>> import datetime
     >>> start_date = datetime.datetime(2016, 6, 1)
@@ -141,7 +145,7 @@ ISD temperature data as an hourly timeseries::
     2016-06-01 03:00:00+00:00    80.417750
     2016-06-01 04:00:00+00:00    80.063259
 
-ISD temperature data as a daily timeseries::
+ISD temperature data as a daily time series::
 
     >>> tempC = station.load_isd_daily_temp_data(start_date, end_date)
     >>> tempC.head()
@@ -160,7 +164,7 @@ ISD temperature data as a daily timeseries::
     2016-06-05 00:00:00+00:00    74.80850
     Freq: D, dtype: float64
 
-GSOD temperature data as a daily timeseries::
+GSOD temperature data as a daily time series::
 
     >>> tempC = station.load_gsod_daily_temp_data(start_date, end_date)
     >>> tempC.head()

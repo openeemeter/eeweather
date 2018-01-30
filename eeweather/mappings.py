@@ -416,7 +416,7 @@ def zcta_closest_within_climate_zone(zcta):
     - IECC Climate Zone
     - IECC Moisture Regime
     - Building America Climate Zone
-    - California Buildin Climate Zone Area
+    - California Building Climate Zone Area
 
     Parameters
     ----------
@@ -594,7 +594,7 @@ def lat_long_closest_within_climate_zone(latitude, longitude):
     - IECC Climate Zone
     - IECC Moisture Regime
     - Building America Climate Zone
-    - California Buildin Climate Zone Area
+    - California Building Climate Zone Area
 
     Parameters
     ----------

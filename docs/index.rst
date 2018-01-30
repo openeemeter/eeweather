@@ -1,3 +1,9 @@
+.. spelling::
+
+   EEmeter
+   shapefiles
+   metadata
+
 EEweather: Weather station wrangling for EEmeter
 ================================================
 
