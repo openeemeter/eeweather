@@ -1,2 +1,3 @@
 include README.rst LICENSE pytest.ini
 recursive-include tests *.py
+recursive-include eeweather *.db

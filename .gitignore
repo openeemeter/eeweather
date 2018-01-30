@@ -1,11 +1,19 @@
+# python
 *.py[cod]
 __pycache__/
 *.egg-info/
 
+# jupyter
 .ipynb_checkpoints/
 
+# sphinx
 _build/
 
+# packaging and distribution
+build/
+dist/
+
+# config files
 .*
 !.gitignore
 !.coveragerc
