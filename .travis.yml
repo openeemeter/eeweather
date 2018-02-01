@@ -9,6 +9,10 @@ addons:
   apt:
     packages:
       - libenchant-dev
+      - binutils
+      - libproj-dev
+      - gdal-bin
+      - libgeos-dev
 
 language: python
 
