@@ -72,24 +72,45 @@ Dev installation::
 
 Build docs::
 
-    make -C docs html
+    $ make -C docs html
 
 Autobuild docs::
 
-    make -C docs livehtml
+    $ make -C docs livehtml
 
 Check spelling in docs::
 
-    make -C docs spelling
+    $ make -C docs spelling
 
 Run tests::
 
-    pytest
+    $ pytest
 
 Run tests on multiple python versions::
 
-    tox
+    $ tox
 
 Upload to pypi (using twine)::
 
-    python setup.py upload
+    $ python setup.py upload
+
+Use with Docker
+---------------
+
+To use with docker-compose, use the following:
+
+Run a tutorial notebook (copy link w/ token, open tutorial.ipynb)::
+
+    $ docker-compose up jupyter
+
+Live-edit docs::
+
+    $ docker-compose up docs
+
+Open a shell::
+
+    $ docker-compose run --rm shell
+
+Run tests::
+
+    $ docker-compose run test

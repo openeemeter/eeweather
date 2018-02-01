@@ -224,7 +224,7 @@ class ISDStationMapping(MappingResult):
         width_ratio = 2.
         height_ratio = 1.
 
-        if (right - left) / (top - bottom) > height_ratio / width_ratio:
+        if (right - left) / (top - bottom) > width_ratio / height_ratio:
             # too short
             goal = (right - left) * height_ratio / width_ratio
             diff = goal - (top - bottom)
@@ -240,8 +240,8 @@ class ISDStationMapping(MappingResult):
         ax.set_extent([left, right, bottom, top])
 
         # determine zoom level
-        # tile size at level_1 = 64 km
-        # 2 = 32 km, 3 = 16 km, etc, i.e. 128/(2^n) km
+        # tile size at level 1 = 64 km
+        # level 2 = 32 km, level 3 = 16 km, etc, i.e. 128/(2^n) km
         N_TILES = 600  # (how many tiles approximately fit in distance)
         km = self.distance_meters / 1000.0
         zoom_level = int(np.log2(128 * N_TILES / km))

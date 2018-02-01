@@ -7,7 +7,6 @@ name = "pypi"
 
 [packages]
 
-"e1839a8" = {path = ".", editable = true}
 "beautifulsoup4" = "*"
 pyproj = "*"
 shapely = {extras = ["vectorized"]}
@@ -15,6 +14,11 @@ simplejson = "*"
 funcsigs = "*"
 pandas = "*"
 sqlalchemy = "*"
+matplotlib = "*"
+cartopy = "*"
+cython = "*"
+pillow = "*"
+scipy = "*"
 
 
 [dev-packages]
@@ -29,3 +33,4 @@ sphinx = "*"
 sphinx-autobuild = "*"
 typing = "*"
 sphinxcontrib-spelling = "*"
+jupyter = "*"
