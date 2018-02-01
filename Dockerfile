@@ -10,9 +10,8 @@ RUN apt-get update \
     # geo libraries
     binutils libproj-dev gdal-bin libgeos-dev
 
-WORKDIR /app
-
-COPY Pipfile Pipfile.lock /app/
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
 
 RUN set -ex && pipenv install --system --deploy --dev
 
@@ -23,4 +22,6 @@ COPY docs/ /app/docs
 COPY scripts/ /app/scripts
 COPY tests/ /app/tests
 
-RUN set -ex && pipenv install --system --deploy --skip-lock -e .
+RUN set -ex && pipenv install --system --deploy --skip-lock -e /app
+
+WORKDIR /app

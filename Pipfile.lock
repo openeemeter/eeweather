@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2c395b98a6afdae8719e46ae515ef76b78aa53fae6b106740bcf278ce903d8d1"
+            "sha256": "2d4f142bd8693340b851019286d0531dda6412b3834840de60aa615a0fd91c58"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "17.3.0",
+            "platform_release": "17.4.0",
             "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.3.0: Thu Nov  9 18:09:22 PST 2017; root:xnu-4570.31.3~1/RELEASE_X86_64",
+            "platform_version": "Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "darwin"
@@ -37,9 +37,9 @@
         },
         "cartopy": {
             "hashes": [
-                "sha256:bb8a084055c38bc895b2fe094262753813e6fc7221ef2c1fc87ec1ff302f3c09"
+                "sha256:779a75cd4a5553489cd71e4506685247d6ac94017a7979a50d09306b43e8d7ff"
             ],
-            "version": "==0.15.1"
+            "version": "==0.13.1"
         },
         "cycler": {
             "hashes": [
@@ -508,7 +508,6 @@
                 "sha256:fcc6d46f08c3c4de7b15ae1c426e15be1b7932bcda9d83ce1a4304e8c1129df3",
                 "sha256:51c158a6c8b899898d1c91c6b51a34110196815cc905f9be0fa5878e19355608"
             ],
-            "markers": "python_version >= '3.3'",
             "version": "==6.2.1"
         },
         "ipython-genutils": {
