@@ -5,7 +5,7 @@ services:
     image: eeweather_shell
     stdin_open: true
     tty: true
-    command: /bin/sh
+    entrypoint: /bin/sh
     volumes:
       - .:/app
 
@@ -13,13 +13,13 @@ services:
     image: eeweather_shell
     ports:
       - "${HOST_PORT_DOCS:-8000}:8000"
-    command: make -C docs livehtml
+    entrypoint: make -C docs livehtml
     volumes:
       - .:/app
 
   test:
     image: eeweather_shell
-    command: py.test -n0
+    entrypoint: py.test -n0
     volumes:
       - .:/app
 
@@ -27,7 +27,7 @@ services:
     ports:
       - "${HOST_PORT_JUPYTER:-8888}:8888"
     image: eeweather_shell
-    command: |
+    entrypoint: |
       jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser /app/scripts/tutorial.ipynb
     volumes:
       - .:/app
