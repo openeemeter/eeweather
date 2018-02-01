@@ -10,7 +10,7 @@ addons:
     packages:
       - libenchant-dev
       - binutils
-      - libproj-dev
+      - proj=4.9.3-2
       - gdal-bin
       - libgeos-dev
 
