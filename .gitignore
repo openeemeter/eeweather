@@ -18,3 +18,4 @@ dist/
 !.gitignore
 !.coveragerc
 !.travis.yml
+!.gitattributes
