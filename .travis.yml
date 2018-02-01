@@ -26,8 +26,14 @@ notifications:
   email: false
 
 before_install:
-  - wget https://launchpad.net/ubuntu/+archive/primary/+files/libproj-dev_4.9.3-2_i386.deb
-  - sudo dpkg -i libproj-dev_4.9.3-2_i386.deb
+  - wget http://download.osgeo.org/proj/proj-4.9.3.tar.gz;
+    tar xf proj-4.9.3.tar.gz;
+    pushd proj-4.9.3;
+    ./configure --prefix=$HOME/local;
+    make;
+    sed -i "" -e s/-I// proj.pc;
+    make install;
+    popd;
 
 install:
   - pip install tox-travis
