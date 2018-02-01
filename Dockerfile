@@ -22,6 +22,7 @@ COPY docs/ /app/docs
 COPY scripts/ /app/scripts
 COPY tests/ /app/tests
 
+RUN set -ex && pipenv install --system --deploy --skip-lock cartopy jupyter
 RUN set -ex && pipenv install --system --deploy --skip-lock -e /app
 
 WORKDIR /app
