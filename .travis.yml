@@ -10,7 +10,7 @@ addons:
     packages:
       - libenchant-dev
       - binutils
-      - proj=4.9.3-2
+      - libproj-dev
       - gdal-bin
       - libgeos-dev
 
@@ -24,6 +24,10 @@ python:
 
 notifications:
   email: false
+
+before_install:
+  - wget https://launchpad.net/ubuntu/+archive/primary/+files/libproj-dev_4.9.3-2_i386.deb
+  - sudo dpkg -i libproj-dev_4.9.3-2_i386.deb
 
 install:
   - pip install tox-travis
