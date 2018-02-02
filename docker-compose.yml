@@ -16,12 +16,16 @@ services:
     entrypoint: make -C docs livehtml
     volumes:
       - .:/app
+    depends_on:
+      - shell
 
   test:
     image: eeweather_shell
     entrypoint: py.test -n0
     volumes:
       - .:/app
+    depends_on:
+      - shell
 
   jupyter:
     ports:
@@ -31,3 +35,5 @@ services:
       jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser /app/scripts/tutorial.ipynb
     volumes:
       - .:/app
+    depends_on:
+      - shell
