@@ -18,9 +18,6 @@ RUN set -ex && pipenv install --system --deploy --dev
 COPY setup.py README.rst /app/
 
 COPY eeweather/ /app/eeweather
-COPY docs/ /app/docs
-COPY scripts/ /app/scripts
-COPY tests/ /app/tests
 
 RUN set -ex && pipenv install --system --deploy --skip-lock cartopy jupyter
 RUN set -ex && pipenv install --system --deploy --skip-lock -e /app
