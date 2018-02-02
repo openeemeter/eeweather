@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0d0df36cb391f602ea0d9d5c2adb1e453a32080f007145606ec21ad6d43cf648"
+            "sha256": "3eee00330d8d29806dd46cc44194de89f55d36a47f65a5fb27e69f6a629687ff"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -76,13 +76,6 @@
                 "sha256:6a00512de1f2e3ce66ba35c5420babaef1fe2d9c43a8faab4080b0dbcc26bc64"
             ],
             "version": "==0.27.3"
-        },
-        "funcsigs": {
-            "hashes": [
-                "sha256:330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca",
-                "sha256:a7bb0f2cf3a3fd1ab2732cb49eba4252c2af4240442415b4abce3b87022a8f50"
-            ],
-            "version": "==1.0.2"
         },
         "matplotlib": {
             "hashes": [

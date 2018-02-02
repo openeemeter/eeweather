@@ -24,6 +24,7 @@ services:
     entrypoint: py.test -n0
     volumes:
       - .:/app
+      - /app/tests/__pycache__/
     depends_on:
       - shell
 
