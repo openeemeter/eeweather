@@ -1,4 +1,4 @@
-__title__ = 'eemeter'
+__title__ = 'eeweather'
 __description__ = 'Weather for Open Energy Efficiency Meter'
 __url__ = 'http://github.com/openeemeter/eeweather'
 __version__ = '0.1.1'
