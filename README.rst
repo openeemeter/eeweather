@@ -22,6 +22,8 @@ EEweather: Weather station wrangling for EEmeter
 
 EEweather comes with a database of weather station metadata, ZCTA metadata, and GIS data that makes it easier to find the right weather station to use for a particular ZIP code or lat/long coordinate.
 
+`https://eeweather.readthedocs.org/`_
+
 Installation
 ------------
 

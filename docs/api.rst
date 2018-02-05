@@ -68,6 +68,11 @@ Mappings for use with ``eeweather.match_lat_long``
 .. autoclass:: eeweather.ISDStation
    :members:
 
+Summaries
+---------
+
+.. autofunction:: eeweather.summaries.get_zcta_ids
+
 Database
 --------
 
