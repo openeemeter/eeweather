@@ -26,10 +26,16 @@ def cli():
         $ eeweather match_zcta 90210
         722880
 
+    Match lat/long to weather station:
+
+    \b
+        $ eeweather match_lat_long -- 35.5 -94.3
+        723440
+
     See station metadata:
 
     \b
-        $ eeweather inspect_station_metadata 722880
+        $ eeweather inspect_isd_station 722880
         {
           "usaf_id": "722880",
           "wban_ids": "23152,99999",
@@ -43,19 +49,19 @@ def cli():
     See station file data:
 
     \b
-        $ eeweather inspect_station_file_metadata 722880
+        $ eeweather inspect_isd_file_years 722880
         {...}
 
     See station file names for ISD:
 
     \b
-        $ eeweather inspect_station_filenames 722880 2017
+        $ eeweather inspect_isd_filenames 722880 2017
         ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz
 
     Or for GSOD:
 
     \b
-        $ eeweather inspect_station_filenames 722880 2017 --source=gsod
+        $ eeweather inspect_gsod_filenames 722880 2017
         ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz
 
     Rebuild metadata db from primary source files:
