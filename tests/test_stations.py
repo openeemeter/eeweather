@@ -955,31 +955,38 @@ def test_isd_station_load_gsod_daily_temp_data_cached_proxy(
 def test_load_isd_hourly_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
 
-    start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
+    start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_isd_hourly_temp_data('722874', start, end)
     assert ts.index[0] == start
+    assert pd.isnull(ts[0])
     assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
 
 
 def test_load_isd_daily_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
 
-    start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
+    start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_isd_daily_temp_data('722874', start, end)
     assert ts.index[0] == start
+    assert pd.isnull(ts[0])
     assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
 
 
 def test_load_gsod_daily_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
 
-    start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
+    start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_gsod_daily_temp_data('722874', start, end)
     assert ts.index[0] == start
+    assert pd.isnull(ts[0])
     assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
+
 
 
 # station load data between dates

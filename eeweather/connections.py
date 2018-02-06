@@ -14,7 +14,6 @@ __all__ = (
 )
 
 
-
 def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
     host = 'ftp.ncdc.noaa.gov'
     for i in range(n_tries):
