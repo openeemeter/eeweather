@@ -14,12 +14,10 @@ COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
 
 RUN set -ex && pipenv install --system --deploy --dev
+RUN set -ex && pipenv install --system --deploy --skip-lock cartopy jupyter
 
 COPY setup.py README.rst /app/
-
 COPY eeweather/ /app/eeweather
-
-RUN set -ex && pipenv install --system --deploy --skip-lock cartopy jupyter
 RUN set -ex && pipenv install --system --deploy --skip-lock -e /app
 
 WORKDIR /app

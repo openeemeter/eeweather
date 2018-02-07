@@ -84,6 +84,20 @@ cached_data = CachedData()
 
 
 def get_lat_long_climate_zones(latitude, longitude):
+    ''' Get climate zones that contain lat/long coordinates.
+
+    Parameters
+    ----------
+    latitude : float
+        Latitude of point.
+    longitude : float
+        Longitude of point.
+
+    Returns
+    -------
+    climate_zones: dict of str
+        Region ids for each climate zone type.
+    '''
     try:
         from shapely.geometry import Point
     except ImportError:  # pragma: no cover
@@ -130,6 +144,18 @@ def get_lat_long_climate_zones(latitude, longitude):
 
 
 def get_zcta_metadata(zcta):
+    ''' Get metadata about a ZIP Code Tabulation Area (ZCTA).
+
+    Parameters
+    ----------
+    zcta : str
+        ID of ZIP Code Tabulation Area
+
+    Returns
+    -------
+    metadata : dict
+        Dict of data about the ZCTA, including lat/long coordinates.
+    '''
     conn = metadata_db_connection_proxy.get_connection()
     cur = conn.cursor()
     cur.execute('''

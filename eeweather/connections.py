@@ -55,19 +55,20 @@ class NOAAFTPConnectionProxy(object):
         try:
             try:
                 ftp.retrbinary('RETR {}'.format(filename), bytes_string.write)
-            except (ftplib.error_temp, EOFError) as e_temp:
+            except (ftplib.error_temp, ftplib.error_perm, EOFError, IOError) as e:
                 # Bad connection. attempt to reconnect.
                 logger.warn(
-                    'Failed RETR {}:\n{}.'
+                    'Failed RETR {}:\n{}\n'
                     'Attempting reconnect.'
-                    .format(filename, e_temp)
+                    .format(filename, e)
                 )
                 ftp = self.reconnect()
                 ftp.retrbinary('RETR {}'.format(filename), bytes_string.write)
-        except (IOError, ftplib.error_perm) as e_perm:
+        except Exception as e:
             logger.warn(
-                'Failed RETR {}:\n{}.'
-                .format(filename, e_perm)
+                'Failed RETR {}:\n{}\n'
+                'Not attempting reconnect.'
+                .format(filename, e)
             )
             return None
 

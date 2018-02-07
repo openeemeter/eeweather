@@ -73,6 +73,13 @@ Summaries
 
 .. autofunction:: eeweather.summaries.get_zcta_ids
 
+Geography
+---------
+
+.. autofunction:: eeweather.api.get_lat_long_climate_zones
+
+.. autofunction:: eeweather.api.get_zcta_metadata
+
 Database
 --------
 
