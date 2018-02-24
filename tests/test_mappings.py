@@ -35,7 +35,7 @@ def test_mapping_result_blank_default_kwargs():
         'Distance from target to weather station is greater than 50km.'
     ]
     assert str(mapping) == '720446'
-    assert repr(mapping) == "ISDStationMapping('720446')"
+    assert repr(mapping) == "ISDStationMapping('720446', distance_meters=2132142)"
     assert mapping.is_empty() is False
 
 

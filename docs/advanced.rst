@@ -83,7 +83,7 @@ Using the CLI
 
 If you prefer a GUI: `SQLite Browser <http://sqlitebrowser.org/>`_
 
-The default database location is at ``~/.eeweather/cache.db``.
+The default database location is ``~/.eeweather/cache.db``.
 
 How to log into the database::
 

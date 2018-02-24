@@ -30,10 +30,10 @@ services:
 
   jupyter:
     ports:
-      - "${HOST_PORT_JUPYTER:-8888}:8888"
+      - "${HOST_PORT_JUPYTER:-8888}:${HOST_PORT_JUPYTER:-8888}"
     image: eeweather_shell
     entrypoint: |
-      jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser /app/scripts/tutorial.ipynb
+      jupyter notebook --ip=0.0.0.0 --port=${HOST_PORT_JUPYTER:-8888} --allow-root --no-browser
     volumes:
       - .:/app
     depends_on:

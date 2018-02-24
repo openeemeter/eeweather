@@ -176,7 +176,9 @@ class ISDStationMapping(MappingResult):
         return self.isd_station.usaf_id
 
     def __repr__(self):
-        return "ISDStationMapping('{}')".format(self.isd_station.usaf_id)
+        return "ISDStationMapping('{}', distance_meters={})".format(
+            self.isd_station.usaf_id, self.distance_meters
+        )
 
     def plot(self, target_label='target'):  # pragma: no cover
         ''' Plots this mapping on a map.'''
