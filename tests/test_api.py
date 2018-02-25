@@ -25,6 +25,7 @@ def test_get_zcta_metadata():
         'iecc_moisture_regime': 'B',
         'latitude': '34.0480061236777',
         'longitude': '-118.294181179333',
+        'state': 'CA',
         'zcta_id': '90006'
     }
 

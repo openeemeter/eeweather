@@ -86,6 +86,7 @@ def test_get_isd_station_metadata():
         'name': 'DOWNTOWN L.A./USC CAMPUS',
         'quality': 'high',
         'recent_wban_id': '93134',
+        'state': 'CA',
         'usaf_id': '722874',
         'wban_ids': '93134',
     }

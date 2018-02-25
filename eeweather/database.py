@@ -92,6 +92,7 @@ def _load_isd_station_metadata(download_path):
             'longitude': recent.LON,
             'point': Point(float(recent.LON), float(recent.LAT)),
             'elevation': recent['ELEV(M)'],
+            'state': recent.STATE,
         }
 
     return metadata
@@ -182,12 +183,27 @@ def _load_zcta_metadata(download_path):
     with open(geojson_path, 'r') as f:
         geojson = json.load(f)
 
+    # load ZIP code prefixes by state
+    zipcode_prefixes_path = os.path.join(download_path, 'zipcode_prefixes.json')
+    with open(zipcode_prefixes_path, 'r') as f:
+        zipcode_prefixes = json.load(f)
+        prefix_to_zipcode = {
+            zipcode_prefix: state
+            for state, zipcode_prefix_list in zipcode_prefixes.items()
+            for zipcode_prefix in zipcode_prefix_list
+        }
+
+    def _get_state(zcta):
+        prefix = zcta[:3]
+        return prefix_to_zipcode.get(prefix)
+
     metadata = {}
     for feature in geojson['features']:
         zcta = feature['properties']['GEOID10']
         geometry = feature['geometry']
         polygon = shape(geometry)
         centroid = polygon.centroid
+        state = _get_state(zcta)
         metadata[zcta] = {
             'zcta': zcta,
             'polygon': polygon,
@@ -195,6 +211,7 @@ def _load_zcta_metadata(download_path):
             'centroid': centroid,
             'latitude': centroid.coords[0][1],
             'longitude': centroid.coords[0][0],
+            'state': state,
         }
     return metadata
 
@@ -514,6 +531,7 @@ def _create_table_structures(conn):
         , latitude text not null
         , longitude text not null
         , elevation text
+        , state text
         , quality text default 'low'
         , iecc_climate_zone text
         , iecc_moisture_regime text
@@ -536,6 +554,7 @@ def _create_table_structures(conn):
         , geometry text
         , latitude text not null
         , longitude text not null
+        , state text
         , iecc_climate_zone text
         , iecc_moisture_regime text
         , ba_climate_zone text
@@ -614,6 +633,7 @@ def _write_isd_station_metadata_table(conn, isd_station_metadata):
             metadata['latitude'],
             metadata['longitude'],
             metadata['elevation'],
+            metadata['state'],
             metadata['quality'],
             metadata['iecc_climate_zone'],
             metadata['iecc_moisture_regime'],
@@ -631,15 +651,19 @@ def _write_isd_station_metadata_table(conn, isd_station_metadata):
         , latitude
         , longitude
         , elevation
+        , state
         , quality
         , iecc_climate_zone
         , iecc_moisture_regime
         , ba_climate_zone
         , ca_climate_zone
-      ) values (?,?,?,?,?,?,?,?,?,?,?,?)
+      ) values (?,?,?,?,?,?,?,?,?,?,?,?,?)
     ''', rows)
     cur.execute('''
       create index isd_station_metadata_usaf_id on isd_station_metadata(usaf_id)
+    ''')
+    cur.execute('''
+      create index isd_station_metadata_state on isd_station_metadata(state)
     ''')
     cur.execute('''
       create index isd_station_metadata_iecc_climate_zone on
@@ -713,6 +737,7 @@ def _write_zcta_metadata_table(conn, zcta_metadata, geometry=False):
             metadata['geometry'] if geometry else None,
             metadata['latitude'],
             metadata['longitude'],
+            metadata['state'],
             metadata['iecc_climate_zone'],
             metadata['iecc_moisture_regime'],
             metadata['ba_climate_zone'],
@@ -726,14 +751,18 @@ def _write_zcta_metadata_table(conn, zcta_metadata, geometry=False):
         , geometry
         , latitude
         , longitude
+        , state
         , iecc_climate_zone
         , iecc_moisture_regime
         , ba_climate_zone
         , ca_climate_zone
-      ) values (?,?,?,?,?,?,?,?)
+      ) values (?,?,?,?,?,?,?,?,?)
     ''', rows)
     cur.execute('''
       create index zcta_metadata_zcta_id on zcta_metadata(zcta_id)
+    ''')
+    cur.execute('''
+      create index zcta_metadata_state on zcta_metadata(state)
     ''')
     cur.execute('''
       create index zcta_metadata_iecc_climate_zone on zcta_metadata(iecc_climate_zone)

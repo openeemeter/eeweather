@@ -61,6 +61,7 @@ def test_isd_station_metadata_table_content():
         'name': 'TWENTY NINE PALMS',
         'quality': 'high',
         'recent_wban_id': '93121',
+        'state': 'CA',
         'usaf_id': '690150',
         'wban_ids': '93121,99999'
     }
@@ -71,7 +72,7 @@ def test_isd_file_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 34651  # this count is brittle b/c of frequent updates
+    assert count == 34720  # this count is brittle b/c of frequent updates
 
 
 def test_isd_file_metadata_table_content():
@@ -108,6 +109,7 @@ def test_zcta_metadata_table_content():
         'iecc_moisture_regime': 'A',
         'latitude': '18.1800455429617',
         'longitude': '-66.752178136408',
+        'state': 'PR',
         'zcta_id': '00601'
     }
 
