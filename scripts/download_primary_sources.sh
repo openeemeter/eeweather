@@ -46,4 +46,8 @@ wget -O $DATA_DIR/tmy3-stations.html -N http://rredc.nrel.gov/solar/old_data/nsr
 echo Downloading zipcode_to_cz2010.csv
 wget -N https://gist.githubusercontent.com/philngo/45a049284fc2a4aeadef2fb7201bc845/raw/12f5dd3659a818fdd208defe221f8a46c76e8064/zipcode_to_cz2010.csv -P $DATA_DIR -q --show-progress
 
+# Add ZIP code prefix mapping
+echo Downloading state zipcode prefixes
+wget -N https://gist.githubusercontent.com/philngo/247226aa89e5abf5869b981b9b841245/raw/56e25d8d590c001a18a1c0bab3ac69c53c09117c/zipcode_prefixes.json -P $DATA_DIR -q --show-progress
+
 echo Finished downloading primary source files

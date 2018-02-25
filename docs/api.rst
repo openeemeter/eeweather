@@ -73,6 +73,8 @@ Summaries
 
 .. autofunction:: eeweather.summaries.get_zcta_ids
 
+.. autofunction:: eeweather.summaries.get_isd_station_usaf_ids
+
 Geography
 ---------
 

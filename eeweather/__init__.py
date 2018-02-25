@@ -34,6 +34,7 @@ from .matching import (
 )
 from .summaries import (
     get_zcta_ids,
+    get_isd_station_usaf_ids,
 )
 from .stations import (
     ISDStation,

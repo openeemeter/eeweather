@@ -53,6 +53,7 @@ def test_inspect_isd_station():
         'name': 'BURBANK-GLENDALE-PASA ARPT',
         'quality': 'high',
         'recent_wban_id': '23152',
+        'state': 'CA',
         'usaf_id': '722880',
         'wban_ids': '23152,99999'
     }
