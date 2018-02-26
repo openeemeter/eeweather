@@ -105,6 +105,7 @@ def test_isd_station_no_load_metadata():
     assert station.coords is None
     assert station.name is None
     assert station.quality is None
+    assert station.state is None
     assert station.wban_ids is None
     assert station.recent_wban_id is None
     assert station.climate_zones == {}
@@ -131,6 +132,7 @@ def test_isd_station_with_load_metadata():
     assert station.coords == (34.201, -118.358)
     assert station.name == 'BURBANK-GLENDALE-PASA ARPT'
     assert station.quality == 'high'
+    assert station.state == 'CA'
     assert station.wban_ids == ['23152', '99999']
     assert station.recent_wban_id == '23152'
     assert station.climate_zones == {
@@ -149,6 +151,7 @@ def test_isd_station_json():
         'longitude': -118.358,
         'name': 'BURBANK-GLENDALE-PASA ARPT',
         'quality': 'high',
+        'state': 'CA',
         'recent_wban_id': '23152',
         'wban_ids': ['23152', '99999'],
         'climate_zones': {

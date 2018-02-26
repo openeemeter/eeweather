@@ -662,6 +662,8 @@ class ISDStation(object):
         name of the station
     quality : str
         "high", "medium", "low"
+    state : str
+        State abbreviation.
     wban_ids : list of str
         list of WBAN IDs, or "99999" which have been used to identify the station.
     recent_wban_id = None
@@ -687,6 +689,7 @@ class ISDStation(object):
             self.coords = None
             self.name = None
             self.quality = None
+            self.state = None
             self.wban_ids = None
             self.recent_wban_id = None
             self.climate_zones = {}
@@ -710,6 +713,7 @@ class ISDStation(object):
         self.coords = (self.latitude, self.longitude)
         self.name = metadata['name']
         self.quality = metadata['quality']
+        self.state = metadata['state']
         self.wban_ids = metadata['wban_ids'].split(',')
         self.recent_wban_id = metadata['recent_wban_id']
         self.climate_zones = {
@@ -727,6 +731,7 @@ class ISDStation(object):
             'longitude': self.longitude,
             'name': self.name,
             'quality': self.quality,
+            'state': self.state,
             'wban_ids': self.wban_ids,
             'recent_wban_id': self.recent_wban_id,
             'climate_zones': {

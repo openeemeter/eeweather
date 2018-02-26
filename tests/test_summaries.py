@@ -23,3 +23,15 @@ def test_get_isd_station_usaf_ids_by_state():
     usaf_ids = get_isd_station_usaf_ids(state='IL')
     assert len(usaf_ids) == 76
     assert usaf_ids[0] == '720137'
+
+
+def test_get_isd_station_usaf_ids_by_quality():
+    usaf_ids = get_isd_station_usaf_ids(quality='high')
+    assert len(usaf_ids) == 1770
+    assert usaf_ids[0] == '690150'
+
+
+def test_get_isd_station_usaf_ids_by_state_and_quality():
+    usaf_ids = get_isd_station_usaf_ids(state='CA', quality='low')
+    assert len(usaf_ids) == 181
+    assert usaf_ids[0] == '690020'
