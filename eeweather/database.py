@@ -88,6 +88,7 @@ def _load_isd_station_metadata(download_path):
             'wban_ids': wban_stations,
             'recent_wban_id': recent.WBAN,
             'name': recent['STATION NAME'],
+            'icao_code': recent.ICAO,
             'latitude': recent.LAT,
             'longitude': recent.LON,
             'point': Point(float(recent.LON), float(recent.LAT)),
@@ -528,6 +529,7 @@ def _create_table_structures(conn):
         , wban_ids text not null
         , recent_wban_id text not null
         , name text not null
+        , icao_code text
         , latitude text not null
         , longitude text not null
         , elevation text
@@ -630,6 +632,7 @@ def _write_isd_station_metadata_table(conn, isd_station_metadata):
             ','.join(metadata['wban_ids']),
             metadata['recent_wban_id'],
             metadata['name'],
+            metadata['icao_code'],
             metadata['latitude'],
             metadata['longitude'],
             metadata['elevation'],
@@ -648,6 +651,7 @@ def _write_isd_station_metadata_table(conn, isd_station_metadata):
         , wban_ids
         , recent_wban_id
         , name
+        , icao_code
         , latitude
         , longitude
         , elevation
@@ -657,7 +661,7 @@ def _write_isd_station_metadata_table(conn, isd_station_metadata):
         , iecc_moisture_regime
         , ba_climate_zone
         , ca_climate_zone
-      ) values (?,?,?,?,?,?,?,?,?,?,?,?,?)
+      ) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     ''', rows)
     cur.execute('''
       create index isd_station_metadata_usaf_id on isd_station_metadata(usaf_id)

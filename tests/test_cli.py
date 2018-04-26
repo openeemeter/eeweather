@@ -46,6 +46,7 @@ def test_inspect_isd_station():
         'ba_climate_zone': 'Hot-Dry',
         'ca_climate_zone': 'CA_09',
         'elevation': '+0236.2',
+        'icao_code': 'KBUR',
         'iecc_climate_zone': '3',
         'iecc_moisture_regime': 'B',
         'latitude': '+34.201',

@@ -115,4 +115,8 @@ Open a shell::
 
 Run tests::
 
-    $ docker-compose run test
+    $ docker-compose run --rm test
+
+Run the CLI::
+
+    $ docker-compose run --rm eeweather --help
