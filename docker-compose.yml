@@ -38,3 +38,11 @@ services:
       - .:/app
     depends_on:
       - shell
+
+  eeweather:
+    image: eeweather_shell
+    entrypoint: eeweather
+    volumes:
+      - .:/app
+    depends_on:
+      - shell

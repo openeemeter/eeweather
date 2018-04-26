@@ -54,6 +54,7 @@ def test_isd_station_metadata_table_content():
         'ba_climate_zone': 'Hot-Dry',
         'ca_climate_zone': 'CA_14',
         'elevation': '+0625.1',
+        'icao_code': 'KNXP',
         'iecc_climate_zone': '3',
         'iecc_moisture_regime': 'B',
         'latitude': '+34.300',
@@ -72,7 +73,7 @@ def test_isd_file_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 34720  # this count is brittle b/c of frequent updates
+    assert count == 34730  # this count is brittle b/c of frequent updates
 
 
 def test_isd_file_metadata_table_content():

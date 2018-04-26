@@ -79,6 +79,7 @@ def test_get_isd_station_metadata():
         'ba_climate_zone': 'Hot-Dry',
         'ca_climate_zone': 'CA_08',
         'elevation': '+0054.6',
+        'icao_code': 'KCQT',
         'iecc_climate_zone': '3',
         'iecc_moisture_regime': 'B',
         'latitude': '+34.024',
