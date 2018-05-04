@@ -7,22 +7,22 @@ from eeweather.cache import KeyValueStore
 
 
 def write_isd_file(bytes_string):
-    with pkg_resources.resource_stream('resources', 'ISD.gz') as f:
+    with pkg_resources.resource_stream('eeweather.resources', 'ISD.gz') as f:
         bytes_string.write(f.read())
 
 
 def write_missing_isd_file(bytes_string):
-    with pkg_resources.resource_stream('resources', 'ISD-MISSING.gz') as f:
+    with pkg_resources.resource_stream('eeweather.resources', 'ISD-MISSING.gz') as f:
         bytes_string.write(f.read())
 
 
 def write_gsod_file(bytes_string):
-    with pkg_resources.resource_stream('resources', 'GSOD.op.gz') as f:
+    with pkg_resources.resource_stream('eeweather.resources', 'GSOD.op.gz') as f:
         bytes_string.write(f.read())
 
 
 def write_missing_gsod_file(bytes_string):
-    with pkg_resources.resource_stream('resources', 'GSOD-MISSING.op.gz') as f:
+    with pkg_resources.resource_stream('eeweather.resources', 'GSOD-MISSING.op.gz') as f:
         bytes_string.write(f.read())
 
 
