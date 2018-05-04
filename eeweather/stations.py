@@ -699,11 +699,11 @@ class ISDStation(object):
 
     def _load_metadata(self):
         metadata = get_isd_station_metadata(self.usaf_id)
-
         self.iecc_climate_zone = metadata['iecc_climate_zone']
         self.iecc_moisture_regime = metadata['iecc_moisture_regime']
         self.ba_climate_zone = metadata['ba_climate_zone']
         self.ca_climate_zone = metadata['ca_climate_zone']
+        self.icao_code = metadata['icao_code']
         self.elevation = float(metadata['elevation'])  # meters
         self.latitude = float(metadata['latitude'])
         self.longitude = float(metadata['longitude'])
@@ -725,6 +725,7 @@ class ISDStation(object):
             'elevation': self.elevation,
             'latitude': self.latitude,
             'longitude': self.longitude,
+            'icao_code': self.icao_code,
             'name': self.name,
             'quality': self.quality,
             'wban_ids': self.wban_ids,
