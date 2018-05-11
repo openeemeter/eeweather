@@ -11,6 +11,7 @@ import eeweather.connections
 
 from eeweather.connections import (
     metadata_db_connection_proxy,
+    csv_request_proxy,
 )
 
 from .exceptions import (
@@ -29,16 +30,18 @@ __all__ = (
     'get_isd_station_metadata',
     'get_isd_file_metadata',
 
-    'get_isd_raw_temp_data',
-    'get_isd_hourly_temp_data',
-    'get_isd_daily_temp_data',
+    'get_isd_raw_temp_data', #Not currently written
+    'get_isd_hourly_temp_data', #Not currently written
+    'get_isd_daily_temp_data', #Not currently written
 
-    'get_gsod_raw_temp_data',
-    'get_gsod_daily_temp_data',
+    'get_gsod_raw_temp_data', #Not currently written
+    'get_gsod_daily_temp_data', #Not currently written
 
     'get_isd_hourly_temp_data_cache_key',
     'get_isd_daily_temp_data_cache_key',
     'get_gsod_daily_temp_data_cache_key',
+    'get_tmy3_hourly_temp_data_cache_key',
+    'get_cz2010_hourly_temp_data_cache_key',
 
     'cached_isd_hourly_temp_data_is_expired',
     'cached_isd_daily_temp_data_is_expired',
@@ -47,38 +50,56 @@ __all__ = (
     'validate_isd_hourly_temp_data_cache',
     'validate_isd_daily_temp_data_cache',
     'validate_gsod_daily_temp_data_cache',
+    'validate_tmy3_hourly_temp_data_cache',
+    'validate_cz2010_hourly_temp_data_cache',
 
     'serialize_isd_hourly_temp_data',
     'serialize_isd_daily_temp_data',
     'serialize_gsod_daily_temp_data',
+    'serialize_tmy3_hourly_temp_data',
+    'serialize_cz2010_hourly_temp_data',
 
     'deserialize_isd_hourly_temp_data',
     'deserialize_isd_daily_temp_data',
     'deserialize_gsod_daily_temp_data',
+    'deserialize_tmy3_daily_temp_data',
+    'deserialize_cz2010_daily_temp_data',
 
     'read_isd_hourly_temp_data_from_cache',
     'read_isd_daily_temp_data_from_cache',
     'read_gsod_daily_temp_data_from_cache',
+    'read_tmy3_hourly_temp_data_from_cache',
+    'read_cz2010_hourly_temp_data_from_cache',
 
     'write_isd_hourly_temp_data_to_cache',
     'write_isd_daily_temp_data_to_cache',
     'write_gsod_daily_temp_data_to_cache',
+    'write_tmy3_hourly_temp_data_to_cache',
+    'write_cz2010_hourly_temp_data_to_cache',
 
     'destroy_cached_isd_hourly_temp_data',
     'destroy_cached_isd_daily_temp_data',
     'destroy_cached_gsod_daily_temp_data',
+    'destroy_cached_tmy3_hourly_temp_data',
+    'destroy_cached_cz2010_hourly_temp_data',
 
     'load_isd_hourly_temp_data_cached_proxy',
     'load_isd_daily_temp_data_cached_proxy',
     'load_gsod_daily_temp_data_cached_proxy',
+    'load_tmy3_hourly_temp_data_cached_proxy',
+    'load_cz2010_hourly_temp_data_cached_proxy',
 
     'load_isd_hourly_temp_data',
     'load_isd_daily_temp_data',
     'load_gsod_daily_temp_data',
+    'load_tmy3_hourly_temp_data',
+    'load_cz2010_hourly_temp_data',
 
     'load_cached_isd_hourly_temp_data',
     'load_cached_isd_daily_temp_data',
     'load_cached_gsod_daily_temp_data',
+    'load_cached_tmy3_hourly_temp_data',
+    'load_cached_cz2010_hourly_temp_data',
 )
 
 
@@ -284,6 +305,53 @@ def fetch_gsod_daily_temp_data(usaf_id, year):
     return ts.resample('D').mean()
 
 
+def fetch_tmy3_hourly_temp_data(usaf_id):
+    url = (
+        "http://rredc.nrel.gov/solar/old_data/nsrdb/"
+        "1991-2005/data/tmy3/{}TYA.CSV".format(usaf_id)
+        )
+    return fetch_hourly_normalized_temp_data(usaf_id, url, 'TMY3')
+
+
+def fetch_cz2010_hourly_temp_data(usaf_id):
+    url = (
+        "https://storage.googleapis.com/oee-cz2010/csv/{}_CZ2010.CSV"
+        .format(usaf_id)
+        )
+    return fetch_hourly_normalized_temp_data(usaf_id, url, 'CZ2010')
+
+
+def fetch_hourly_normalized_temp_data(usaf_id, url, source_name):
+    index = pd.date_range("1900-01-01 00:00", "1900-12-31 23:00",
+                          freq='H', tz=pytz.UTC)
+    ts = pd.Series(None, index=index, dtype=float)
+
+    lines = eeweather.connections \
+        .csv_request_proxy.get_text(url).splitlines()
+
+    utc_offset_str = lines[0].split(',')[3]
+    utc_offset = timedelta(seconds=3600 * float(utc_offset_str))
+
+    for line in lines[2:]:
+        row = line.split(",")
+        month = row[0][0:2]
+        day = row[0][3:5]
+        hour = int(row[1][0:2]) - 1
+
+        # YYYYMMDDHH
+        date_string = "1900{}{}{:02d}".format(month, day, hour)
+
+        dt = datetime.strptime(date_string, "%Y%m%d%H") - utc_offset
+
+        # Only a little redundant to make year 1900 again - matters for
+        # first or last few hours of the year depending UTC on offset
+        dt = pytz.UTC.localize(dt.replace(year=1900))
+        temp_C = float(row[31])
+
+        ts[dt] = temp_C
+
+    return ts
+
 def get_isd_hourly_temp_data_cache_key(usaf_id, year):
     return 'isd-hourly-{}-{}'.format(usaf_id, year)
 
@@ -294,6 +362,14 @@ def get_isd_daily_temp_data_cache_key(usaf_id, year):
 
 def get_gsod_daily_temp_data_cache_key(usaf_id, year):
     return 'gsod-daily-{}-{}'.format(usaf_id, year)
+
+
+def get_tmy3_hourly_temp_data_cache_key(usaf_id):
+    return 'tmy3-hourly-{}'.format(usaf_id)
+
+
+def get_cz2010_hourly_temp_data_cache_key(usaf_id):
+    return 'cz2010-hourly-{}'.format(usaf_id)
 
 
 def _expired(last_updated, year):
@@ -321,6 +397,13 @@ def cached_isd_daily_temp_data_is_expired(usaf_id, year):
 
 def cached_gsod_daily_temp_data_is_expired(usaf_id, year):
     key = get_gsod_daily_temp_data_cache_key(usaf_id, year)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    last_updated = store.key_updated(key)
+    return _expired(last_updated, year)
+
+
+def cached_isd_hourly_temp_data_is_expired(usaf_id, year):
+    key = get_isd_hourly_temp_data_cache_key(usaf_id, year)
     store = eeweather.connections.key_value_store_proxy.get_store()
     last_updated = store.key_updated(key)
     return _expired(last_updated, year)
@@ -374,6 +457,28 @@ def validate_gsod_daily_temp_data_cache(usaf_id, year):
     return True
 
 
+def validate_tmy3_hourly_temp_data_cache(usaf_id):
+    key = get_tmy3_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+
+    # fail if no key
+    if not store.key_exists(key):
+        return False
+
+    return True
+
+
+def validate_cz2010_hourly_temp_data_cache(usaf_id):
+    key = get_cz2010_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+
+    # fail if no key
+    if not store.key_exists(key):
+        return False
+
+    return True
+
+
 def _serialize(ts, freq):
     if freq == 'H':
         dt_format = '%Y%m%d%H'
@@ -398,6 +503,14 @@ def serialize_isd_daily_temp_data(ts):
 
 def serialize_gsod_daily_temp_data(ts):
     return _serialize(ts, 'D')
+
+
+def serialize_tmy3_hourly_temp_data(ts):
+    return _serialize(ts, 'H')
+
+
+def serialize_cz2010_hourly_temp_data(ts):
+    return _serialize(ts, 'H')
 
 
 def _deserialize(data, freq):
@@ -426,6 +539,14 @@ def deserialize_gsod_daily_temp_data(data):
     return _deserialize(data, 'D')
 
 
+def deserialize_tmy3_hourly_temp_data(data):
+    return _deserialize(data, 'H')
+
+
+def deserialize_cz2010_hourly_temp_data(data):
+    return _deserialize(data, 'H')
+
+
 def read_isd_hourly_temp_data_from_cache(usaf_id, year):
     key = get_isd_hourly_temp_data_cache_key(usaf_id, year)
     store = eeweather.connections.key_value_store_proxy.get_store()
@@ -442,6 +563,18 @@ def read_gsod_daily_temp_data_from_cache(usaf_id, year):
     key = get_gsod_daily_temp_data_cache_key(usaf_id, year)
     store = eeweather.connections.key_value_store_proxy.get_store()
     return deserialize_gsod_daily_temp_data(store.retrieve_json(key))
+
+
+def read_tmy3_hourly_temp_data_from_cache(usaf_id):
+    key = get_tmy3_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return deserialize_tmy3_hourly_temp_data(store.retrieve_json(key))
+
+
+def read_cz2010_hourly_temp_data_from_cache(usaf_id):
+    key = get_cz2010_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return deserialize_cz2010_hourly_temp_data(store.retrieve_json(key))
 
 
 def write_isd_hourly_temp_data_to_cache(usaf_id, year, ts):
@@ -462,6 +595,18 @@ def write_gsod_daily_temp_data_to_cache(usaf_id, year, ts):
     return store.save_json(key, serialize_gsod_daily_temp_data(ts))
 
 
+def write_tmy3_hourly_temp_data_to_cache(usaf_id, ts):
+    key = get_tmy3_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return store.save_json(key, serialize_tmy3_hourly_temp_data(ts))
+
+
+def write_cz2010_hourly_temp_data_to_cache(usaf_id, ts):
+    key = get_cz2010_hourly_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return store.save_json(key, serialize_cz2010_hourly_temp_data(ts))
+
+
 def destroy_cached_isd_hourly_temp_data(usaf_id, year):
     key = get_isd_hourly_temp_data_cache_key(usaf_id, year)
     store = eeweather.connections.key_value_store_proxy.get_store()
@@ -476,6 +621,18 @@ def destroy_cached_isd_daily_temp_data(usaf_id, year):
 
 def destroy_cached_gsod_daily_temp_data(usaf_id, year):
     key = get_gsod_daily_temp_data_cache_key(usaf_id, year)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return store.clear(key)
+
+
+def destroy_cached_tmy3_hourly_temp_data(usaf_id):
+    key = get_tmy3_daily_temp_data_cache_key(usaf_id)
+    store = eeweather.connections.key_value_store_proxy.get_store()
+    return store.clear(key)
+
+
+def destroy_cached_cz2010_hourly_temp_data(usaf_id):
+    key = get_cz2010_daily_temp_data_cache_key(usaf_id)
     store = eeweather.connections.key_value_store_proxy.get_store()
     return store.clear(key)
 
@@ -525,6 +682,38 @@ def load_gsod_daily_temp_data_cached_proxy(
     else:
         # read_from_cache=True and data_ok=True
         ts = read_gsod_daily_temp_data_from_cache(usaf_id, year)
+    return ts
+
+
+def load_tmy3_hourly_temp_data_cached_proxy(
+        usaf_id, read_from_cache=True, write_to_cache=True):
+    # take from cache?
+    data_ok = validate_tmy3_hourly_temp_data_cache(usaf_id)
+
+    if not read_from_cache or not data_ok:
+        # need to actually fetch the data
+        ts = fetch_tmy3_hourly_temp_data(usaf_id)
+        if write_to_cache:
+            write_tmy3_hourly_temp_data_to_cache(usaf_id, ts)
+    else:
+        # read_from_cache=True and data_ok=True
+        ts = read_isd_hourly_temp_data_from_cache(usaf_id)
+    return ts
+
+
+def load_cz2010_hourly_temp_data_cached_proxy(
+        usaf_id, read_from_cache=True, write_to_cache=True):
+    # take from cache?
+    data_ok = validate_cz2010_hourly_temp_data_cache(usaf_id)
+
+    if not read_from_cache or not data_ok:
+        # need to actually fetch the data
+        ts = fetch_cz2010_hourly_temp_data(usaf_id)
+        if write_to_cache:
+            write_cz2010_hourly_temp_data_to_cache(usaf_id, ts)
+    else:
+        # read_from_cache=True and data_ok=True
+        ts = read_isd_hourly_temp_data_from_cache(usaf_id)
     return ts
 
 
@@ -587,6 +776,46 @@ def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_t
     return ts
 
 
+def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+    data = [
+        load_tmy3_hourly_temp_data_cached_proxy(
+            usaf_id, read_from_cache=read_from_cache,
+            write_to_cache=write_to_cache
+        )
+        for year in range(start.year, end.year + 1)
+    ]
+
+    # get raw data
+    ts = pd.concat(data).resample('H').mean()
+
+    # whittle down
+    ts = ts[start:end]
+
+    # fill in gaps
+    ts = ts.reindex(pd.date_range(start, end, freq='H'))
+    return ts
+
+
+def load_cz2010_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+    data = [
+        load_cz2010_hourly_temp_data_cached_proxy(
+            usaf_id, read_from_cache=read_from_cache,
+            write_to_cache=write_to_cache
+        )
+        for year in range(start.year, end.year + 1)
+    ]
+
+    # get raw data
+    ts = pd.concat(data).resample('H').mean()
+
+    # whittle down
+    ts = ts[start:end]
+
+    # fill in gaps
+    ts = ts.reindex(pd.date_range(start, end, freq='H'))
+    return ts
+
+
 def load_cached_isd_hourly_temp_data(usaf_id):
     store = eeweather.connections.key_value_store_proxy.get_store()
 
@@ -624,6 +853,24 @@ def load_cached_gsod_daily_temp_data(usaf_id):
     if data == []:
         return None
     return pd.concat(data).resample('D').mean()
+
+
+def load_cached_tmy3_hourly_temp_data(usaf_id):
+    store = eeweather.connections.key_value_store_proxy.get_store()
+
+    if store.key_exists(get_tmy3_hourly_temp_data_cache_key(usaf_id)):
+        return read_tmy3_hourly_temp_data_from_cache(usaf_id)
+    else:
+        return None
+
+
+def load_cached_cz2010_hourly_temp_data(usaf_id):
+    store = eeweather.connections.key_value_store_proxy.get_store()
+
+    if store.key_exists(get_cz2010_hourly_temp_data_cache_key(usaf_id)):
+        return read_cz2010_hourly_temp_data_from_cache(usaf_id)
+    else:
+        return None
 
 
 class ISDStation(object):
@@ -772,6 +1019,14 @@ class ISDStation(object):
         ''' Pull raw GSOD temperature data for the given year directly from FTP and resample to daily time series. '''
         return fetch_gsod_daily_temp_data(self.usaf_id, year)
 
+    def fetch_tmy3_hourly_temp_data(self, year):
+        ''' Pull hourly TMY3 temperature hourly time series directly from NREL. '''
+        return fetch_tmy3_hourly_temp_data(self.usaf_id)
+
+    def fetch_cz2010_hourly_temp_data(self, year):
+        ''' Pull hourly CZ2010 temperature hourly time series from URL. '''
+        return fetch_cz2010_hourly_temp_data(self.usaf_id)
+
     # get key-value store key
     def get_isd_hourly_temp_data_cache_key(self, year):
         ''' Get key used to cache resampled hourly ISD temperature data for the given year. '''
@@ -784,6 +1039,14 @@ class ISDStation(object):
     def get_gsod_daily_temp_data_cache_key(self, year):
         ''' Get key used to cache resampled daily GSOD temperature data for the given year. '''
         return get_gsod_daily_temp_data_cache_key(self.usaf_id, year)
+
+    def get_tmy3_hourly_temp_data_cache_key(self):
+        ''' Get key used to cache TMY3 weather-normalized temperature data. '''
+        return get_tmy3_hourly_temp_data_cache_key(self.usaf_id)
+
+    def get_cz2010_hourly_temp_data_cache_key(self):
+        ''' Get key used to cache CZ2010 weather-normalized temperature data. '''
+        return get_tmy3_hourly_temp_data_cache_key(self.usaf_id)
 
     # is cached data expired? boolean. true if expired or not in cache
     def cached_isd_hourly_temp_data_is_expired(self, year):
@@ -798,7 +1061,7 @@ class ISDStation(object):
         ''' Return True if cache of resampled daily GSOD temperature data has expired or does not exist for the given year. '''
         return cached_gsod_daily_temp_data_is_expired(self.usaf_id, year)
 
-    # delete data in the cache if it's expired
+    # check if data is available and delete data in the cache if it's expired
     def validate_isd_hourly_temp_data_cache(self, year):
         ''' Delete cached resampled hourly ISD temperature data if it has expired for the given year. '''
         return validate_isd_hourly_temp_data_cache(self.usaf_id, year)
@@ -810,6 +1073,14 @@ class ISDStation(object):
     def validate_gsod_daily_temp_data_cache(self, year):
         ''' Delete cached resampled daily GSOD temperature data if it has expired for the given year. '''
         return validate_gsod_daily_temp_data_cache(self.usaf_id, year)
+
+    def validate_tmy3_hourly_temp_data_cache(self):
+        ''' Check if TMY3 data exists in cache. '''
+        return validate_tmy3_hourly_temp_data_cache(self.usaf_id)
+
+    def validate_cz2010_hourly_temp_data_cache(self):
+        ''' Check if CZ2010 data exists in cache. '''
+        return validate_cz2010_hourly_temp_data_cache(self.usaf_id)
 
     # pandas time series to json
     def serialize_isd_hourly_temp_data(self, ts):
@@ -824,6 +1095,14 @@ class ISDStation(object):
         ''' Serialize resampled daily GSOD pandas time series as JSON for caching. '''
         return serialize_gsod_daily_temp_data(ts)
 
+    def serialize_tmy3_hourly_temp_data(self, ts):
+        ''' Serialize hourly TMY3 pandas time series as JSON for caching. '''
+        return serialize_tmy3_hourly_temp_data(ts)
+
+    def serialize_cz2010_hourly_temp_data(self, ts):
+        ''' Serialize hourly CZ2010 pandas time series as JSON for caching. '''
+        return serialize_cz2010_hourly_temp_data(ts)
+
     # json to pandas time series
     def deserialize_isd_hourly_temp_data(self, data):
         ''' Deserialize JSON representation of resampled hourly ISD into pandas time series. '''
@@ -836,6 +1115,14 @@ class ISDStation(object):
     def deserialize_gsod_daily_temp_data(self, data):
         ''' Deserialize JSON representation of resampled daily GSOD into pandas time series. '''
         return deserialize_gsod_daily_temp_data(data)
+
+    def deserialize_tmy3_hourly_temp_data(self, data):
+        ''' Deserialize JSON representation of hourly TMY3 into pandas time series. '''
+        return deserialize_isd_hourly_temp_data(data)
+
+    def deserialize_cz2010_hourly_temp_data(self, data):
+        ''' Deserialize JSON representation of hourly CZ2010 into pandas time series. '''
+        return deserialize_cz2010_hourly_temp_data(data)
 
     # return pandas time series of data from cache
     def read_isd_hourly_temp_data_from_cache(self, year):
@@ -850,6 +1137,14 @@ class ISDStation(object):
         ''' Get cached version of resampled daily GSOD temperature data for given year. '''
         return read_gsod_daily_temp_data_from_cache(self.usaf_id, year)
 
+    def read_tmy3_hourly_temp_data_from_cache(self):
+        ''' Get cached version of hourly TMY3 temperature data. '''
+        return read_tmy3_hourly_temp_data_from_cache(self.usaf_id)
+
+    def read_cz2010_hourly_temp_data_from_cache(self):
+        ''' Get cached version of hourly TMY3 temperature data. '''
+        return read_cz2010_hourly_temp_data_from_cache(self.usaf_id)
+
     # write pandas time series of data to cache for a particular year
     def write_isd_hourly_temp_data_to_cache(self, year, ts):
         ''' Write resampled hourly ISD temperature data to cache for given year. '''
@@ -862,6 +1157,14 @@ class ISDStation(object):
     def write_gsod_daily_temp_data_to_cache(self, year, ts):
         ''' Write resampled daily GSOD temperature data to cache for given year. '''
         return write_gsod_daily_temp_data_to_cache(self.usaf_id, year, ts)
+
+    def write_tmy3_hourly_temp_data_to_cache(self, ts):
+        ''' Write hourly TMY3 temperature data to cache for given year. '''
+        return write_tmy3_hourly_temp_data_to_cache(self.usaf_id, ts)
+
+    def write_cz2010_hourly_temp_data_to_cache(self, ts):
+        ''' Write hourly CZ2010 temperature data to cache for given year. '''
+        return write_cz2010_hourly_temp_data_to_cache(self.usaf_id, ts)
 
     # delete cached data for a particular year
     def destroy_cached_isd_hourly_temp_data(self, year):
@@ -876,6 +1179,14 @@ class ISDStation(object):
         ''' Remove cached resampled daily GSOD temperature data to cache for given year. '''
         return destroy_cached_gsod_daily_temp_data(self.usaf_id, year)
 
+    def destroy_cached_tmy3_hourly_temp_data(self):
+        ''' Remove cached hourly TMY3 temperature data to cache. '''
+        return destroy_cached_tmy3_hourly_temp_data(self.usaf_id)
+
+    def destroy_cached_cz2010_hourly_temp_data(self):
+        ''' Remove cached hourly CZ2010 temperature data to cache. '''
+        return destroy_cached_cz2010_hourly_temp_data(self.usaf_id)
+
     # load data either from cache if valid or directly from source
     def load_isd_hourly_temp_data_cached_proxy(self, year):
         ''' Load resampled hourly ISD temperature data from cache, or if it is expired or hadn't been cached, fetch from FTP for given year. '''
@@ -888,6 +1199,14 @@ class ISDStation(object):
     def load_gsod_daily_temp_data_cached_proxy(self, year):
         ''' Load resampled daily GSOD temperature data from cache, or if it is expired or hadn't been cached, fetch from FTP for given year. '''
         return load_gsod_daily_temp_data_cached_proxy(self.usaf_id, year)
+
+    def load_tmy3_hourly_temp_data_cached_proxy(self):
+        ''' Load hourly TMY3 temperature data from cache, or if it is expired or hadn't been cached, fetch from NREL. '''
+        return load_tmy3_hourly_temp_data_cached_proxy(self.usaf_id)
+
+    def load_cz2010_hourly_temp_data_cached_proxy(self):
+        ''' Load hourly CZ2010 temperature data from cache, or if it is expired or hadn't been cached, fetch from URL. '''
+        return load_tmy3_hourly_temp_data_cached_proxy(self.usaf_id)
 
     # main interface: load data from start date to end date
     def load_isd_hourly_temp_data(
@@ -953,6 +1272,48 @@ class ISDStation(object):
             self.usaf_id, start, end, read_from_cache=read_from_cache,
             write_to_cache=write_to_cache)
 
+    def load_tmy3_hourly_temp_data(
+            self, start, end, read_from_cache=True, write_to_cache=True):
+        ''' Load hourly TMY3 temperature data from start date to end date (inclusive).
+
+        This is the primary convenience method for loading hourly TMY3 temperature data.
+
+        Parameters
+        ----------
+        start : datetime.datetime
+            The earliest date from which to load data.
+        end : datetime.datetime
+            The latest date until which to load data.
+        read_from_cache : bool
+            Whether or not to load data from cache.
+        write_to_cache : bool
+            Whether or not to write newly loaded data to cache.
+        '''
+        return load_tmy3_hourly_temp_data(
+            self.usaf_id, start, end, read_from_cache=read_from_cache,
+            write_to_cache=write_to_cache)
+
+    def load_cz2010_hourly_temp_data(
+            self, start, end, read_from_cache=True, write_to_cache=True):
+        ''' Load hourly CZ2010 temperature data from start date to end date (inclusive).
+
+        This is the primary convenience method for loading hourly CZ2010 temperature data.
+
+        Parameters
+        ----------
+        start : datetime.datetime
+            The earliest date from which to load data.
+        end : datetime.datetime
+            The latest date until which to load data.
+        read_from_cache : bool
+            Whether or not to load data from cache.
+        write_to_cache : bool
+            Whether or not to write newly loaded data to cache.
+        '''
+        return load_cz2010_hourly_temp_data(
+            self.usaf_id, start, end, read_from_cache=read_from_cache,
+            write_to_cache=write_to_cache)
+
     # load all cached data for this station
     def load_cached_isd_hourly_temp_data(self):
         ''' Load all cached resampled hourly ISD temperature data. '''
@@ -965,3 +1326,11 @@ class ISDStation(object):
     def load_cached_gsod_daily_temp_data(self):
         ''' Load all cached resampled daily GSOD temperature data. '''
         return load_cached_gsod_daily_temp_data(self.usaf_id)
+
+    def load_cached_tmy3_hourly_temp_data(self):
+        ''' Load all cached hourly TMY3 temperature data (the year is set to 1900) '''
+        return load_cached_tmy3_hourly_temp_data(self.usaf_id)
+
+    def load_cached_cz2010_hourly_temp_data(self):
+        ''' Load all cached hourly TMY3 temperature data (the year is set to 1900) '''
+        return load_cached_cz2010_hourly_temp_data(self.usaf_id)

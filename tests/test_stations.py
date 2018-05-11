@@ -14,39 +14,61 @@ from eeweather import (
     fetch_isd_daily_temp_data,
     fetch_gsod_raw_temp_data,
     fetch_gsod_daily_temp_data,
+    fetch_tmy3_hourly_temp_data,
+    fetch_cz2010_hourly_temp_data,
     get_isd_hourly_temp_data_cache_key,
     get_isd_daily_temp_data_cache_key,
     get_gsod_daily_temp_data_cache_key,
+    get_tmy3_hourly_temp_data_cache_key,
+    get_cz2010_hourly_temp_data_cache_key,
     cached_isd_hourly_temp_data_is_expired,
     cached_isd_daily_temp_data_is_expired,
     cached_gsod_daily_temp_data_is_expired,
     validate_isd_hourly_temp_data_cache,
     validate_isd_daily_temp_data_cache,
     validate_gsod_daily_temp_data_cache,
+    validate_tmy3_hourly_temp_data_cache,
+    validate_cz2010_hourly_temp_data_cache,
     serialize_isd_hourly_temp_data,
     serialize_isd_daily_temp_data,
     serialize_gsod_daily_temp_data,
+    serialize_tmy3_hourly_temp_data,
+    serialize_cz2010_hourly_temp_data,
     deserialize_isd_hourly_temp_data,
     deserialize_isd_daily_temp_data,
     deserialize_gsod_daily_temp_data,
+    deserialize_tmy3_hourly_temp_data,
+    deserialize_cz2010_hourly_temp_data,
     read_isd_hourly_temp_data_from_cache,
     read_isd_daily_temp_data_from_cache,
     read_gsod_daily_temp_data_from_cache,
+    read_tmy3_hourly_temp_data_from_cache,
+    read_cz2010_hourly_temp_data_from_cache,
     write_isd_hourly_temp_data_to_cache,
     write_isd_daily_temp_data_to_cache,
     write_gsod_daily_temp_data_to_cache,
+    write_tmy3_hourly_temp_data_to_cache,
+    write_cz2010_hourly_temp_data_to_cache,
     destroy_cached_isd_hourly_temp_data,
     destroy_cached_isd_daily_temp_data,
     destroy_cached_gsod_daily_temp_data,
+    destroy_cached_tmy3_hourly_temp_data,
+    destroy_cached_cz2010_hourly_temp_data,
     load_isd_hourly_temp_data_cached_proxy,
     load_isd_daily_temp_data_cached_proxy,
     load_gsod_daily_temp_data_cached_proxy,
+    load_tmy3_hourly_temp_data_cached_proxy,
+    load_cz2010_hourly_temp_data_cached_proxy,
     load_isd_hourly_temp_data,
     load_isd_daily_temp_data,
     load_gsod_daily_temp_data,
+    load_tmy3_hourly_temp_data,
+    load_cz2010_hourly_temp_data,
     load_cached_isd_hourly_temp_data,
     load_cached_isd_daily_temp_data,
     load_cached_gsod_daily_temp_data,
+    load_cached_tmy3_hourly_temp_data,
+    load_cached_cz2010_hourly_temp_data,
 )
 from eeweather.exceptions import (
     UnrecognizedUSAFIDError,
@@ -56,6 +78,8 @@ from eeweather.exceptions import (
 from eeweather.testing import (
     MockNOAAFTPConnectionProxy,
     MockKeyValueStoreProxy,
+    MockTMY3RequestProxy,
+    MockCZ2010RequestProxy,
 )
 
 
@@ -64,6 +88,22 @@ def monkeypatch_noaa_ftp(monkeypatch):
     monkeypatch.setattr(
         'eeweather.connections.noaa_ftp_connection_proxy',
         MockNOAAFTPConnectionProxy()
+    )
+
+
+@pytest.fixture
+def monkeypatch_tmy3_request(monkeypatch):
+    monkeypatch.setattr(
+        'eeweather.connections.csv_request_proxy',
+        MockTMY3RequestProxy()
+    )
+
+
+@pytest.fixture
+def monkeypatch_cz2010_request(monkeypatch):
+    monkeypatch.setattr(
+        'eeweather.connections.csv_request_proxy',
+        MockCZ2010RequestProxy()
     )
 
 
@@ -440,6 +480,17 @@ def test_fetch_gsod_daily_temp_data(monkeypatch_noaa_ftp):
     assert data.sum() == 6509.5
     assert data.shape == (365,)
 
+
+def test_fetch_tmy3_hourly_temp_data(monkeypatch_tmy3_request):
+    data = fetch_tmy3_hourly_temp_data('722874')
+    assert data.sum() == 156194.3
+    assert data.shape == (8760,)
+
+
+def test_fetch_cz2010_hourly_temp_data(monkeypatch_cz2010_request):
+    data = fetch_cz2010_hourly_temp_data('722874')
+    assert data.sum() == 153430.90000000002
+    assert data.shape == (8760,)
 
 # station fetch
 def test_isd_station_fetch_isd_hourly_temp_data(monkeypatch_noaa_ftp):
