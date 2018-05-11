@@ -53,7 +53,10 @@ from eeweather.exceptions import (
     ISDDataNotAvailableError,
     GSODDataNotAvailableError,
 )
-from mocks import MockNOAAFTPConnectionProxy, MockKeyValueStoreProxy
+from eeweather.testing import (
+    MockNOAAFTPConnectionProxy,
+    MockKeyValueStoreProxy,
+)
 
 
 @pytest.fixture
@@ -73,6 +76,7 @@ def monkeypatch_key_value_store(monkeypatch):
     )
 
     return key_value_store_proxy.get_store()
+
 
 def test_get_isd_station_metadata():
     assert get_isd_station_metadata('722874') == {
@@ -127,6 +131,7 @@ def test_isd_station_with_load_metadata():
     assert station.ba_climate_zone == 'Hot-Dry'
     assert station.ca_climate_zone == 'CA_09'
     assert station.elevation == 236.2
+    assert station.icao_code == 'KBUR'
     assert station.latitude == 34.201
     assert station.longitude == -118.358
     assert station.coords == (34.201, -118.358)
@@ -146,6 +151,7 @@ def test_isd_station_json():
     station = ISDStation('722880', load_metadata=True)
     assert station.json() == {
         'elevation': 236.2,
+        'icao_code': 'KBUR',
         'latitude': 34.201,
         'longitude': -118.358,
         'name': 'BURBANK-GLENDALE-PASA ARPT',
