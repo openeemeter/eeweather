@@ -42,7 +42,6 @@ class CSVRequestProxy(object):
         self.status_code = None
 
     def make_request(self, url):  # pragma: no cover
-    host = 'ftp.ncdc.noaa.gov'
         self.response = requests.get(url)
         if self.status_code == 200:
             self.text = self.response.text
