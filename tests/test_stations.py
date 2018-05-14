@@ -74,6 +74,8 @@ from eeweather.exceptions import (
     UnrecognizedUSAFIDError,
     ISDDataNotAvailableError,
     GSODDataNotAvailableError,
+    TMY3DataNotAvailableError,
+    CZ2010DataNotAvailableError,
 )
 from eeweather.testing import (
     MockNOAAFTPConnectionProxy,
@@ -482,13 +484,13 @@ def test_fetch_gsod_daily_temp_data(monkeypatch_noaa_ftp):
 
 
 def test_fetch_tmy3_hourly_temp_data(monkeypatch_tmy3_request):
-    data = fetch_tmy3_hourly_temp_data('722874')
+    data = fetch_tmy3_hourly_temp_data('722880')
     assert data.sum() == 156194.3
     assert data.shape == (8760,)
 
 
 def test_fetch_cz2010_hourly_temp_data(monkeypatch_cz2010_request):
-    data = fetch_cz2010_hourly_temp_data('722874')
+    data = fetch_cz2010_hourly_temp_data('722880')
     assert data.sum() == 153430.90000000002
     assert data.shape == (8760,)
 
@@ -514,6 +516,20 @@ def test_isd_station_fetch_gsod_daily_temp_data(monkeypatch_noaa_ftp):
     assert data.shape == (365,)
 
 
+def test_tmy3_station_hourly_temp_data(monkeypatch_tmy3_request):
+    station = ISDStation('722880')
+    data = station.fetch_tmy3_hourly_temp_data()
+    assert data.sum() == 156194.3
+    assert data.shape == (8760,)
+
+
+def test_cz2010_station_hourly_temp_data(monkeypatch_cz2010_request):
+    station = ISDStation('722880')
+    data = station.fetch_cz2010_hourly_temp_data()
+    assert data.sum() == 153430.90000000002
+    assert data.shape == (8760,)
+
+
 # fetch invalid station
 def test_fetch_isd_hourly_temp_data_invalid():
     with pytest.raises(UnrecognizedUSAFIDError):
@@ -530,6 +546,31 @@ def test_fetch_gsod_daily_temp_data_invalid():
         fetch_gsod_daily_temp_data('INVALID', 2007)
 
 
+def test_fetch_tmy3_hourly_temp_data_invalid():
+    with pytest.raises(TMY3DataNotAvailableError):
+        fetch_tmy3_hourly_temp_data('INVALID')
+
+
+def test_fetch_cz2010_hourly_temp_data_invalid():
+    with pytest.raises(CZ2010DataNotAvailableError):
+        fetch_cz2010_hourly_temp_data('INVALID')
+
+def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list():
+    data = fetch_isd_hourly_temp_data('722874', 2007)
+    assert data.sum() == 156160.0355
+    assert data.shape == (8760,)
+    with pytest.raises(TMY3DataNotAvailableError):
+        fetch_tmy3_hourly_temp_data('722874')
+
+
+def test_fetch_cz2010_hourly_temp_data_not_in_cz2010_list():
+    data = fetch_isd_hourly_temp_data('722874', 2007)
+    assert data.sum() == 156160.0355
+    assert data.shape == (8760,)
+    with pytest.raises(CZ2010DataNotAvailableError):
+        fetch_cz2010_hourly_temp_data('722874')
+
+
 # get cache key
 def test_get_isd_hourly_temp_data_cache_key():
     assert get_isd_hourly_temp_data_cache_key('722874', 2007) == 'isd-hourly-722874-2007'
@@ -541,6 +582,14 @@ def test_get_isd_daily_temp_data_cache_key():
 
 def test_get_gsod_daily_temp_data_cache_key():
     assert get_gsod_daily_temp_data_cache_key('722874', 2007) == 'gsod-daily-722874-2007'
+
+
+def test_get_tmy3_hourly_temp_data_cache_key():
+    assert get_tmy3_hourly_temp_data_cache_key('722880') == 'tmy3-hourly-722880'
+
+
+def test_get_cz2010_hourly_temp_data_cache_key():
+    assert get_cz2010_hourly_temp_data_cache_key('722880') == 'cz2010-hourly-722880'
 
 
 # station get cache key
@@ -557,6 +606,16 @@ def test_isd_station_get_isd_daily_temp_data_cache_key():
 def test_isd_station_get_gsod_daily_temp_data_cache_key():
     station = ISDStation('722874')
     assert station.get_gsod_daily_temp_data_cache_key(2007) == 'gsod-daily-722874-2007'
+
+
+def test_tmy3_station_get_isd_hourly_temp_data_cache_key():
+    station = ISDStation('722880')
+    assert station.get_tmy3_hourly_temp_data_cache_key() == 'tmy3-hourly-722880'
+
+
+def test_cz2010_station_get_isd_hourly_temp_data_cache_key():
+    station = ISDStation('722880')
+    assert station.get_cz2010_hourly_temp_data_cache_key() == 'cz2010-hourly-722880'
 
 
 # cache expired empty
@@ -666,6 +725,14 @@ def test_validate_gsod_daily_temp_data_cache_empty(monkeypatch_key_value_store):
     assert validate_gsod_daily_temp_data_cache('722874', 2007) is False
 
 
+def test_validate_tmy3_hourly_temp_data_cache_empty(monkeypatch_key_value_store):
+    assert validate_tmy3_hourly_temp_data_cache('722880') is False
+
+
+def test_validate_cz2010_hourly_temp_data_cache_empty(monkeypatch_key_value_store):
+    assert validate_cz2010_hourly_temp_data_cache('722880') is False
+
+
 # station validate cache empty
 def test_isd_station_validate_isd_hourly_temp_data_cache_empty(monkeypatch_key_value_store):
     station = ISDStation('722874')
@@ -680,6 +747,16 @@ def test_isd_station_validate_isd_daily_temp_data_cache_empty(monkeypatch_key_va
 def test_isd_station_validate_gsod_daily_temp_data_cache_empty(monkeypatch_key_value_store):
     station = ISDStation('722874')
     assert station.validate_gsod_daily_temp_data_cache(2007) is False
+
+
+def test_isd_station_validate_tmy3_hourly_temp_data_cache_empty(monkeypatch_key_value_store):
+    station = ISDStation('722880')
+    assert station.validate_tmy3_hourly_temp_data_cache() is False
+
+
+def test_isd_station_validate_cz2010_hourly_temp_data_cache_empty(monkeypatch_key_value_store):
+    station = ISDStation('722880')
+    assert station.validate_cz2010_hourly_temp_data_cache() is False
 
 
 # validate updated recently
@@ -699,6 +776,18 @@ def test_validate_gsod_daily_temp_data_cache_updated_recently(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
     load_gsod_daily_temp_data_cached_proxy('722874', 2007)
     assert validate_gsod_daily_temp_data_cache('722874', 2007) is True
+
+
+def test_validate_tmy3_hourly_temp_data_cache_updated_recently(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+    load_tmy3_hourly_temp_data_cached_proxy('722880')
+    assert validate_tmy3_hourly_temp_data_cache('722880') is True
+
+
+def test_validate_cz2010_hourly_temp_data_cache_updated_recently(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+    load_cz2010_hourly_temp_data_cached_proxy('722880')
+    assert validate_cz2010_hourly_temp_data_cache('722880') is True
 
 
 # validate expired
@@ -763,6 +852,16 @@ def test_serialize_gsod_daily_temp_data():
     assert serialize_gsod_daily_temp_data(ts) == [['20170101', 1]]
 
 
+def test_serialize_tmy3_hourly_temp_data():
+    ts = pd.Series([1], index=[pytz.UTC.localize(datetime(2017, 1, 1))])
+    assert serialize_tmy3_hourly_temp_data(ts) == [['2017010100', 1]]
+
+
+def test_serialize_cz2010_hourly_temp_data():
+    ts = pd.Series([1], index=[pytz.UTC.localize(datetime(2017, 1, 1))])
+    assert serialize_cz2010_hourly_temp_data(ts) == [['2017010100', 1]]
+
+
 # station serialize
 def test_isd_station_serialize_isd_hourly_temp_data():
     station = ISDStation('722874')
@@ -782,6 +881,18 @@ def test_isd_station_serialize_gsod_daily_temp_data():
     assert station.serialize_gsod_daily_temp_data(ts) == [['20170101', 1]]
 
 
+def test_isd_station_serialize_tmy3_hourly_temp_data():
+    station = ISDStation('722880')
+    ts = pd.Series([1], index=[pytz.UTC.localize(datetime(2017, 1, 1))])
+    assert station.serialize_tmy3_hourly_temp_data(ts) == [['2017010100', 1]]
+
+
+def test_isd_station_serialize_cz2010_hourly_temp_data():
+    station = ISDStation('722880')
+    ts = pd.Series([1], index=[pytz.UTC.localize(datetime(2017, 1, 1))])
+    assert station.serialize_cz2010_hourly_temp_data(ts) == [['2017010100', 1]]
+
+
 # deserialize
 def test_deserialize_isd_hourly_temp_data():
     ts = deserialize_isd_hourly_temp_data([['2017010100', 1]])
@@ -799,6 +910,18 @@ def test_deserialize_gsod_daily_temp_data():
     ts = deserialize_gsod_daily_temp_data([['20170101', 1]])
     assert ts.sum() == 1
     assert ts.index.freq.name == 'D'
+
+
+def test_deserialize_tmy3_hourly_temp_data():
+    ts = deserialize_tmy3_hourly_temp_data([['2017010100', 1]])
+    assert ts.sum() == 1
+    assert ts.index.freq.name == 'H'
+
+
+def test_deserialize_cz2010_hourly_temp_data():
+    ts = deserialize_cz2010_hourly_temp_data([['2017010100', 1]])
+    assert ts.sum() == 1
+    assert ts.index.freq.name == 'H'
 
 
 # station deserialize
@@ -821,6 +944,20 @@ def test_isd_station_deserialize_gsod_daily_temp_data():
     ts = station.deserialize_gsod_daily_temp_data([['20170101', 1]])
     assert ts.sum() == 1
     assert ts.index.freq.name == 'D'
+
+
+def test_isd_station_deserialize_tmy3_hourly_temp_data():
+    station = ISDStation('722880')
+    ts = station.deserialize_tmy3_hourly_temp_data([['2017010100', 1]])
+    assert ts.sum() == 1
+    assert ts.index.freq.name == 'H'
+
+
+def test_isd_station_deserialize_cz2010_hourly_temp_data():
+    station = ISDStation('722880')
+    ts = station.deserialize_cz2010_hourly_temp_data([['2017010100', 1]])
+    assert ts.sum() == 1
+    assert ts.index.freq.name == 'H'
 
 
 # write read destroy
