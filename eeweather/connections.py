@@ -41,14 +41,15 @@ class CSVRequestProxy(object):
         self.text = None
         self.status_code = None
 
-    def make_request(self, url):
+    def make_request(self, url):  # pragma: no cover
+    host = 'ftp.ncdc.noaa.gov'
         self.response = requests.get(url)
         if self.status_code == 200:
             self.text = self.response.text
         else:
             raise RuntimeError('Could not find {}.'.format(url))
 
-    def get_text(self, url):
+    def get_text(self, url):  # pragma: no cover
         if self.response is None:
             self.make_request(url)
         return self.text
