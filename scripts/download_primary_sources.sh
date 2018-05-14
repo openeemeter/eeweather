@@ -42,10 +42,6 @@ wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-inventory.csv -P $DATA_DIR -q 
 echo Downloading tmy3-stations.html
 wget -O $DATA_DIR/tmy3-stations.html -N http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/by_USAFN.html -q --show-progress
 
-# Add CZ2010 mapping
-echo Downloading zipcode_to_cz2010.csv
-wget -N https://gist.githubusercontent.com/philngo/45a049284fc2a4aeadef2fb7201bc845/raw/12f5dd3659a818fdd208defe221f8a46c76e8064/zipcode_to_cz2010.csv -P $DATA_DIR -q --show-progress
-
 # Add ZIP code prefix mapping
 echo Downloading state zipcode prefixes
 wget -N https://gist.githubusercontent.com/philngo/247226aa89e5abf5869b981b9b841245/raw/56e25d8d590c001a18a1c0bab3ac69c53c09117c/zipcode_prefixes.json -P $DATA_DIR -q --show-progress

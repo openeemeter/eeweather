@@ -11,11 +11,11 @@ def write_isd_file(bytes_string):
         bytes_string.write(f.read())
 
 def write_tmy3_file():
-    data = pkg_resources.resource_string('eeweather.resources', '722874TYA.CSV')
+    data = pkg_resources.resource_string('eeweather.resources', '722880TYA.CSV')
     return data.decode('ascii')
 
 def write_cz2010_file():
-    data = pkg_resources.resource_string('eeweather.resources', '722874_CZ2010.CSV')
+    data = pkg_resources.resource_string('eeweather.resources', '722880_CZ2010.CSV')
     return data.decode('ascii')
 
 def write_missing_isd_file(bytes_string):
@@ -39,7 +39,7 @@ class MockTMY3RequestProxy():
 
         match_url = (
             "http://rredc.nrel.gov/solar/old_data/nsrdb/"
-            "1991-2005/data/tmy3/722874TYA.CSV"
+            "1991-2005/data/tmy3/722880TYA.CSV"
             )
         if re.match(match_url, url):
             return write_tmy3_file()
@@ -52,7 +52,7 @@ class MockCZ2010RequestProxy():
 
         match_url = (
             "https://storage.googleapis.com/oee-cz2010/csv/"
-            "722874_CZ2010.CSV"
+            "722880_CZ2010.CSV"
             )
 
         if re.match(match_url, url):

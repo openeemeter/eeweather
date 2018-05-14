@@ -80,3 +80,41 @@ class GSODDataNotAvailableError(EEWeatherError):
             'GSOD data does not exist for station "{}" in year {}.'
             .format(usaf_id, year)
         )
+
+
+class TMY3DataNotAvailableError(EEWeatherError):
+    ''' Raised when TMY3 data is not available for a particular station.
+
+    Attributes
+    ----------
+    usaf_id : str
+        the USAF ID for which TMY3 data does not exist.
+    message : str
+        a message describing the error
+    '''
+
+    def __init__(self, usaf_id):
+        self.usaf_id = usaf_id
+        self.message = (
+            'TMY3 data does not exist for station "{}".'
+            .format(usaf_id)
+        )
+
+
+class CZ2010DataNotAvailableError(EEWeatherError):
+    ''' Raised when CZ2010 data is not available for a particular station.
+
+    Attributes
+    ----------
+    usaf_id : str
+        the USAF ID for which CZ2010 data does not exist.
+    message : str
+        a message describing the error
+    '''
+
+    def __init__(self, usaf_id):
+        self.usaf_id = usaf_id
+        self.message = (
+            'CZ2010 data does not exist for station "{}".'
+            .format(usaf_id)
+        )

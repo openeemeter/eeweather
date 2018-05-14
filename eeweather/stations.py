@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import gzip
 import json
-
+import pkg_resources
 import pandas as pd
 import pytz
 
@@ -18,6 +18,8 @@ from .exceptions import (
     UnrecognizedUSAFIDError,
     ISDDataNotAvailableError,
     GSODDataNotAvailableError,
+    TMY3DataNotAvailableError,
+    CZ2010DataNotAvailableError,
 )
 from .validation import valid_usaf_id_or_raise
 
@@ -216,6 +218,46 @@ def get_isd_file_metadata(usaf_id):
     ]
 
 
+def get_tmy3_station_metadata(usaf_id):
+    conn = metadata_db_connection_proxy.get_connection()
+    cur = conn.cursor()
+    cur.execute('''
+      select
+        *
+      from
+        tmy3_station_metadata
+      where
+        usaf_id = ?
+    ''', (usaf_id,))
+    row = cur.fetchone()
+    if row is None:
+        raise TMY3DataNotAvailableError(usaf_id)
+    return {
+        col[0]: row[i]
+        for i, col in enumerate(cur.description)
+    }
+
+
+def get_cz2010_station_metadata(usaf_id):
+    conn = metadata_db_connection_proxy.get_connection()
+    cur = conn.cursor()
+    cur.execute('''
+      select
+        *
+      from
+        cz2010_station_metadata
+      where
+        usaf_id = ?
+    ''', (usaf_id,))
+    row = cur.fetchone()
+    if row is None:
+        raise CZ2010DataNotAvailableError(usaf_id)
+    return {
+        col[0]: row[i]
+        for i, col in enumerate(cur.description)
+    }
+
+
 def fetch_isd_raw_temp_data(usaf_id, year):
     # possible locations of this data, errors if station is not recognized
     filenames = get_isd_filenames(usaf_id, year)
@@ -310,6 +352,10 @@ def fetch_tmy3_hourly_temp_data(usaf_id):
         "http://rredc.nrel.gov/solar/old_data/nsrdb/"
         "1991-2005/data/tmy3/{}TYA.CSV".format(usaf_id)
         )
+
+    # checks that the station has TMY3 data associated with it.
+    tmy3_metadata = get_tmy3_station_metadata(usaf_id)
+
     return fetch_hourly_normalized_temp_data(usaf_id, url, 'TMY3')
 
 
@@ -318,6 +364,10 @@ def fetch_cz2010_hourly_temp_data(usaf_id):
         "https://storage.googleapis.com/oee-cz2010/csv/{}_CZ2010.CSV"
         .format(usaf_id)
         )
+
+    # checks that the station has CZ2010 data associated with it.
+    cz2010_metadata = get_cz2010_station_metadata(usaf_id)
+
     return fetch_hourly_normalized_temp_data(usaf_id, url, 'CZ2010')
 
 
@@ -1019,11 +1069,11 @@ class ISDStation(object):
         ''' Pull raw GSOD temperature data for the given year directly from FTP and resample to daily time series. '''
         return fetch_gsod_daily_temp_data(self.usaf_id, year)
 
-    def fetch_tmy3_hourly_temp_data(self, year):
+    def fetch_tmy3_hourly_temp_data(self):
         ''' Pull hourly TMY3 temperature hourly time series directly from NREL. '''
         return fetch_tmy3_hourly_temp_data(self.usaf_id)
 
-    def fetch_cz2010_hourly_temp_data(self, year):
+    def fetch_cz2010_hourly_temp_data(self):
         ''' Pull hourly CZ2010 temperature hourly time series from URL. '''
         return fetch_cz2010_hourly_temp_data(self.usaf_id)
 
@@ -1046,7 +1096,7 @@ class ISDStation(object):
 
     def get_cz2010_hourly_temp_data_cache_key(self):
         ''' Get key used to cache CZ2010 weather-normalized temperature data. '''
-        return get_tmy3_hourly_temp_data_cache_key(self.usaf_id)
+        return get_cz2010_hourly_temp_data_cache_key(self.usaf_id)
 
     # is cached data expired? boolean. true if expired or not in cache
     def cached_isd_hourly_temp_data_is_expired(self, year):
