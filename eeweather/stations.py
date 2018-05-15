@@ -825,6 +825,7 @@ def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_
             usaf_id, read_from_cache=read_from_cache,
             write_to_cache=write_to_cache
         )
+
     #dealing with year replacement
     data = []
     for year in range(start.year, end.year + 1):
