@@ -296,6 +296,8 @@ def fetch_isd_hourly_temp_data(usaf_id, year):
     # TODO(philngo): allow swappable resample method
     # TODO(philngo): record data sufficiency warnings
     ts = fetch_isd_raw_temp_data(usaf_id, year)
+
+    # CalTRACK 2.3.3
     return ts.resample('Min').mean() \
            .interpolate(method='linear', limit=60, limit_direction='both') \
            .resample('H').mean()
