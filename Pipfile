@@ -17,6 +17,7 @@ matplotlib = "*"
 Cython = "*"
 Pillow = "*"
 scipy = "*"
+requests ="*"
 
 
 [dev-packages]

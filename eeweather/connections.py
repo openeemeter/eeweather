@@ -2,6 +2,7 @@ import ftplib
 from io import BytesIO
 import logging
 import os
+import requests
 import sqlite3
 
 from .cache import KeyValueStore
@@ -10,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = (
     'noaa_ftp_connection_proxy'
+    'csv_request_proxy'
     'metadata_db_connection_proxy'
 )
 
@@ -30,6 +32,26 @@ def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
         logger.info('Connected to {}.'.format(host))
         return ftp
     raise RuntimeError('Could not connect to {}.'.format(host))
+
+
+class CSVRequestProxy(object):
+
+    def __init__(self):
+        self.response = None
+        self.text = None
+        self.status_code = None
+
+    def make_request(self, url):  # pragma: no cover
+        self.response = requests.get(url)
+        if self.response.status_code == 200:
+            self.text = self.response.text
+        else:
+            raise RuntimeError('Could not find {}.'.format(url))
+
+    def get_text(self, url):  # pragma: no cover
+        if self.response is None:
+            self.make_request(url)
+        return self.text
 
 
 class NOAAFTPConnectionProxy(object):
@@ -115,5 +137,6 @@ class KeyValueStoreProxy(object):
 
 # Use proxies for lazy loading, abstraction
 noaa_ftp_connection_proxy = NOAAFTPConnectionProxy()
+csv_request_proxy = CSVRequestProxy()
 metadata_db_connection_proxy = MetadataDBConnectionProxy()
 key_value_store_proxy = KeyValueStoreProxy()

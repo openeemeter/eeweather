@@ -30,7 +30,7 @@ def test_database_tables():
         'ba_climate_zone_metadata',
         'ca_climate_zone_metadata',
         'tmy3_station_metadata',
-        'zipcode_to_cz2010_station',
+        'cz2010_station_metadata',
     ]
 
 
@@ -40,7 +40,7 @@ def test_isd_station_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 3774
+    assert count == 3775
 
 
 def test_isd_station_metadata_table_content():
@@ -73,7 +73,7 @@ def test_isd_file_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 34730  # this count is brittle b/c of frequent updates
+    assert count == 34735  # this count is brittle b/c of frequent updates
 
 
 def test_isd_file_metadata_table_content():
@@ -246,20 +246,25 @@ def test_tmy3_station_metadata_table_content():
     }
 
 
-def test_zipcode_to_cz2010_station_table_count():
+def test_cz2010_station_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from zipcode_to_cz2010_station ''')
+    cur.execute(''' select count(*) from cz2010_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 1664
+    assert count == 70
 
 
-def test_zipcode_to_cz2010_station_table_content():
+def test_cz2010_station_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from zipcode_to_cz2010_station limit 1 ''')
+    cur.execute(''' select * from cz2010_station_metadata limit 1''')
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'usaf_id': '722956', 'zipcode': '90001'}
+    assert data == {
+        'class': 'I',
+        'name': 'Twentynine Palms',
+        'state': 'CA',
+        'usaf_id': '690150',
+    }
