@@ -255,7 +255,7 @@ def test_cz2010_station_metadata_table_count():
     assert count == 70
 
 
-def test_tmy3_station_metadata_table_content():
+def test_cz2010_station_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()

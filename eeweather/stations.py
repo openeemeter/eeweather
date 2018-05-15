@@ -452,13 +452,6 @@ def cached_gsod_daily_temp_data_is_expired(usaf_id, year):
     return _expired(last_updated, year)
 
 
-def cached_isd_hourly_temp_data_is_expired(usaf_id, year):
-    key = get_isd_hourly_temp_data_cache_key(usaf_id, year)
-    store = eeweather.connections.key_value_store_proxy.get_store()
-    last_updated = store.key_updated(key)
-    return _expired(last_updated, year)
-
-
 def validate_isd_hourly_temp_data_cache(usaf_id, year):
     key = get_isd_hourly_temp_data_cache_key(usaf_id, year)
     store = eeweather.connections.key_value_store_proxy.get_store()
@@ -676,13 +669,13 @@ def destroy_cached_gsod_daily_temp_data(usaf_id, year):
 
 
 def destroy_cached_tmy3_hourly_temp_data(usaf_id):
-    key = get_tmy3_daily_temp_data_cache_key(usaf_id)
+    key = get_tmy3_hourly_temp_data_cache_key(usaf_id)
     store = eeweather.connections.key_value_store_proxy.get_store()
     return store.clear(key)
 
 
 def destroy_cached_cz2010_hourly_temp_data(usaf_id):
-    key = get_cz2010_daily_temp_data_cache_key(usaf_id)
+    key = get_cz2010_hourly_temp_data_cache_key(usaf_id)
     store = eeweather.connections.key_value_store_proxy.get_store()
     return store.clear(key)
 
@@ -747,7 +740,7 @@ def load_tmy3_hourly_temp_data_cached_proxy(
             write_tmy3_hourly_temp_data_to_cache(usaf_id, ts)
     else:
         # read_from_cache=True and data_ok=True
-        ts = read_isd_hourly_temp_data_from_cache(usaf_id)
+        ts = read_tmy3_hourly_temp_data_from_cache(usaf_id)
     return ts
 
 
@@ -763,7 +756,7 @@ def load_cz2010_hourly_temp_data_cached_proxy(
             write_cz2010_hourly_temp_data_to_cache(usaf_id, ts)
     else:
         # read_from_cache=True and data_ok=True
-        ts = read_isd_hourly_temp_data_from_cache(usaf_id)
+        ts = read_cz2010_hourly_temp_data_from_cache(usaf_id)
     return ts
 
 
@@ -827,13 +820,17 @@ def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_t
 
 
 def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
-    data = [
+    single_year_data = \
         load_tmy3_hourly_temp_data_cached_proxy(
             usaf_id, read_from_cache=read_from_cache,
             write_to_cache=write_to_cache
         )
-        for year in range(start.year, end.year + 1)
-    ]
+
+    data = []
+    for year in range(start.year, end.year + 1):
+        single_year_data.index = single_year_data.index.map(
+            lambda t: t.replace(year=year))
+        data.append(single_year_data)
 
     # get raw data
     ts = pd.concat(data).resample('H').mean()
@@ -847,13 +844,17 @@ def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_
 
 
 def load_cz2010_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
-    data = [
+    single_year_data = \
         load_cz2010_hourly_temp_data_cached_proxy(
             usaf_id, read_from_cache=read_from_cache,
             write_to_cache=write_to_cache
         )
-        for year in range(start.year, end.year + 1)
-    ]
+
+    data = []
+    for year in range(start.year, end.year + 1):
+        single_year_data.index = single_year_data.index.map(
+            lambda t: t.replace(year=year))
+        data.append(single_year_data)
 
     # get raw data
     ts = pd.concat(data).resample('H').mean()
@@ -1256,7 +1257,7 @@ class ISDStation(object):
 
     def load_cz2010_hourly_temp_data_cached_proxy(self):
         ''' Load hourly CZ2010 temperature data from cache, or if it is expired or hadn't been cached, fetch from URL. '''
-        return load_tmy3_hourly_temp_data_cached_proxy(self.usaf_id)
+        return load_cz2010_hourly_temp_data_cached_proxy(self.usaf_id)
 
     # main interface: load data from start date to end date
     def load_isd_hourly_temp_data(

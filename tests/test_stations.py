@@ -1015,6 +1015,42 @@ def test_write_read_destroy_gsod_daily_temp_data_to_from_cache(monkeypatch_key_v
     assert store.key_exists(key) is False
 
 
+def test_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(monkeypatch_key_value_store):
+    store = monkeypatch_key_value_store
+    key = get_tmy3_hourly_temp_data_cache_key('123456')
+    assert store.key_exists(key) is False
+
+    ts1 = pd.Series([1], index=[pytz.UTC.localize(datetime(1990, 1, 1))])
+    write_tmy3_hourly_temp_data_to_cache('123456', ts1)
+    assert store.key_exists(key) is True
+
+    ts2 = read_tmy3_hourly_temp_data_from_cache('123456')
+    assert store.key_exists(key) is True
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+    destroy_cached_tmy3_hourly_temp_data('123456')
+    assert store.key_exists(key) is False
+
+
+def test_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(monkeypatch_key_value_store):
+    store = monkeypatch_key_value_store
+    key = get_cz2010_hourly_temp_data_cache_key('123456')
+    assert store.key_exists(key) is False
+
+    ts1 = pd.Series([1], index=[pytz.UTC.localize(datetime(1990, 1, 1))])
+    write_cz2010_hourly_temp_data_to_cache('123456', ts1)
+    assert store.key_exists(key) is True
+
+    ts2 = read_cz2010_hourly_temp_data_from_cache('123456')
+    assert store.key_exists(key) is True
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+    destroy_cached_cz2010_hourly_temp_data('123456')
+    assert store.key_exists(key) is False
+
+
 # station write read destroy
 def test_isd_station_write_read_destroy_isd_hourly_temp_data_to_from_cache(
         monkeypatch_key_value_store):
@@ -1076,6 +1112,46 @@ def test_isd_station_write_read_destroy_gsod_daily_temp_data_to_from_cache(
     assert store.key_exists(key) is False
 
 
+def test_isd_station_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(
+        monkeypatch_key_value_store):
+    station = ISDStation('722880')
+    store = monkeypatch_key_value_store
+    key = station.get_tmy3_hourly_temp_data_cache_key()
+    assert store.key_exists(key) is False
+
+    ts1 = pd.Series([1], index=[pytz.UTC.localize(datetime(1990, 1, 1))])
+    station.write_tmy3_hourly_temp_data_to_cache(ts1)
+    assert store.key_exists(key) is True
+
+    ts2 = station.read_tmy3_hourly_temp_data_from_cache()
+    assert store.key_exists(key) is True
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+    station.destroy_cached_tmy3_hourly_temp_data()
+    assert store.key_exists(key) is False
+
+
+def test_isd_station_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(
+        monkeypatch_key_value_store):
+    station = ISDStation('722880')
+    store = monkeypatch_key_value_store
+    key = station.get_cz2010_hourly_temp_data_cache_key()
+    assert store.key_exists(key) is False
+
+    ts1 = pd.Series([1], index=[pytz.UTC.localize(datetime(1990, 1, 1))])
+    station.write_cz2010_hourly_temp_data_to_cache(ts1)
+    assert store.key_exists(key) is True
+
+    ts2 = station.read_cz2010_hourly_temp_data_from_cache()
+    assert store.key_exists(key) is True
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+    station.destroy_cached_cz2010_hourly_temp_data()
+    assert store.key_exists(key) is False
+
+
 # load cached proxy
 def test_load_isd_hourly_temp_data_cached_proxy(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
@@ -1106,6 +1182,28 @@ def test_load_gsod_daily_temp_data_cached_proxy(
     # except that coverage picks it up either here or elsewhere
     ts1 = load_gsod_daily_temp_data_cached_proxy('722874', 2007)
     ts2 = load_gsod_daily_temp_data_cached_proxy('722874', 2007)
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+
+def test_load_tmy3_hourly_temp_data_cached_proxy(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    # doesn't yet guarantee that all code paths are taken,
+    # except that coverage picks it up either here or elsewhere
+    ts1 = load_tmy3_hourly_temp_data_cached_proxy('722880', 2007)
+    ts2 = load_tmy3_hourly_temp_data_cached_proxy('722880', 2007)
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+
+def test_load_cz2010_hourly_temp_data_cached_proxy(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+
+    # doesn't yet guarantee that all code paths are taken,
+    # except that coverage picks it up either here or elsewhere
+    ts1 = load_cz2010_hourly_temp_data_cached_proxy('722880', 2007)
+    ts2 = load_cz2010_hourly_temp_data_cached_proxy('722880', 2007)
     assert int(ts1.sum()) == int(ts2.sum())
     assert ts1.shape == ts2.shape
 
@@ -1147,6 +1245,30 @@ def test_isd_station_load_gsod_daily_temp_data_cached_proxy(
     assert ts1.shape == ts2.shape
 
 
+def test_isd_station_load_tmy3_hourly_temp_data_cached_proxy(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+    station = ISDStation('722880')
+
+    # doesn't yet guarantee that all code paths are taken,
+    # except that coverage picks it up either here or elsewhere
+    ts1 = station.load_tmy3_hourly_temp_data_cached_proxy()
+    ts2 = station.load_tmy3_hourly_temp_data_cached_proxy()
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+
+def test_isd_station_load_cz2010_hourly_temp_data_cached_proxy(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+    station = ISDStation('722880')
+
+    # doesn't yet guarantee that all code paths are taken,
+    # except that coverage picks it up either here or elsewhere
+    ts1 = station.load_cz2010_hourly_temp_data_cached_proxy()
+    ts2 = station.load_cz2010_hourly_temp_data_cached_proxy()
+    assert int(ts1.sum()) == int(ts2.sum())
+    assert ts1.shape == ts2.shape
+
+
 # load data between dates
 def test_load_isd_hourly_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
@@ -1184,6 +1306,29 @@ def test_load_gsod_daily_temp_data(
     assert pd.notnull(ts[-1])
 
 
+def test_load_tmy3_hourly_temp_data(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
+    ts = load_tmy3_hourly_temp_data('722880', start, end)
+    assert ts.index[0] == start
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
+
+
+def test_load_cz2010_hourly_temp_data(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+
+    start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
+    ts = load_cz2010_hourly_temp_data('722880', start, end)
+    assert ts.index[0] == start
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
+
 
 # station load data between dates
 def test_isd_station_load_isd_hourly_temp_data(
@@ -1215,6 +1360,28 @@ def test_isd_station_load_gsod_daily_temp_data(
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = station.load_gsod_daily_temp_data(start, end)
+    assert ts.index[0] == start
+    assert ts.index[-1] == end
+
+
+def test_isd_station_load_tmy3_hourly_temp_data(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
+    ts = station.load_tmy3_hourly_temp_data(start, end)
+    assert ts.index[0] == start
+    assert ts.index[-1] == end
+
+
+def test_isd_station_load_cz2010_hourly_temp_data(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
+    ts = station.load_cz2010_hourly_temp_data(start, end)
     assert ts.index[0] == start
     assert ts.index[-1] == end
 
@@ -1268,6 +1435,38 @@ def test_load_cached_gsod_daily_temp_data(
     assert ts.shape == (365,)
 
 
+def test_load_cached_tmy3_hourly_temp_data(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    ts = load_cached_tmy3_hourly_temp_data('722880')
+    assert ts is None
+
+    # load data
+    ts = load_tmy3_hourly_temp_data_cached_proxy('722880')
+    assert int(ts.sum()) == 156194
+    assert ts.shape == (8760,)
+
+    ts = load_cached_tmy3_hourly_temp_data('722880')
+    assert int(ts.sum()) == 156194
+    assert ts.shape == (8760,)
+
+
+def test_load_cached_cz2010_hourly_temp_data(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+
+    ts = load_cached_cz2010_hourly_temp_data('722880')
+    assert ts is None
+
+    # load data
+    ts = load_cz2010_hourly_temp_data_cached_proxy('722880')
+    assert int(ts.sum()) == 153430
+    assert ts.shape == (8760,)
+
+    ts = load_cached_cz2010_hourly_temp_data('722880')
+    assert int(ts.sum()) == 153430
+    assert ts.shape == (8760,)
+
+
 # station load cached
 def test_isd_station_load_cached_isd_hourly_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
@@ -1318,3 +1517,38 @@ def test_isd_station_load_cached_gsod_daily_temp_data(
     ts = station.load_cached_gsod_daily_temp_data()
     assert int(ts.sum()) == 6509
     assert ts.shape == (365,)
+
+
+def test_isd_station_load_cached_tmy3_hourly_temp_data(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+    station = ISDStation('722880')
+
+    ts = station.load_cached_tmy3_hourly_temp_data()
+    assert ts is None
+
+    # load data
+    ts = station.load_tmy3_hourly_temp_data_cached_proxy()
+    assert int(ts.sum()) == 156194
+    assert ts.shape == (8760,)
+
+    ts = station.load_cached_tmy3_hourly_temp_data()
+    assert int(ts.sum()) == 156194
+    assert ts.shape == (8760,)
+
+
+def test_isd_station_load_cached_cz2010_hourly_temp_data(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+    station = ISDStation('722880')
+
+    ts = station.load_cached_cz2010_hourly_temp_data()
+    assert ts is None
+
+    # load data
+    ts = station.load_cz2010_hourly_temp_data_cached_proxy()
+    assert int(ts.sum()) == 153430
+    assert ts.shape == (8760,)
+
+    ts = station.load_cached_cz2010_hourly_temp_data()
+    assert int(ts.sum()) == 153430
+    assert ts.shape == (8760,)
+    import pdb;pdb.set_trace()
