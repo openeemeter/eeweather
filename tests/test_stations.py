@@ -1313,7 +1313,7 @@ def test_load_tmy3_hourly_temp_data(
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_tmy3_hourly_temp_data('722880', start, end)
     assert ts.index[0] == start
-    assert pd.isnull(ts[0])
+    assert pd.notnull(ts[0])
     assert ts.index[-1] == end
     assert pd.notnull(ts[-1])
 
@@ -1325,7 +1325,7 @@ def test_load_cz2010_hourly_temp_data(
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_cz2010_hourly_temp_data('722880', start, end)
     assert ts.index[0] == start
-    assert pd.isnull(ts[0])
+    assert pd.notnull(ts[1])
     assert ts.index[-1] == end
     assert pd.notnull(ts[-1])
 
@@ -1551,4 +1551,38 @@ def test_isd_station_load_cached_cz2010_hourly_temp_data(
     ts = station.load_cached_cz2010_hourly_temp_data()
     assert int(ts.sum()) == 153430
     assert ts.shape == (8760,)
-    import pdb;pdb.set_trace()
+
+
+# test slicing of normalized data
+def test_load_correctly_sliced_tmy3_hourly_temp_data(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    start = datetime(2015, 2, 15, tzinfo=pytz.UTC)
+    end = datetime(2016, 8, 12, tzinfo=pytz.UTC)
+
+    ts = load_tmy3_hourly_temp_data('722880', start, end)
+    ts_orig = fetch_tmy3_hourly_temp_data('722880')
+
+    for i in ts.index:
+        # leap day is null
+        if i.month == 2 and i.day == 29:
+            assert pd.isnull(ts[i])
+        else:
+            assert ts[i] == ts_orig[i.replace(year=1900)]
+
+
+def test_load_correctly_sliced_cz2010_hourly_temp_data(
+        monkeypatch_cz2010_request, monkeypatch_key_value_store):
+
+    start = datetime(2015, 2, 15, tzinfo=pytz.UTC)
+    end = datetime(2016, 8, 12, tzinfo=pytz.UTC)
+
+    ts = load_cz2010_hourly_temp_data('722880', start, end)
+    ts_orig = fetch_cz2010_hourly_temp_data('722880')
+
+    for i in ts.index:
+        # leap day is null
+        if i.month == 2 and i.day == 29:
+            assert pd.isnull(ts[i])
+        else:
+            assert ts[i] == ts_orig[i.replace(year=1900)]
