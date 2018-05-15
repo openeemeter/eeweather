@@ -43,7 +43,7 @@ class CSVRequestProxy(object):
 
     def make_request(self, url):  # pragma: no cover
         self.response = requests.get(url)
-        if self.status_code == 200:
+        if self.response.status_code == 200:
             self.text = self.response.text
         else:
             raise RuntimeError('Could not find {}.'.format(url))
