@@ -356,10 +356,8 @@ def _load_tmy3_station_metadata(download_path):
     return metadata
 
 
-def _load_cz2010_station_metadata(download_path):
-    tmy3_station_metadata = _load_tmy3_station_metadata(download_path)
-    return {key: tmy3_station_metadata[key]
-        for key in tmy3_station_metadata if key in CZ2010_LIST}
+def _load_cz2010_station_metadata():
+    return {usaf_id: {'usaf_id': usaf_id} for usaf_id in CZ2010_LIST}
 
 
 def _create_merged_climate_zones_metadata(county_metadata):
@@ -631,9 +629,6 @@ def _create_table_structures(conn):
     cur.execute('''
       create table cz2010_station_metadata (
         usaf_id text not null
-        , name text not null
-        , state text not null
-        , class text not null
       )
     ''')
 
@@ -933,19 +928,13 @@ def _write_cz2010_station_metadata_table(conn, cz2010_station_metadata):
     rows = [
         (
             metadata['usaf_id'],
-            metadata['name'],
-            metadata['state'],
-            metadata['class'],
         )
         for cz2010_station, metadata in sorted(cz2010_station_metadata.items())
     ]
     cur.executemany('''
       insert into cz2010_station_metadata(
         usaf_id
-        , name
-        , state
-        , class
-      ) values (?,?,?,?)
+      ) values (?)
     ''', rows)
     cur.execute('''
       create index cz2010_station_metadata_usaf_id on
@@ -1078,7 +1067,7 @@ def build_metadata_db(
     tmy3_station_metadata = _load_tmy3_station_metadata(download_path)
 
     print('Loading CZ2010 station metadata')
-    cz2010_station_metadata = _load_cz2010_station_metadata(download_path)
+    cz2010_station_metadata = _load_cz2010_station_metadata()
 
     # Augment data in memory
     print('Computing ISD station quality')
