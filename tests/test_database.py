@@ -252,7 +252,7 @@ def test_cz2010_station_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from cz2010_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 70
+    assert count == 86
 
 
 def test_cz2010_station_metadata_table_content():
@@ -263,8 +263,5 @@ def test_cz2010_station_metadata_table_content():
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
     assert data == {
-        'class': 'I',
-        'name': 'Twentynine Palms',
-        'state': 'CA',
         'usaf_id': '690150',
     }
