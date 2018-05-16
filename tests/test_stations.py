@@ -564,11 +564,11 @@ def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list():
 
 
 def test_fetch_cz2010_hourly_temp_data_not_in_cz2010_list():
-    data = fetch_isd_hourly_temp_data('722874', 2007)
-    assert data.sum() == 156160.0355
+    data = fetch_isd_hourly_temp_data('725340', 2007)
+    assert data.sum() == 99834.69900607287
     assert data.shape == (8760,)
     with pytest.raises(CZ2010DataNotAvailableError):
-        fetch_cz2010_hourly_temp_data('722874')
+        fetch_cz2010_hourly_temp_data('725340')
 
 
 # get cache key
