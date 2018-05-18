@@ -23,14 +23,14 @@ def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
         try:
             ftp = ftplib.FTP(host)
             ftp.login()  # default u='anonymous' p='anonymous@'
+            logger.info('Connected to {}.'.format(host))
+            return ftp
         except ftplib.all_errors as e:
             logger.warn(
                 'Failed attempt ({} of {}) to connect to {}:\n{}'
                 .format(i + 1, n_tries, host, e)
             )
 
-        logger.info('Connected to {}.'.format(host))
-        return ftp
     raise RuntimeError('Could not connect to {}.'.format(host))
 
 

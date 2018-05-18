@@ -555,7 +555,7 @@ def test_fetch_cz2010_hourly_temp_data_invalid():
     with pytest.raises(CZ2010DataNotAvailableError):
         fetch_cz2010_hourly_temp_data('INVALID')
 
-def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list():
+def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list(monkeypatch_noaa_ftp):
     data = fetch_isd_hourly_temp_data('722874', 2007)
     assert data.sum() == 156160.0355
     assert data.shape == (8760,)
@@ -563,9 +563,9 @@ def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list():
         fetch_tmy3_hourly_temp_data('722874')
 
 
-def test_fetch_cz2010_hourly_temp_data_not_in_cz2010_list():
-    data = fetch_isd_hourly_temp_data('725340', 2007)
-    assert data.sum() == 99834.69900607287
+def test_fetch_cz2010_hourly_temp_data_not_in_cz2010_list(monkeypatch_cz2010_request):
+    data = fetch_cz2010_hourly_temp_data('722880')
+    assert data.sum() == 153430.90000000002
     assert data.shape == (8760,)
     with pytest.raises(CZ2010DataNotAvailableError):
         fetch_cz2010_hourly_temp_data('725340')
