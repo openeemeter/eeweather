@@ -90,7 +90,7 @@ def _load_isd_station_metadata(download_path):
     isUS = (
         ((isd_history.CTRY == 'US') & (isd_history.STATE.notnull()))
         # AQ = American Samoa, GQ = Guam, RQ = Peurto Rico, VQ = Virgin Islands
-        | (isd_history.CTRY[1] == 'Q')
+        | (isd_history.CTRY.str[1] == 'Q')
     )
     hasUSAF = isd_history.USAF != '999999'
 
