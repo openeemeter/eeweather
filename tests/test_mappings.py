@@ -185,7 +185,7 @@ def test_lat_long_naive_closest():
 
     # africa - obviously outside climate zone.
     result = lat_long_naive_closest(0, 0)
-    assert result.isd_station.usaf_id == '785430'
+    assert result.isd_station.usaf_id == '997172'
 
 
 def test_oee_lat_long():
@@ -200,4 +200,4 @@ def test_oee_lat_long():
 
     # africa - obviously outside climate zone.
     result = oee_lat_long(0, 0)
-    assert result.isd_station.usaf_id == '785430'
+    assert result.isd_station.usaf_id == '997172'
