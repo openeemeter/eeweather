@@ -132,5 +132,5 @@ def test_match_lat_long_with_library_mapping():
 
 def test_match_lat_long_state_border():
     result = match_lat_long(35.853394, -115.728778)
-    assert 'Mapped weather station is not in the same climate zone as the provided lat/long point.' in result.warnings
+    assert result.warnings == ['Distance from target to weather station is greater than 50km.', 'Mapped weather station is not in the same climate zone as the provided lat/long point.']
     assert result.isd_station.usaf_id == '723860'
