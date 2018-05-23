@@ -213,6 +213,9 @@ def test_isd_station_unrecognized_usaf_id():
     with pytest.raises(UnrecognizedUSAFIDError):
         station = ISDStation('FAKE', load_metadata=True)
 
+def test_isd_station_guam():
+    station = ISDStation('785203', load_metadata=True)
+    assert station.usaf_id == '785203'
 
 def test_get_isd_filenames_bad_usaf_id():
     with pytest.raises(UnrecognizedUSAFIDError) as excinfo:
