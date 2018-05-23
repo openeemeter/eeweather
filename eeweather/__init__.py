@@ -108,7 +108,7 @@ from .mappings import (
     EmptyMapping,
     ISDStationMapping,
     zcta_closest_within_climate_zone,
-    zcta_naive_closest_high_quality,
+    zcta_naive_closest,
     lat_long_naive_closest,
     lat_long_closest_within_climate_zone,
     oee_zcta,

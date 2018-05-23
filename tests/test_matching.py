@@ -3,7 +3,7 @@ from eeweather import (
     match_lat_long,
 )
 from eeweather.mappings import (
-    zcta_naive_closest_high_quality,
+    zcta_naive_closest,
     lat_long_naive_closest,
 )
 from eeweather.exceptions import (
@@ -97,7 +97,7 @@ def test_match_zcta_custom_func_mapping():
 
 
 def test_match_zcta_with_library_mapping():
-    result = match_zcta('96701', mapping=zcta_naive_closest_high_quality)
+    result = match_zcta('96701', mapping=zcta_naive_closest)
     assert result.isd_station.usaf_id == '911820'
 
 

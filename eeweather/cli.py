@@ -132,13 +132,12 @@ def inspect_gsod_filenames(usaf_id, year):
 @click.option('--iecc-moisture-regime-geometry/--no-iecc-moisture-regime-geometry', default=True)
 @click.option('--ba-climate-zone-geometry/--no-ba-climate-zone-geometry', default=True)
 @click.option('--ca-climate-zone-geometry/--no-ca-climate-zone-geometry', default=True)
-@click.option('--n-closest-stations', default=10, type=int)
 def rebuild_db(
         zcta_geometry, iecc_climate_zone_geometry, iecc_moisture_regime_geometry,
-        ba_climate_zone_geometry, ca_climate_zone_geometry, n_closest_stations):
+        ba_climate_zone_geometry, ca_climate_zone_geometry):
     build_metadata_db(  # pragma: no cover
         zcta_geometry, iecc_climate_zone_geometry, iecc_moisture_regime_geometry,
-        ba_climate_zone_geometry, ca_climate_zone_geometry, n_closest_stations)
+        ba_climate_zone_geometry, ca_climate_zone_geometry)
 
 
 @cli.command()

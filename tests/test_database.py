@@ -24,7 +24,6 @@ def test_database_tables():
         'isd_station_metadata',
         'isd_file_metadata',
         'zcta_metadata',
-        'zcta_to_isd_station',
         'iecc_climate_zone_metadata',
         'iecc_moisture_regime_metadata',
         'ba_climate_zone_metadata',
@@ -40,7 +39,7 @@ def test_isd_station_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 3775
+    assert count == 3863
 
 
 def test_isd_station_metadata_table_content():
@@ -73,7 +72,7 @@ def test_isd_file_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 34735  # this count is brittle b/c of frequent updates
+    assert count == 35163  # this count is brittle b/c of frequent updates
 
 
 def test_isd_file_metadata_table_content():
@@ -83,7 +82,7 @@ def test_isd_file_metadata_table_content():
     cur.execute(''' select * from isd_file_metadata limit 1''')
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'usaf_id': '423630', 'wban_id': '99999', 'year': '2013'}
+    assert data == {'usaf_id': '407330', 'wban_id': '99999', 'year': '2007'}
 
 
 def test_zcta_metadata_table_count():
@@ -111,34 +110,6 @@ def test_zcta_metadata_table_content():
         'latitude': '18.1800455429617',
         'longitude': '-66.752178136408',
         'state': 'PR',
-        'zcta_id': '00601'
-    }
-
-
-def test_zcta_to_isd_station_table_count():
-    conn = metadata_db_connection_proxy.get_connection()
-
-    cur = conn.cursor()
-    cur.execute(''' select count(*) from zcta_to_isd_station ''')
-    (count,) = cur.fetchone()
-    assert count == 331440
-
-
-def test_zcta_to_isd_station_table_content():
-    conn = metadata_db_connection_proxy.get_connection()
-
-    cur = conn.cursor()
-    cur.execute(''' select * from zcta_to_isd_station limit 1''')
-    row = cur.fetchone()
-    data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {
-        'ba_climate_zone_match': 1,
-        'ca_climate_zone_match': 1,
-        'distance_meters': '42764',
-        'iecc_climate_zone_match': 1,
-        'iecc_moisture_regime_match': 1,
-        'rank': 1,
-        'usaf_id': '785145',
         'zcta_id': '00601'
     }
 

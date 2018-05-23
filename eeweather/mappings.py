@@ -10,9 +10,8 @@ __all__ = (
     'MappingResult',
     'EmptyMapping',
     'ISDStationMapping',
+    'zcta_naive_closest',
     'zcta_closest_within_climate_zone',
-    'zcta_naive_closest_high_quality',
-    'zcta_naive_closest_medium_quality',
     'lat_long_naive_closest',
     'lat_long_closest_within_climate_zone',
     'oee_zcta',
@@ -72,11 +71,6 @@ class CachedData(object):
         return isd_station_metadata
 
 cached_data = CachedData()
-
-
-def _unrecognized_zcta_or_empty_mapping(zcta):
-    valid_zcta_or_raise(zcta)
-    return EmptyMapping()
 
 
 class MappingResult(object):
@@ -409,6 +403,41 @@ def plot_mapping_results(mapping_results):  # pragma: no cover
 
     plt.show()
 
+def _zcta_to_lat_long(zcta):
+    '''Get location of ZCTA centroid
+
+    Retrieves latitude and longitude of centroid of ZCTA
+    to use for matching with weather station.
+    Parameters
+    ----------
+    zcta : str
+        ID of the target ZCTA.
+
+    Returns
+    -------
+    latitude : float
+        Latitude of centroid of ZCTA.
+    longitude : float
+        Target Longitude of centroid of ZCTA.
+    '''
+    if valid_zcta_or_raise(zcta):
+
+        conn = metadata_db_connection_proxy.get_connection()
+        cur = conn.cursor()
+
+        cur.execute('''
+          select
+            latitude
+            , longitude
+          from
+            zcta_metadata
+          where
+            zcta_id = ?
+        ''', (zcta,))
+        match = cur.fetchone()
+        #match existence checked in validate_zcta_or_raise(zcta)
+        (latitude, longitude) = match
+        return float(latitude), float(longitude)
 
 def zcta_closest_within_climate_zone(zcta):
     '''Match ZCTA with closest high quality station within the same climate zone.
@@ -429,43 +458,11 @@ def zcta_closest_within_climate_zone(zcta):
     -------
     mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
     '''
-    conn = metadata_db_connection_proxy.get_connection()
-    cur = conn.cursor()
-
-    # try to find a station in the same climate zone
-    cur.execute('''
-      select
-        z2i.usaf_id
-        , z2i.distance_meters
-        , zcta.latitude
-        , zcta.longitude
-      from
-        zcta_to_isd_station z2i
-        join isd_station_metadata isd on
-          z2i.usaf_id = isd.usaf_id
-        join zcta_metadata zcta on
-          z2i.zcta_id = zcta.zcta_id
-      where
-        z2i.zcta_id = ?
-        and isd.quality = 'high'
-        and z2i.iecc_climate_zone_match
-        and z2i.iecc_moisture_regime_match
-        and z2i.ba_climate_zone_match
-        and z2i.ca_climate_zone_match
-      order by
-        rank
-      limit 1
-    ''', (zcta,))
-
-    match = cur.fetchone()
-    if match is not None:
-        (usaf_id, distance_meters, latitude, longitude) = match
-        return ISDStationMapping(usaf_id, latitude, longitude, int(distance_meters))
-    else:
-        return _unrecognized_zcta_or_empty_mapping(zcta)
+    latitude, longitude = _zcta_to_lat_long(zcta)
+    return lat_long_closest_within_climate_zone(latitude, longitude)
 
 
-def zcta_naive_closest_high_quality(zcta):
+def zcta_naive_closest(zcta):
     '''Match ZCTA with closest high quality station regardless of climate zone inclusion.
 
     Uses ZCTA centroid as target.
@@ -479,83 +476,8 @@ def zcta_naive_closest_high_quality(zcta):
     -------
     mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
     '''
-    conn = metadata_db_connection_proxy.get_connection()
-    cur = conn.cursor()
-
-    # try a naive distance-only search.
-    cur.execute('''
-      select
-        zcta2isd.usaf_id
-        , zcta.latitude
-        , zcta.longitude
-        , zcta2isd.distance_meters
-      from
-        zcta_to_isd_station zcta2isd
-        join isd_station_metadata isd on
-          zcta2isd.usaf_id = isd.usaf_id
-        join zcta_metadata zcta on
-          zcta2isd.zcta_id = zcta.zcta_id
-      where
-        zcta2isd.zcta_id = ?
-        and isd.quality = 'high'
-      order by
-        rank
-      limit 1
-    ''', (zcta,))
-
-    match = cur.fetchone()
-    if match is not None:
-        usaf_id, latitude, longitude, distance_meters = match
-        return ISDStationMapping(usaf_id, latitude, longitude, int(distance_meters))
-    else:
-        return _unrecognized_zcta_or_empty_mapping(zcta)
-
-
-def zcta_naive_closest_medium_quality(zcta):
-    '''Match ZCTA with closest medium quality station regardless of climate zone
-    inclusion.
-
-    Uses ZCTA centroid as target.
-
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
-
-    Returns
-    -------
-    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
-    '''
-    conn = metadata_db_connection_proxy.get_connection()
-    cur = conn.cursor()
-
-    # try a naive distance-only search.
-    cur.execute('''
-      select
-        zcta2isd.usaf_id
-        , zcta.latitude
-        , zcta.longitude
-        , zcta2isd.distance_meters
-      from
-        zcta_to_isd_station zcta2isd
-        join isd_station_metadata isd on
-          zcta2isd.usaf_id = isd.usaf_id
-        join zcta_metadata zcta on
-          zcta2isd.zcta_id = zcta.zcta_id
-      where
-        zcta2isd.zcta_id = ?
-        and isd.quality = 'medium'
-      order by
-        rank
-      limit 1
-    ''', (zcta,))
-
-    match = cur.fetchone()
-    if match is not None:
-        usaf_id, latitude, longitude, distance_meters = match
-        return ISDStationMapping(usaf_id, latitude, longitude, int(distance_meters))
-    else:
-        return _unrecognized_zcta_or_empty_mapping(zcta)
+    latitude, longitude = _zcta_to_lat_long(zcta)
+    return lat_long_naive_closest(latitude, longitude)
 
 
 def lat_long_naive_closest(latitude, longitude):
@@ -575,7 +497,7 @@ def lat_long_naive_closest(latitude, longitude):
     try:
         import pyproj
     except ImportError:  # pragma: no cover
-        raise ImportError('Matching by lat/lng requires pyproj.')
+        raise ImportError('Matching requires pyproj.')
 
     isd_usaf_ids, isd_lats, isd_lngs = cached_data.isd_station_locations
     lats = np.tile(latitude, isd_lats.shape)
@@ -678,9 +600,11 @@ def oee_zcta(zcta):
     -------
     mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
     '''
-    mapping_result = zcta_closest_within_climate_zone(zcta)
-    if mapping_result.is_empty():
-        mapping_result = zcta_naive_closest_high_quality(zcta)
+    latitude, longitude = _zcta_to_lat_long(zcta)
+    mapping_result = lat_long_closest_within_climate_zone(latitude, longitude)
+    # haven't yet found a case where this applies, so untested.
+    if mapping_result.is_empty(): # pragma: no cover
+        mapping_result = lat_long_naive_closest(latitude, longitude)
         if not mapping_result.is_empty():
             mapping_result.warnings.append(
                 'Mapped weather station is not in the same'

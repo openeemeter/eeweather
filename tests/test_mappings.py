@@ -8,8 +8,7 @@ from eeweather.mappings import (
     ISDStationMapping,
     EmptyMapping,
     zcta_closest_within_climate_zone,
-    zcta_naive_closest_high_quality,
-    zcta_naive_closest_medium_quality,
+    zcta_naive_closest,
     lat_long_closest_within_climate_zone,
     lat_long_naive_closest,
     oee_zcta,
@@ -64,59 +63,26 @@ def test_zcta_closest_within_climate_zone():
     result = zcta_closest_within_climate_zone('38348')
     assert result.isd_station.usaf_id == '720447'
 
-    # valid zcta but no cz match
-    result = zcta_closest_within_climate_zone('00682')
-    assert result.is_empty() is True
-
-    # valid zcta but no matches at all
-    result = zcta_closest_within_climate_zone('33034')
-    assert result.is_empty() is True
-
     # invalid zcta
     with pytest.raises(UnrecognizedZCTAError) as excinfo:
         zcta_closest_within_climate_zone('00000')
     excinfo.value.value == '00000'
 
 
-def test_zcta_naive_closest_high_quality():
+def test_zcta_naive_closest():
     # OK
-    result = zcta_naive_closest_high_quality('38348')
+    result = zcta_naive_closest('38348')
     assert result.isd_station.usaf_id == '723346'
     assert result.distance_meters == 38745
 
     # different climate zone
-    result = zcta_naive_closest_high_quality('00601')
-    assert result.isd_station.usaf_id == '785430'
-    assert result.distance_meters == 188200
-
-    # valid zcta but no matches at all
-    result = zcta_naive_closest_high_quality('33034')
-    assert result.is_empty() is True
+    result = zcta_naive_closest('00601')
+    assert result.isd_station.usaf_id == '785263'
+    assert result.distance_meters == 83209
 
     # invalid zcta
     with pytest.raises(UnrecognizedZCTAError) as excinfo:
-        zcta_naive_closest_high_quality('00000')
-    excinfo.value.value == '00000'
-
-
-def test_zcta_naive_closest_medium_quality():
-    # OK
-    result = zcta_naive_closest_medium_quality('95543')
-    assert result.isd_station.usaf_id == '994012'
-    assert result.distance_meters == 30119
-
-    # different climate zone
-    result = zcta_naive_closest_medium_quality('00601')
-    assert result.isd_station.usaf_id == '785140'
-    assert result.distance_meters == 53150
-
-    # valid zcta but no matches at all
-    result = zcta_naive_closest_medium_quality('33034')
-    assert result.is_empty() is True
-
-    # invalid zcta
-    with pytest.raises(UnrecognizedZCTAError) as excinfo:
-        zcta_naive_closest_medium_quality('00000')
+        zcta_naive_closest('00000')
     excinfo.value.value == '00000'
 
 
@@ -134,25 +100,6 @@ def test_oee_zcta():
     assert result.warnings == [
         'Distance from target to weather station is greater than 50km.'
     ]
-
-    # valid no climate zone match
-    result = oee_zcta('00601')
-    assert result.isd_station.usaf_id == '785430'
-    assert result.distance_meters == 188200
-    assert result.warnings == [
-        'Distance from target to weather station is greater than 50km.',
-        'Mapped weather station is not in the same climate zone as the centroid of '
-        'the provided ZCTA.'
-    ]
-
-    # valid zcta has no matches at all
-    result = oee_zcta('33034')
-    assert result.is_empty() is True
-    assert result.warnings == [
-        'No mapping result was found.',
-    ]
-    with pytest.raises(AttributeError):
-        result.distance_meters
 
     # invalid zcta
     with pytest.raises(UnrecognizedZCTAError) as excinfo:

@@ -576,19 +576,6 @@ def _create_table_structures(conn):
     ''')
 
     cur.execute('''
-      create table zcta_to_isd_station (
-        zcta_id text not null
-        , usaf_id text not null
-        , rank integer not null
-        , distance_meters text not null
-        , iecc_climate_zone_match boolean not null
-        , iecc_moisture_regime_match boolean not null
-        , ba_climate_zone_match boolean not null
-        , ca_climate_zone_match boolean not null
-      )
-    ''')
-
-    cur.execute('''
       create table iecc_climate_zone_metadata (
         iecc_climate_zone text not null
         , geometry text
@@ -944,58 +931,12 @@ def _write_cz2010_station_metadata_table(conn, cz2010_station_metadata):
     conn.commit()
 
 
-def _write_zcta_to_isd_station_table(conn, zcta_metadata):
-    cur = conn.cursor()
-    rows = [
-        (
-            metadata['zcta'],
-            match['usaf_id'],
-            match['rank'],
-            match['distance_meters'],
-            match['iecc_climate_zone_match'],
-            match['iecc_moisture_regime_match'],
-            match['ba_climate_zone_match'],
-            match['ca_climate_zone_match'],
-        )
-        for zcta, metadata in sorted(zcta_metadata.items())
-        for match in metadata['closest_isd_stations']
-    ]
-    cur.executemany('''
-      insert into zcta_to_isd_station(
-        zcta_id
-        , usaf_id
-        , rank
-        , distance_meters
-        , iecc_climate_zone_match
-        , iecc_moisture_regime_match
-        , ba_climate_zone_match
-        , ca_climate_zone_match
-      ) values (?,?,?,?,?,?,?,?)
-    ''', rows)
-
-    cur.execute('''
-      create index zcta_to_isd_station_zcta_id on
-        zcta_to_isd_station(zcta_id)
-    ''')
-    cur.execute('''
-      create index zcta_to_isd_station_zcta_id_rank on
-        zcta_to_isd_station(zcta_id, rank)
-    ''')
-    cur.execute('''
-      create index zcta_to_isd_station_rank on
-        zcta_to_isd_station(rank)
-    ''')
-    cur.close()
-    conn.commit()
-
-
 def build_metadata_db(
         zcta_geometry=False,
         iecc_climate_zone_geometry=True,
         iecc_moisture_regime_geometry=True,
         ba_climate_zone_geometry=True,
-        ca_climate_zone_geometry=True,
-        n_closest_stations=10):
+        ca_climate_zone_geometry=True):
     ''' Build database of metadata from primary sources.
 
     Downloads primary sources, clears existing DB, and rebuilds from scratch.
@@ -1012,8 +953,6 @@ def build_metadata_db(
         Whether or not to include Building America Climate Zone geometry in database.
     ca_climate_zone_geometry : bool, optional
         Whether or not to include California Building Climate Zone Area geometry in database.
-    n_closest_stations : int, optional
-        The number of closest stations to include in zcta_to_isd_station table.
     '''
 
     try:
@@ -1087,10 +1026,6 @@ def build_metadata_db(
         isd_station_metadata, iecc_climate_zone_metadata, iecc_moisture_regime_metadata,
         ba_climate_zone_metadata, ca_climate_zone_metadata)
 
-    print('Finding closest ISD stations for each ZCTA')
-    _find_zcta_closest_isd_stations(
-        zcta_metadata, isd_station_metadata, n_closest_stations)
-
     # Write tables
     print('Creating table structures')
     _create_table_structures(conn)
@@ -1129,9 +1064,6 @@ def build_metadata_db(
 
     print('Writing CZ2010 station metadata')
     _write_cz2010_station_metadata_table(conn, cz2010_station_metadata)
-
-    print('Writing ZCTA to ISD station mapping')
-    _write_zcta_to_isd_station_table(conn, zcta_metadata)
 
     print('Cleaning up...')
     shutil.rmtree(download_path)
