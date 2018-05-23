@@ -8,6 +8,11 @@ from six import string_types
 def match_zcta(zcta, mapping=None):
     ''' Match a target ZCTA to ISD Station using the given mapping.
 
+    .. note::
+
+        For CalTRACK compliance (2.4.1), the default mapping
+        must be used (mappings.oee_zcta).
+
     Uses eeweather.mapping.oee_zcta by default.
     Accepts dict or callable as mapping.
 
@@ -42,6 +47,11 @@ def match_zcta(zcta, mapping=None):
 
 def match_lat_long(latitude, longitude, mapping=None):
     ''' Match a target lat long to an ISD station.
+
+    .. note::
+
+        For CalTRACK compliance (2.4.1), the default mapping
+        must be used (mappings.oee_lat_long).
 
     Uses eeweather.mapping.oee_lat_long by default.
     Accepts callable as mapping.

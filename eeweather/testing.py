@@ -10,6 +10,13 @@ def write_isd_file(bytes_string):
     with pkg_resources.resource_stream('eeweather.resources', 'ISD.gz') as f:
         bytes_string.write(f.read())
 
+def write_tmy3_file():
+    data = pkg_resources.resource_string('eeweather.resources', '722880TYA.CSV')
+    return data.decode('ascii')
+
+def write_cz2010_file():
+    data = pkg_resources.resource_string('eeweather.resources', '722880_CZ2010.CSV')
+    return data.decode('ascii')
 
 def write_missing_isd_file(bytes_string):
     with pkg_resources.resource_stream('eeweather.resources', 'ISD-MISSING.gz') as f:
@@ -24,6 +31,32 @@ def write_gsod_file(bytes_string):
 def write_missing_gsod_file(bytes_string):
     with pkg_resources.resource_stream('eeweather.resources', 'GSOD-MISSING.op.gz') as f:
         bytes_string.write(f.read())
+
+
+class MockTMY3RequestProxy():
+
+    def get_text(self, url):
+
+        match_url = (
+            "http://rredc.nrel.gov/solar/old_data/nsrdb/"
+            "1991-2005/data/tmy3/722880TYA.CSV"
+            )
+        if re.match(match_url, url):
+            return write_tmy3_file()
+
+
+
+class MockCZ2010RequestProxy():
+
+    def get_text(self, url):
+
+        match_url = (
+            "https://storage.googleapis.com/oee-cz2010/csv/"
+            "722880_CZ2010.CSV"
+            )
+
+        if re.match(match_url, url):
+            return write_cz2010_file()
 
 
 class MockNOAAFTPConnectionProxy():

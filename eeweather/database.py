@@ -23,6 +23,22 @@ __all__ = (
     'inspect_metadata_db',
 )
 
+CZ2010_LIST = [
+    '725958', '725945', '723840', '724837', '724800', '725845', '747188',
+    '722880', '723926', '722926', '722927', '746120', '722899', '724936',
+    '725946', '723815', '723810', '722810', '725940', '723890', '722976',
+    '724935', '747185', '722909', '723826', '722956', '725847', '723816',
+    '747020', '724927', '722895', '722970', '722975', '722874', '722950',
+    '724815', '724926', '722953', '725955', '724915', '725957', '724955',
+    '723805', '724930', '723927', '722868', '747187', '723820', '724937',
+    '723965', '723910', '723895', '725910', '725920', '722860', '722869',
+    '724830', '724839', '724917', '724938', '722925', '722907', '722900',
+    '722903', '722906', '724940', '724945', '724946', '722897', '722910',
+    '723830', '722977', '723925', '723940', '722885', '724957', '724920',
+    '722955', '745160', '725846', '690150', '725905', '722886', '723930',
+    '723896', '724838'
+]
+
 
 class PrettyFloat(float):
     def __repr__(self):
@@ -340,13 +356,8 @@ def _load_tmy3_station_metadata(download_path):
     return metadata
 
 
-def _load_zipcode_to_cz2010_station(download_path):
-    '''These are actual zipcodes, not ZCTAs afaik (philngo)'''
-    zipcode_to_cz2010_station = pd.read_csv(
-        os.path.join(download_path, 'zipcode_to_cz2010.csv'),
-        dtype=str
-    )
-    return zipcode_to_cz2010_station
+def _load_cz2010_station_metadata():
+    return {usaf_id: {'usaf_id': usaf_id} for usaf_id in CZ2010_LIST}
 
 
 def _create_merged_climate_zones_metadata(county_metadata):
@@ -616,9 +627,8 @@ def _create_table_structures(conn):
     ''')
 
     cur.execute('''
-      create table zipcode_to_cz2010_station (
-        zipcode text not null
-        , usaf_id text not null
+      create table cz2010_station_metadata (
+        usaf_id text not null
       )
     ''')
 
@@ -913,6 +923,27 @@ def _write_tmy3_station_metadata_table(conn, tmy3_station_metadata):
     conn.commit()
 
 
+def _write_cz2010_station_metadata_table(conn, cz2010_station_metadata):
+    cur = conn.cursor()
+    rows = [
+        (
+            metadata['usaf_id'],
+        )
+        for cz2010_station, metadata in sorted(cz2010_station_metadata.items())
+    ]
+    cur.executemany('''
+      insert into cz2010_station_metadata(
+        usaf_id
+      ) values (?)
+    ''', rows)
+    cur.execute('''
+      create index cz2010_station_metadata_usaf_id on
+        cz2010_station_metadata(usaf_id)
+    ''')
+    cur.close()
+    conn.commit()
+
+
 def _write_zcta_to_isd_station_table(conn, zcta_metadata):
     cur = conn.cursor()
     rows = [
@@ -953,32 +984,6 @@ def _write_zcta_to_isd_station_table(conn, zcta_metadata):
     cur.execute('''
       create index zcta_to_isd_station_rank on
         zcta_to_isd_station(rank)
-    ''')
-    cur.close()
-    conn.commit()
-
-
-def _write_zipcode_to_cz2010_station_table(conn, zipcode_to_cz2010_station):
-    cur = conn.cursor()
-    rows = [
-        (row.zipcode, row.cz2010_usaf_id)
-        for i, row in zipcode_to_cz2010_station.iterrows()
-    ]
-
-    cur.executemany('''
-      insert into zipcode_to_cz2010_station(
-        zipcode
-        , usaf_id
-      ) values (?,?)
-    ''', rows)
-
-    cur.execute('''
-      create index zipcode_to_cz2010_station_zipcode on
-        zipcode_to_cz2010_station(zipcode)
-    ''')
-    cur.execute('''
-      create index zipcode_to_cz2010_station_usaf_id on
-        zipcode_to_cz2010_station(usaf_id)
     ''')
     cur.close()
     conn.commit()
@@ -1061,8 +1066,8 @@ def build_metadata_db(
     print('Loading TMY3 station metadata')
     tmy3_station_metadata = _load_tmy3_station_metadata(download_path)
 
-    print('Loading ZIP code to CZ2010 station mapping')
-    zipcode_to_cz2010_station = _load_zipcode_to_cz2010_station(download_path)
+    print('Loading CZ2010 station metadata')
+    cz2010_station_metadata = _load_cz2010_station_metadata()
 
     # Augment data in memory
     print('Computing ISD station quality')
@@ -1122,11 +1127,11 @@ def build_metadata_db(
     print('Writing TMY3 station metadata')
     _write_tmy3_station_metadata_table(conn, tmy3_station_metadata)
 
+    print('Writing CZ2010 station metadata')
+    _write_cz2010_station_metadata_table(conn, cz2010_station_metadata)
+
     print('Writing ZCTA to ISD station mapping')
     _write_zcta_to_isd_station_table(conn, zcta_metadata)
-
-    print('Writing ZIP code to CZ2010 station mapping')
-    _write_zipcode_to_cz2010_station_table(conn, zipcode_to_cz2010_station)
 
     print('Cleaning up...')
     shutil.rmtree(download_path)

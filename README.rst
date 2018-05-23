@@ -120,3 +120,14 @@ Run tests::
 Run the CLI::
 
     $ docker-compose run --rm eeweather --help
+
+
+Notice Regarding CZ2010 Data
+----------------------------
+
+There may be conditions placed on their international commercial use.
+They can be used within the U.S. or for non-commercial international activities without restriction.
+The non-U.S. data cannot be redistributed for commercial purposes.
+Re-distribution of these data by others must provide this same notification.
+
+See `further explanation <http://weather.whiteboxtechnologies.com/faq#Q12/>`_ here. 
