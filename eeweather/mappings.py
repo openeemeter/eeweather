@@ -632,20 +632,20 @@ def lat_long_closest_within_climate_zone(latitude, longitude):
 
     isd_station_metadata = cached_data.isd_station_metadata
 
-    isd_usaf_ids, isd_lats, isd_lngs = zip(*[
+    isd_results = list(zip(*[
         (usaf_id, metadata['latitude'], metadata['longitude'])
         for usaf_id, metadata in isd_station_metadata.items()
         if (metadata['iecc_climate_zone'] == iecc_climate_zone
             and metadata['iecc_moisture_regime'] == iecc_moisture_regime
             and metadata['ca_climate_zone'] == ca_climate_zone
             and metadata['ba_climate_zone'] == ba_climate_zone)
-    ])
-
-    if len(isd_usaf_ids) == 0:
-        # haven't yet found a case where this applies, so untested.
-        return EmptyMapping(warnings=[  # pragma: no cover
+    ]))
+    if len(isd_results) == 0:
+        return EmptyMapping(warnings=[
             'No weather stations in the target climate zone.'
         ])
+
+    isd_usaf_ids, isd_lats, isd_lngs = isd_results 
 
     isd_lats = np.array(isd_lats)
     isd_lngs = np.array(isd_lngs)
