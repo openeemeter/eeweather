@@ -19,6 +19,7 @@ from .__version__ import __copyright__
 from .api import (
     get_lat_long_climate_zones,
     get_zcta_metadata,
+    zcta_to_lat_long,
 )
 from .database import build_metadata_db
 from .exceptions import (
@@ -29,7 +30,6 @@ from .exceptions import (
     GSODDataNotAvailableError,
 )
 from .matching import (
-    match_zcta,
     match_lat_long,
 )
 from .summaries import (
@@ -107,12 +107,15 @@ from .mappings import (
     MappingResult,
     EmptyMapping,
     ISDStationMapping,
-    zcta_closest_within_climate_zone,
-    zcta_naive_closest,
     lat_long_naive_closest,
+    lat_long_naive_closest_tmy3,
+    lat_long_naive_closest_cz2010,
     lat_long_closest_within_climate_zone,
-    oee_zcta,
+    lat_long_closest_within_climate_zone_tmy3,
+    lat_long_closest_within_climate_zone_cz2010,
     oee_lat_long,
+    oee_lat_long_tmy3,
+    oee_lat_long_cz2010,
     plot_mapping_results,
 )
 

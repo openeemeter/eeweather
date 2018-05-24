@@ -1,5 +1,6 @@
 import pytest
 
+from eeweather.api import zcta_to_lat_long
 from eeweather.exceptions import (
     UnrecognizedUSAFIDError,
     UnrecognizedZCTAError,
@@ -7,12 +8,15 @@ from eeweather.exceptions import (
 from eeweather.mappings import (
     ISDStationMapping,
     EmptyMapping,
-    zcta_closest_within_climate_zone,
-    zcta_naive_closest,
     lat_long_closest_within_climate_zone,
+    lat_long_closest_within_climate_zone_tmy3,
+    lat_long_closest_within_climate_zone_cz2010,
     lat_long_naive_closest,
-    oee_zcta,
+    lat_long_naive_closest_tmy3,
+    lat_long_naive_closest_cz2010,
     oee_lat_long,
+    oee_lat_long_tmy3,
+    oee_lat_long_cz2010,
 )
 
 
@@ -58,55 +62,6 @@ def test_mapping_result_with_unrecognized_usaf_id():
     )
 
 
-def test_zcta_closest_within_climate_zone():
-    # different from naive
-    result = zcta_closest_within_climate_zone('38348')
-    assert result.isd_station.usaf_id == '720447'
-
-    # invalid zcta
-    with pytest.raises(UnrecognizedZCTAError) as excinfo:
-        zcta_closest_within_climate_zone('00000')
-    excinfo.value.value == '00000'
-
-
-def test_zcta_naive_closest():
-    # OK
-    result = zcta_naive_closest('38348')
-    assert result.isd_station.usaf_id == '723346'
-    assert result.distance_meters == 38745
-
-    # different climate zone
-    result = zcta_naive_closest('00601')
-    assert result.isd_station.usaf_id == '785263'
-    assert result.distance_meters == 83209
-
-    # invalid zcta
-    with pytest.raises(UnrecognizedZCTAError) as excinfo:
-        zcta_naive_closest('00000')
-    excinfo.value.value == '00000'
-
-
-def test_oee_zcta():
-    # close match within climate zone
-    result = oee_zcta('55390')
-    assert result.isd_station.usaf_id == '722114'
-    assert result.distance_meters == 14966
-    assert result.warnings == []
-
-    # prefer climate zone match
-    result = oee_zcta('38348')
-    assert result.isd_station.usaf_id == '720447'
-    assert result.distance_meters == 91915
-    assert result.warnings == [
-        'Distance from target to weather station is greater than 50km.'
-    ]
-
-    # invalid zcta
-    with pytest.raises(UnrecognizedZCTAError) as excinfo:
-        oee_zcta('00000')
-    excinfo.value.value == '00000'
-
-
 def test_lat_long_closest_within_climate_zone():
     # Bakersfield
     result = lat_long_closest_within_climate_zone(35.68, -119.14)
@@ -120,6 +75,32 @@ def test_lat_long_closest_within_climate_zone():
     result = lat_long_closest_within_climate_zone(0, 0)
     assert result.is_empty() is True
 
+def test_lat_long_closest_within_climate_zone_tmy3():
+    # Bakersfield
+    result = lat_long_closest_within_climate_zone_tmy3(35.68, -119.14)
+    assert result.isd_station.usaf_id == '723840'
+
+    # Miami
+    result = lat_long_closest_within_climate_zone_tmy3(25.73, -80.3)
+    assert result.isd_station.usaf_id == '722020'
+
+    # africa, ignores
+    result = lat_long_closest_within_climate_zone_tmy3(0, 0)
+    assert result.is_empty() is True
+
+
+def test_lat_long_closest_within_climate_zone_cz2010():
+    # Bakersfield
+    result = lat_long_closest_within_climate_zone_cz2010(35.68, -119.14)
+    assert result.isd_station.usaf_id == '723840'
+
+    # Miami
+    result = lat_long_closest_within_climate_zone_cz2010(25.73, -80.3)
+    assert result.is_empty() is True
+
+    # africa, ignores
+    result = lat_long_closest_within_climate_zone_cz2010(0, 0)
+    assert result.is_empty() is True
 
 def test_lat_long_naive_closest():
     # Bakersfield
@@ -133,6 +114,33 @@ def test_lat_long_naive_closest():
     # africa - obviously outside climate zone.
     result = lat_long_naive_closest(0, 0)
     assert result.isd_station.usaf_id == '997172'
+
+def test_lat_long_naive_closest_tmy3():
+    # Bakersfield
+    result = lat_long_naive_closest_tmy3(35.68, -119.14)
+    assert result.isd_station.usaf_id == '723840'
+
+    # Miami
+    result = lat_long_naive_closest_tmy3(25.73, -80.3)
+    assert result.isd_station.usaf_id == '722020'
+
+    # africa - obviously outside climate zone.
+    result = lat_long_naive_closest_tmy3(0, 0)
+    assert result.isd_station.usaf_id == '785430'
+
+
+def test_lat_long_naive_closest_cz2010():
+    # Bakersfield
+    result = lat_long_naive_closest_cz2010(35.68, -119.14)
+    assert result.isd_station.usaf_id == '723840'
+
+    # Miami
+    result = lat_long_naive_closest_cz2010(25.73, -80.3)
+    assert result.isd_station.usaf_id == '747188'
+
+    # africa - obviously outside climate zone.
+    result = lat_long_naive_closest_cz2010(0, 0)
+    assert result.isd_station.usaf_id == '723805'
 
 
 def test_oee_lat_long():
@@ -148,3 +156,40 @@ def test_oee_lat_long():
     # africa - obviously outside climate zone.
     result = oee_lat_long(0, 0)
     assert result.isd_station.usaf_id == '997172'
+
+def test_oee_lat_long_tmy3_cz2010():
+    # California close to border
+
+    #ISD
+    result = oee_lat_long(35.85, -115.72)
+    assert result.isd_station.usaf_id == '723860'
+    assert result.warnings == [
+        'Distance from target to weather station is greater than 50km.',
+        'Mapped weather station is not in the same climate zone as the provided lat/long point.'
+    ]
+
+    #TMY3
+    result = oee_lat_long_tmy3(35.85, -115.72)
+    assert result.isd_station.usaf_id == '723860'
+    assert result.warnings == [
+        'Distance from target to weather station is greater than 50km.',
+        'Mapped weather station is not in the same climate zone as the provided lat/long point.'
+    ]
+
+    #CZ2010
+    result = oee_lat_long_cz2010(35.85, -115.72)
+    assert result.isd_station.usaf_id == '723815'
+    assert result.warnings == [
+        'Distance from target to weather station is greater than 50km.',
+        'Mapped weather station is not in the same climate zone as the provided lat/long point.'
+    ]
+
+def test_zcta_to_lat_long():
+
+    lat, long = zcta_to_lat_long(92389)
+    result = oee_lat_long(lat, long)
+    assert result.isd_station.usaf_id == '723870'
+    assert result.warnings == [
+        'Distance from target to weather station is greater than 50km.',
+        'Mapped weather station is not in the same climate zone as the provided lat/long point.'
+    ]

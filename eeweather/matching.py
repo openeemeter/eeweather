@@ -5,46 +5,6 @@ from .validation import valid_zcta_or_raise
 from six import string_types
 
 
-def match_zcta(zcta, mapping=None):
-    ''' Match a target ZCTA to ISD Station using the given mapping.
-
-    .. note::
-
-        For CalTRACK compliance (2.4.1), the default mapping
-        must be used (mappings.oee_zcta).
-
-    Uses eeweather.mapping.oee_zcta by default.
-    Accepts dict or callable as mapping.
-
-    For example::
-
-        mapping = {'12345': '123456'}
-        eeweather.match_zcta(zcta, mapping=mapping)
-
-        mapping = lambda x: '123456' if x == '12345' else None
-        eeweather.match_zcta(zcta, mapping=mapping)
-
-        mapping = eeweather.mappings.zcta_closest_within_climate_zone
-        eeweather.match_zcta(zcta, mapping=mapping)
-
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
-    mapping : dict or callable
-        Mapping dict or function to use during mapping.
-
-    Returns
-    -------
-    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
-    '''
-    if mapping is None:
-        mapping_func = mappings.oee_zcta
-    else:
-        mapping_func = _zcta_mapping_factory(mapping)
-    return mapping_func(zcta)
-
-
 def match_lat_long(latitude, longitude, mapping=None):
     ''' Match a target lat long to an ISD station.
 

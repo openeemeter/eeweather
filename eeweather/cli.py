@@ -4,7 +4,6 @@ import subprocess
 import click
 
 from . import (
-    match_zcta as _match_zcta,
     match_lat_long as _match_lat_long,
     get_isd_station_metadata as _get_isd_station_metadata,
     get_isd_file_metadata as _get_isd_file_metadata,
@@ -19,12 +18,6 @@ from .database import build_metadata_db, inspect_metadata_db
 @click.group()
 def cli():
     '''Example usage
-
-    Match ZCTA to weather station:
-
-    \b
-        $ eeweather match_zcta 90210
-        722880
 
     Match lat/long to weather station:
 
@@ -77,13 +70,6 @@ def cli():
 
     '''
     pass  # pragma: no cover
-
-
-@cli.command()
-@click.argument('zcta', type=str)
-def match_zcta(zcta):
-    station = _match_zcta(zcta)
-    click.echo(station)
 
 
 @cli.command()

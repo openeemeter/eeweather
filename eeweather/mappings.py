@@ -4,23 +4,55 @@ from .connections import metadata_db_connection_proxy
 from .exceptions import UnrecognizedUSAFIDError
 from .stations import ISDStation
 from .utils import lazy_property
-from .validation import valid_zcta_or_raise
 
 __all__ = (
     'MappingResult',
     'EmptyMapping',
     'ISDStationMapping',
-    'zcta_naive_closest',
-    'zcta_closest_within_climate_zone',
-    'lat_long_naive_closest',
-    'lat_long_closest_within_climate_zone',
-    'oee_zcta',
-    'oee_lat_long',
+    'lat_long_naive_closest_isd',
+    'lat_long_naive_closest_tmy3',
+    'lat_long_naive_closest_cz2010',
+    'lat_long_closest_within_climate_zone_isd',
+    'lat_long_closest_within_climate_zone_tmy3',
+    'lat_long_closest_within_climate_zone_cz2010',
+    'oee_lat_long_isd',
+    'oee_lat_long_tmy3',
+    'oee_lat_long_cz2010',
     'plot_mapping_results',
 )
 
 
 class CachedData(object):
+
+    @lazy_property
+    def tmy3_station_list(self):
+        conn = metadata_db_connection_proxy.get_connection()
+
+        cur = conn.cursor()
+        cur.execute('''
+          select
+            usaf_id
+          from
+            tmy3_station_metadata
+        ''')
+
+        tmy3_stations = list(zip(*cur.fetchall()))[0]
+        return tmy3_stations
+
+    @lazy_property
+    def cz2010_station_list(self):
+        conn = metadata_db_connection_proxy.get_connection()
+
+        cur = conn.cursor()
+        cur.execute('''
+          select
+            usaf_id
+          from
+            cz2010_station_metadata
+        ''')
+
+        cz2010_stations = list(zip(*cur.fetchall()))[0]
+        return cz2010_stations
 
     @lazy_property
     def isd_station_locations(self):
@@ -36,6 +68,45 @@ class CachedData(object):
             isd_station_metadata
           where
             quality = 'high'
+        ''')
+
+        isd_stations, isd_lats, isd_lngs = zip(*cur.fetchall())
+        isd_lats = np.array(isd_lats)
+        isd_lngs = np.array(isd_lngs)
+        return isd_stations, isd_lats, isd_lngs
+
+    @lazy_property
+    def tmy3_station_locations(self):
+        conn = metadata_db_connection_proxy.get_connection()
+        cur = conn.cursor()
+        cur.execute('''select
+        isd.usaf_id
+        , isd.latitude
+        , isd.longitude
+      from
+        tmy3_station_metadata tmy3
+        join isd_station_metadata isd on
+          tmy3.usaf_id = isd.usaf_id
+        ''')
+
+        isd_stations, isd_lats, isd_lngs = zip(*cur.fetchall())
+        isd_lats = np.array(isd_lats)
+        isd_lngs = np.array(isd_lngs)
+        return isd_stations, isd_lats, isd_lngs
+
+    @lazy_property
+    def cz2010_station_locations(self):
+        conn = metadata_db_connection_proxy.get_connection()
+
+        cur = conn.cursor()
+        cur.execute('''select
+        isd.usaf_id
+        , isd.latitude
+        , isd.longitude
+      from
+        cz2010_station_metadata cz2010
+        join isd_station_metadata isd on
+          cz2010.usaf_id = isd.usaf_id
         ''')
 
         isd_stations, isd_lats, isd_lngs = zip(*cur.fetchall())
@@ -61,6 +132,70 @@ class CachedData(object):
           where
             quality = 'high'
         ''')
+        isd_station_metadata = {
+            row[0]: {
+                col[0]: val
+                for col, val in zip(cur.description, row)
+            }
+            for row in cur.fetchall()
+        }
+        return isd_station_metadata
+
+    @lazy_property
+    def tmy3_station_metadata(self):
+        tmy3_stations = self.tmy3_station_list
+
+        conn = metadata_db_connection_proxy.get_connection()
+        cur = conn.cursor()
+        format_strings = ','.join(['?'] * len(tmy3_stations))
+        cur.execute('''
+          select
+            usaf_id
+            , latitude
+            , longitude
+            , iecc_climate_zone
+            , iecc_moisture_regime
+            , ba_climate_zone
+            , ca_climate_zone
+          from
+            isd_station_metadata
+          where
+            quality = 'high' and
+            usaf_id in (%s)''' % format_strings,
+            tuple(tmy3_stations))
+
+        isd_station_metadata = {
+            row[0]: {
+                col[0]: val
+                for col, val in zip(cur.description, row)
+            }
+            for row in cur.fetchall()
+        }
+        return isd_station_metadata
+
+    @lazy_property
+    def cz2010_station_metadata(self):
+        cz2010_stations = self.cz2010_station_list
+
+        conn = metadata_db_connection_proxy.get_connection()
+        cur = conn.cursor()
+        format_strings = ','.join(['?'] * len(cz2010_stations))
+        cur.execute('''
+          select
+            usaf_id
+            , latitude
+            , longitude
+            , iecc_climate_zone
+            , iecc_moisture_regime
+            , ba_climate_zone
+            , ca_climate_zone
+          from
+            isd_station_metadata
+          where
+            quality = 'high' and
+            usaf_id in (%s)''' % format_strings,
+            tuple(cz2010_stations))
+
         isd_station_metadata = {
             row[0]: {
                 col[0]: val
@@ -399,88 +534,11 @@ def plot_mapping_results(mapping_results):  # pragma: no cover
     # stations
     ax.plot(lngs, lats, 'bo', markersize=1, transform=ccrs.Geodetic())
 
-    plt.title('ZCTA to weather station mapping')
+    plt.title('Location to weather station mapping')
 
     plt.show()
 
-def _zcta_to_lat_long(zcta):
-    '''Get location of ZCTA centroid
-
-    Retrieves latitude and longitude of centroid of ZCTA
-    to use for matching with weather station.
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
-
-    Returns
-    -------
-    latitude : float
-        Latitude of centroid of ZCTA.
-    longitude : float
-        Target Longitude of centroid of ZCTA.
-    '''
-    if valid_zcta_or_raise(zcta):
-
-        conn = metadata_db_connection_proxy.get_connection()
-        cur = conn.cursor()
-
-        cur.execute('''
-          select
-            latitude
-            , longitude
-          from
-            zcta_metadata
-          where
-            zcta_id = ?
-        ''', (zcta,))
-        match = cur.fetchone()
-        #match existence checked in validate_zcta_or_raise(zcta)
-        (latitude, longitude) = match
-        return float(latitude), float(longitude)
-
-def zcta_closest_within_climate_zone(zcta):
-    '''Match ZCTA with closest high quality station within the same climate zone.
-
-    Uses ZCTA centroid as target. "Within the same climate zone" means that it shares the same inclusion/exclusion status for each of the following climate zones:
-
-    - IECC Climate Zone
-    - IECC Moisture Regime
-    - Building America Climate Zone
-    - California Building Climate Zone Area
-
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
-
-    Returns
-    -------
-    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
-    '''
-    latitude, longitude = _zcta_to_lat_long(zcta)
-    return lat_long_closest_within_climate_zone(latitude, longitude)
-
-
-def zcta_naive_closest(zcta):
-    '''Match ZCTA with closest high quality station regardless of climate zone inclusion.
-
-    Uses ZCTA centroid as target.
-
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
-
-    Returns
-    -------
-    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
-    '''
-    latitude, longitude = _zcta_to_lat_long(zcta)
-    return lat_long_naive_closest(latitude, longitude)
-
-
-def lat_long_naive_closest(latitude, longitude):
+def _lat_long_naive_closest(latitude, longitude, stations_locations):
     ''' Find closest high quality ISD station regardless of climate zone match.
 
     Parameters
@@ -489,6 +547,8 @@ def lat_long_naive_closest(latitude, longitude):
         Target latitude.
     longitude : float
         Target longitude.
+    stations_locations : list
+        List of stations with their locations to chose from.
 
     Returns
     -------
@@ -499,20 +559,37 @@ def lat_long_naive_closest(latitude, longitude):
     except ImportError:  # pragma: no cover
         raise ImportError('Matching requires pyproj.')
 
-    isd_usaf_ids, isd_lats, isd_lngs = cached_data.isd_station_locations
-    lats = np.tile(latitude, isd_lats.shape)
-    lngs = np.tile(longitude, isd_lngs.shape)
+    usaf_ids, stations_lats, stations_lngs = stations_locations
+    lats = np.tile(latitude, stations_lats.shape)
+    lngs = np.tile(longitude, stations_lngs.shape)
 
     geod = pyproj.Geod(ellps='WGS84')
-    dists = geod.inv(lngs, lats, isd_lngs, isd_lats)[2]
+    dists = geod.inv(lngs, lats, stations_lngs, stations_lats)[2]
     idx = np.argmin(dists)
-    usaf_id = isd_usaf_ids[idx]
+    usaf_id = usaf_ids[idx]
     return ISDStationMapping(usaf_id, latitude, longitude)
 
 
-def lat_long_closest_within_climate_zone(latitude, longitude):
-    ''' Find closest ISD station within the same climate zone.
+def lat_long_naive_closest(latitude, longitude):
+    ''' Find closest high quality ISD station regardless of climate zone match.'''
+    stations_locations = cached_data.isd_station_locations
+    return _lat_long_naive_closest(latitude, longitude, stations_locations)
 
+
+def lat_long_naive_closest_tmy3(latitude, longitude):
+    ''' Find closest high quality TMY3 station regardless of climate zone match.'''
+    stations_metadata = cached_data.tmy3_station_locations
+    return _lat_long_naive_closest(latitude, longitude, stations_metadata)
+
+
+def lat_long_naive_closest_cz2010(latitude, longitude):
+    ''' Find closest high quality CZ2010 station regardless of climate zone match.'''
+    stations_metadata = cached_data.cz2010_station_locations
+    return _lat_long_naive_closest(latitude, longitude, stations_metadata)
+
+
+def _lat_long_closest_within_climate_zone(latitude, longitude, stations_metadata):
+    ''' Find closest station within the same climate zone.
     "Within the same climate zone" means that it shares the same inclusion/exclusion status for each of the following climate zones:
 
     - IECC Climate Zone
@@ -526,6 +603,8 @@ def lat_long_closest_within_climate_zone(latitude, longitude):
         Target latitude.
     longitude : float
         Target longitude.
+    stations_metadata : list
+        List of stations and their metadata to select from.
 
     Returns
     -------
@@ -552,11 +631,9 @@ def lat_long_closest_within_climate_zone(latitude, longitude):
             'Target outside all known climate zones.'
         ])
 
-    isd_station_metadata = cached_data.isd_station_metadata
-
     isd_results = list(zip(*[
         (usaf_id, metadata['latitude'], metadata['longitude'])
-        for usaf_id, metadata in isd_station_metadata.items()
+        for usaf_id, metadata in stations_metadata.items()
         if (metadata['iecc_climate_zone'] == iecc_climate_zone
             and metadata['iecc_moisture_regime'] == iecc_moisture_regime
             and metadata['ca_climate_zone'] == ca_climate_zone
@@ -586,31 +663,25 @@ def lat_long_closest_within_climate_zone(latitude, longitude):
         usaf_id, latitude, longitude, distance_meters=distance_meters)
 
 
-def oee_zcta(zcta):
-    '''Default ZCTA to ISD station mapping method.
+def lat_long_closest_within_climate_zone(latitude, longitude):
+    ''' Find closest ISD station within the same climate zone.'''
+    stations_metadata = cached_data.isd_station_metadata
+    return _lat_long_closest_within_climate_zone(latitude, longitude,
+                                                stations_metadata)
 
-    Determine the ZCTA centroid, attempt finding nearest match within climate zone, then fall back to the naive closest if that match is empty. Restricted to high quality stations.
 
-    Parameters
-    ----------
-    zcta : str
-        ID of the target ZCTA.
+def lat_long_closest_within_climate_zone_tmy3(latitude, longitude):
+    ''' Find closest TMY3 station within the same climate zone.'''
+    stations_metadata = cached_data.tmy3_station_metadata
+    return _lat_long_closest_within_climate_zone(latitude, longitude,
+                                                stations_metadata)
 
-    Returns
-    -------
-    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
-    '''
-    latitude, longitude = _zcta_to_lat_long(zcta)
-    mapping_result = lat_long_closest_within_climate_zone(latitude, longitude)
-    # haven't yet found a case where this applies, so untested.
-    if mapping_result.is_empty(): # pragma: no cover
-        mapping_result = lat_long_naive_closest(latitude, longitude)
-        if not mapping_result.is_empty():
-            mapping_result.warnings.append(
-                'Mapped weather station is not in the same'
-                ' climate zone as the centroid of the provided ZCTA.'
-            )
-    return mapping_result
+
+def lat_long_closest_within_climate_zone_cz2010(latitude, longitude):
+    ''' Find closest CZ2010 station within the same climate zone.'''
+    stations_metadata = cached_data.cz2010_station_metadata
+    return _lat_long_closest_within_climate_zone(latitude, longitude,
+                                                stations_metadata)
 
 
 def oee_lat_long(latitude, longitude):
@@ -634,6 +705,64 @@ def oee_lat_long(latitude, longitude):
     mapping_result = lat_long_closest_within_climate_zone(latitude, longitude)
     if mapping_result.is_empty():
         mapping_result = lat_long_naive_closest(latitude, longitude)
+        if not mapping_result.is_empty():
+            mapping_result.warnings.append(
+                'Mapped weather station is not in the same climate zone'
+                ' as the provided lat/long point.'
+            )
+    return mapping_result
+
+
+def oee_lat_long_tmy3(latitude, longitude):
+    '''Lat long to TMY3 station mapping method.
+
+    First attempt finding nearest match within climate zone, then fall back
+    to the naive closest if that match is empty. Restricted to high quality
+    stations.
+
+    Parameters
+    ----------
+    latitude : float
+        Target latitude.
+    longitude : float
+        Target longitude.
+
+    Returns
+    -------
+    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
+    '''
+    mapping_result = lat_long_closest_within_climate_zone_tmy3(latitude, longitude)
+    if mapping_result.is_empty():
+        mapping_result = lat_long_naive_closest_tmy3(latitude, longitude)
+        if not mapping_result.is_empty():
+            mapping_result.warnings.append(
+                'Mapped weather station is not in the same climate zone'
+                ' as the provided lat/long point.'
+            )
+    return mapping_result
+
+
+def oee_lat_long_cz2010(latitude, longitude):
+    '''Lat long to CZ2010 station mapping method.
+
+    First attempt finding nearest match within climate zone, then fall back
+    to the naive closest if that match is empty. Restricted to high quality
+    stations.
+
+    Parameters
+    ----------
+    latitude : float
+        Target latitude.
+    longitude : float
+        Target longitude.
+
+    Returns
+    -------
+    mapping_result : eeweather.mappings.ISDStationMapping or eeweather.mappings.EmptyMapping
+    '''
+    mapping_result = lat_long_closest_within_climate_zone_cz2010(latitude, longitude)
+    if mapping_result.is_empty():
+        mapping_result = lat_long_naive_closest_cz2010(latitude, longitude)
         if not mapping_result.is_empty():
             mapping_result.warnings.append(
                 'Mapped weather station is not in the same climate zone'

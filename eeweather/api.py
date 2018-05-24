@@ -7,11 +7,13 @@ from .exceptions import (
 )
 
 from .utils import lazy_property
+from .validation import valid_zcta_or_raise
 
 
 __all__ = (
     'get_lat_long_climate_zones',
     'get_zcta_metadata',
+    'zcta_to_lat_long'
 )
 
 
@@ -173,3 +175,42 @@ def get_zcta_metadata(zcta):
         col[0]: row[i]
         for i, col in enumerate(cur.description)
     }
+
+
+def zcta_to_lat_long(zcta):
+    '''Get location of ZCTA centroid
+
+    Retrieves latitude and longitude of centroid of ZCTA
+    to use for matching with weather station.
+
+    Parameters
+    ----------
+    zcta : str
+        ID of the target ZCTA.
+
+    Returns
+    -------
+    latitude : float
+        Latitude of centroid of ZCTA.
+    longitude : float
+        Target Longitude of centroid of ZCTA.
+    '''
+    if valid_zcta_or_raise(zcta):
+
+        conn = metadata_db_connection_proxy.get_connection()
+        cur = conn.cursor()
+
+        cur.execute('''
+          select
+            latitude
+            , longitude
+          from
+            zcta_metadata
+          where
+            zcta_id = ?
+        ''', (zcta,))
+        match = cur.fetchone()
+        #match existence checked in validate_zcta_or_raise(zcta)
+        (latitude, longitude) = match
+        return float(latitude), float(longitude)
+
