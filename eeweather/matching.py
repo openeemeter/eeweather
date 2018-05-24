@@ -1,6 +1,5 @@
 from . import mappings
 from .connections import metadata_db_connection_proxy
-from .validation import valid_zcta_or_raise
 
 from six import string_types
 
@@ -47,53 +46,3 @@ def match_lat_long(latitude, longitude, mapping=None):
         return result
     else:
         return mappings.ISDStationMapping(result, latitude, longitude)
-
-
-def _get_zcta_lat_long(zcta):
-    conn = metadata_db_connection_proxy.get_connection()
-    cur = conn.cursor()
-    cur.execute('''
-      select
-        latitude
-        , longitude
-      from
-        zcta_metadata
-      where
-        zcta_id = ?
-    ''', (zcta,))
-
-    return cur.fetchone()
-
-
-def _zcta_mapping_factory(mapping):
-    '''
-    # take a dictionary or function and return a function that returns
-    # a mapping result.
-    '''
-    if isinstance(mapping, dict):
-        _get_usaf_id = mapping.get
-    elif callable(mapping):
-        _get_usaf_id = mapping
-    else:
-        raise ValueError("Mapping must be a dict or callable.")
-
-    def func(zcta):
-        valid_zcta_or_raise(zcta)
-        result = _get_usaf_id(zcta)
-        if isinstance(result, mappings.MappingResult):
-            return result
-
-        warnings = []
-        if result is None:
-            warnings.append(
-                'ZCTA ID "{}" was not found in mapping dictionary.'
-                .format(zcta)
-            )
-            return mappings.EmptyMapping(warnings=warnings)
-
-        target_latitude, target_longitude = _get_zcta_lat_long(zcta)
-
-        return mappings.ISDStationMapping(
-            result, target_latitude, target_longitude, warnings=warnings)
-
-    return func
