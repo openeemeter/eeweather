@@ -27,7 +27,7 @@ def test_empty_mapping():
     assert repr(mapping) == "EmptyMapping(warnings=['No mapping result was found.'])"
 
 
-def test_mapping_result_blank_default_kwargs():
+def test_mapping_result_blank_default_kwargs_200km_away():
     mapping = ISDStationMapping('720446', 40, -110)
     assert mapping.target_latitude == 40
     assert mapping.target_longitude == -110
@@ -35,10 +35,25 @@ def test_mapping_result_blank_default_kwargs():
     assert mapping.distance_meters == 2132142
     assert mapping.isd_station.usaf_id == '720446'
     assert mapping.warnings == [
-        'Distance from target to weather station is greater than 50km.'
+        'Distance from target to weather station is greater than 200km.'
     ]
     assert str(mapping) == '720446'
     assert repr(mapping) == "ISDStationMapping('720446', distance_meters=2132142)"
+    assert mapping.is_empty() is False
+
+
+def test_mapping_result_blank_default_kwargs_50km_away():
+    mapping = ISDStationMapping('720446', 38, -87)
+    assert mapping.target_latitude == 38
+    assert mapping.target_longitude == -87
+    assert mapping.target_coords == (38, -87)
+    assert mapping.distance_meters == 133519
+    assert mapping.isd_station.usaf_id == '720446'
+    assert mapping.warnings == [
+        'Distance from target to weather station is greater than 50km.'
+    ]
+    assert str(mapping) == '720446'
+    assert repr(mapping) == "ISDStationMapping('720446', distance_meters=133519)"
     assert mapping.is_empty() is False
 
 

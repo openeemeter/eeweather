@@ -294,7 +294,12 @@ class ISDStationMapping(MappingResult):
                 target_longitude, target_latitude,
                 self.isd_station.longitude, self.isd_station.latitude)[2])
 
-        if distance_meters > 50000:
+        if distance_meters > 200000:
+            # CalTrack 2.4.2
+            self.warnings.append(
+                'Distance from target to weather station is greater than 200km.'
+            )
+        elif distance_meters > 50000:
             self.warnings.append(
                 'Distance from target to weather station is greater than 50km.'
             )
