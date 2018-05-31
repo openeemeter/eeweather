@@ -68,8 +68,10 @@ RUN set -ex && pipenv install --system --deploy --dev
 
 RUN set -ex && pip install cartopy jupyterlab
 
+ENV PYTHONPATH=/app
+
 COPY setup.py README.rst /app/
 COPY eeweather/ /app/eeweather
-RUN set -ex && pip install -e /app
+RUN set -ex && cd /usr/local/lib/ && python /app/setup.py develop
 
 WORKDIR /app
