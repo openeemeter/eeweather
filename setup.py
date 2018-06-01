@@ -14,6 +14,7 @@ from setuptools import find_packages, setup, Command
 
 NAME = 'eeweather'
 REQUIRED = [
+    'requests',
     'click',
     'pandas',
 ]
