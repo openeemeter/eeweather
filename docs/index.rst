@@ -48,7 +48,8 @@ Supported Sources of Weather Data
 Features
 --------
 
-- Match by ZIP code (ZCTA) or by lat/long coordinates
+- Match by lat/long coordinates
+- Convert ZIP code (ZCTA) to lat/long coordinates of its centroid
 - Use user-supplied weather station mappings
 - Match within climate zones
 
