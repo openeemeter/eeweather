@@ -23,7 +23,7 @@ For example::
     export EEWEATHER_CACHE_URL=postgres://user:password@host:port/dbname
 
 ZCTA to latitude/longitude conversion
------------------------
+-------------------------------------
 
 Convert ZCTA targets into latitude/longitudes based on their centroid::
 
