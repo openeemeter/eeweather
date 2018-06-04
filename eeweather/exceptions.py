@@ -118,3 +118,23 @@ class CZ2010DataNotAvailableError(EEWeatherError):
             'CZ2010 data does not exist for station "{}".'
             .format(usaf_id)
         )
+
+
+class NonUTCTimezoneInfoError(EEWeatherError):
+    ''' Raised when input start and end date aren't explicitly defined 
+    to have a UTC timezone.
+
+    Attributes
+    ----------
+    usaf_id : str
+        the USAF ID for which CZ2010 data does not exist.
+    message : str
+        a message describing the error
+    '''
+
+    def __init__(self, this_date):
+        self.message = (
+            '"{}" does not have a UTC timezone. If using the datetime package, it should be'
+            ' in the format datetime(1,1,1,tzinfo=pytz.UTC).'
+            .format(this_date)
+        )

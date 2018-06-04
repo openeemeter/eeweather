@@ -20,6 +20,7 @@ from .exceptions import (
     GSODDataNotAvailableError,
     TMY3DataNotAvailableError,
     CZ2010DataNotAvailableError,
+    NonUTCTimezoneInfoError,
 )
 from .validation import valid_usaf_id_or_raise
 
@@ -763,6 +764,12 @@ def load_cz2010_hourly_temp_data_cached_proxy(
 
 
 def load_isd_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+
+    # CalTRACK 2.2.2.4
+    if start.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
+    if end.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
     data = [
         load_isd_hourly_temp_data_cached_proxy(
             usaf_id, year, read_from_cache=read_from_cache,
@@ -783,6 +790,12 @@ def load_isd_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_t
 
 
 def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+
+    # CalTRACK 2.2.2.4
+    if start.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
+    if end.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
     data = [
         load_isd_daily_temp_data_cached_proxy(
             usaf_id, year, read_from_cache=read_from_cache,
@@ -798,11 +811,17 @@ def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to
     ts = ts[start:end]
 
     # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='D'))
+    ts = ts.reindex(pd.date_range(start, end, freq='D', tz=pytz.UTC))
     return ts
 
 
 def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+
+    # CalTRACK 2.2.2.4
+    if start.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
+    if end.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
     data = [
         load_gsod_daily_temp_data_cached_proxy(
             usaf_id, year, read_from_cache=read_from_cache,
@@ -817,11 +836,17 @@ def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_t
     ts = ts[start:end]
 
     # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='D'))
+    ts = ts.reindex(pd.date_range(start, end, freq='D', tz=pytz.UTC))
     return ts
 
 
 def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+
+    # CalTRACK 2.2.2.4
+    if start.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
+    if end.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
     single_year_data = \
         load_tmy3_hourly_temp_data_cached_proxy(
             usaf_id, read_from_cache=read_from_cache,
@@ -844,11 +869,17 @@ def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_
     ts = ts[start:end]
 
     # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='H'))
+    ts = ts.reindex(pd.date_range(start, end, freq='H', tz=pytz.UTC))
     return ts
 
 
 def load_cz2010_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
+
+    # CalTRACK 2.2.2.4
+    if start.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
+    if end.tzinfo != pytz.UTC:
+        raise NonUTCTimezoneInfoError(start)
     single_year_data = \
         load_cz2010_hourly_temp_data_cached_proxy(
             usaf_id, read_from_cache=read_from_cache,
@@ -871,7 +902,7 @@ def load_cz2010_hourly_temp_data(usaf_id, start, end, read_from_cache=True, writ
     ts = ts[start:end]
 
     # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='H'))
+    ts = ts.reindex(pd.date_range(start, end, freq='H', tz=pytz.UTC))
     return ts
 
 
