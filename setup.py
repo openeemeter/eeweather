@@ -14,9 +14,11 @@ from setuptools import find_packages, setup, Command
 
 NAME = 'eeweather'
 REQUIRED = [
-    'requests',
     'click',
     'pandas',
+    'pyproj',
+    'requests',
+    'shapely',
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
