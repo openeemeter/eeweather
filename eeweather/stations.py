@@ -765,7 +765,7 @@ def load_cz2010_hourly_temp_data_cached_proxy(
 
 def load_isd_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
 
-    # CalTRACK 2.2.2.4
+    # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
@@ -791,7 +791,7 @@ def load_isd_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_t
 
 def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
 
-    # CalTRACK 2.2.2.4
+    # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
@@ -817,7 +817,7 @@ def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to
 
 def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
 
-    # CalTRACK 2.2.2.4
+    # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
@@ -842,7 +842,7 @@ def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_t
 
 def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
 
-    # CalTRACK 2.2.2.4
+    # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
@@ -875,7 +875,7 @@ def load_tmy3_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_
 
 def load_cz2010_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
 
-    # CalTRACK 2.2.2.4
+    # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
