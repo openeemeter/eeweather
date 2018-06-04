@@ -119,7 +119,7 @@ Most of these are also stored as attributes on the object::
     >>> station.iecc_moisture_regime
     'A'
 
-In addition to these simple attributes there are a host of methods that can be used to fetch temperature data. The simplest are these, which return `pandas.Series` objects.
+In addition to these simple attributes there are a host of methods that can be used to fetch temperature data. The simplest are these, which return `pandas.Series` objects. The start and end date timezones must be explicilty set to UTC.
 
 Note that this temperature data is given in degrees *Celsius*, not Fahrenheit. (:math:`T_F = T_C \cdot 1.8 + 32`), and that the ``pd.Timestamp`` index is given in UTC.
 
@@ -127,8 +127,9 @@ Note that this temperature data is given in degrees *Celsius*, not Fahrenheit. (
 ISD temperature data as an hourly time series::
 
     >>> import datetime
-    >>> start_date = datetime.datetime(2016, 6, 1)
-    >>> end_date = datetime.datetime(2017, 9, 15)
+    >>> import pytz
+    >>> start_date = datetime.datetime(2016, 6, 1, tzinfo=pytz.UTC)
+    >>> end_date = datetime.datetime(2017, 9, 15, tzinfo=pytz.UTC)
     >>> tempC = station.load_isd_hourly_temp_data(start_date, end_date)
     >>> tempC.head()
     2016-06-01 00:00:00+00:00    28.291500
