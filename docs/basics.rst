@@ -15,12 +15,12 @@ EEweather is designed to support the process of finding sources of data that cor
 
 EEweather provides sensible default mappings from geographical markers to weather stations so that it can be used out of the box.
 
-EEweather can use either ZCTAs or lat/long coordinates as targets for weather matching. Both of these methods are described below.
+EEweather uses lat/long coordinates as targets for weather matching. This method is described below.
 
 Latitude/Longitude Coordinates
 //////////////////////////////
 
-The recommended way to find the weather station(s) that correspond to a particular site is to use the lat-long coordinates of that site. Lat/long data is not always available, so ZCTAs can also be used.
+The recommended way to find the weather station(s) that correspond to a particular site is to use the lat-long coordinates of that site.
 
 Example usage::
 
@@ -47,38 +47,30 @@ That particular result has no associated warnings, but other mappings may have a
 ZIP Code Tabulation Areas (ZCTAs)
 /////////////////////////////////
 
-ZIP codes are often abused as rough geographic markers. They are not particularly well set up be used as the basis of a GIS system - some ZIP codes correspond to single buildings or post-offices, some cover thousands of square miles of land. The US Census Bureau transforms census blocks into what they call ZIP Code Tabulation Areas, and use these instead. There are roughly 10k ZIP codes that are not used as ZCTAs, and ZCTAs do not correspond directly to ZIP codes, but for matching to weather stations, which are much sparser than ZIP codes, this rough mapping is usually sufficient. Often tens or hundreds of ZCTAs will be matched to the same weather station.
+ZIP codes are often abused as rough geographic markers. They are not particularly well set up be used as the basis of a GIS system - some ZIP codes correspond to single buildings or post-offices, some cover thousands of square miles of land. The US Census Bureau transforms census blocks into what they call ZIP Code Tabulation Areas, and use these instead. There are roughly 10k ZIP codes that are not used as ZCTAs, and ZCTAs do not correspond directly to ZIP codes, but for matching to weather stations, which are much sparser than ZIP codes, this rough mapping is usually sufficient. Often tens or hundreds of ZCTAs will be matched to the same weather station. We provide a function :any:`eeweather.zcta_to_lat_long` which allows for a ZCTA to be converted into a latitude and longitude (the centroid of the ZCTA) which can be used to match to a weather station using the latitude/longitude method mentioned above.
 
 .. image:: _static/station-mapping.png
    :target: _static/station-mapping.png
-
-*Our default mapping of ZCTA centroids (points at spokes) to high-quality ISD stations (points at centers).*
 
 .. note:: The default mapping concentrates on weather stations in US states (including AK, HI) and territories, including PR, GU, VI etc).
 
 Example usage::
 
-    >>> result = eeweather.match_zcta('70001')
-    >>> result
-    ISDStationMapping('998194')
-
-This ``ISDStationMapping`` object also captures some information about the mapping::
-
-    >>> result.distance_meters
-    6088
-    >>> result.warnings
-    []
+    >>> lat, long = eeweather.zcta_to_lat_long('91104')
+    >>> lat, long
+    (34.1678418058534, -118.123485581459)
 
 Obtaining temperature data
 --------------------------
 
 These matching results carry a reference to a weather station object. The weather station object has some associated metadata and - most importantly - has methods for obtaining weather data.
 
-Let's look at the mapping result object from the section above::
+Let's look at the following mapping result object::
 
+    >>> result = eeweather.match_lat_long(35, -95)
     >>> station = result.isd_station
     >>> station
-    ISDStation('722500')
+    ISDStation('722178')
 
 This ``ISDStation`` object carries information about that station and methods for fetching corresponding weather data.
 
@@ -87,19 +79,21 @@ The ``.json()`` method gives a quick summary of associated metadata in a format 
     >>> import json
     >>> print(json.dumps(station.json(), indent=2)
     {
-      "elevation": 7.3,
-      "latitude": 25.914,
-      "longitude": -97.423,
-      "name": "BROWNSVILLE/S PADRE  ISLAND INTL AP",
+      "elevation": 137.5,
+      "latitude": 35.021,
+      "longitude": -94.621,
+      "icao_code": "KRKR",
+      "name": "ROBERT S KERR AIRPORT",
       "quality": "high",
       "wban_ids": [
-        "12919"
+        "53953",
+        "99999"
       ],
-      "recent_wban_id": "12919",
+      "recent_wban_id": "53953",
       "climate_zones": {
-        "iecc_climate_zone": "2",
+        "iecc_climate_zone": "3",
         "iecc_moisture_regime": "A",
-        "ba_climate_zone": "Hot-Humid",
+        "ba_climate_zone": "Mixed-Humid",
         "ca_climate_zone": null
       }
     }
@@ -107,15 +101,15 @@ The ``.json()`` method gives a quick summary of associated metadata in a format 
 Most of these are also stored as attributes on the object::
 
     >>> station.usaf_id
-    '722500'
+    '722178'
     >>> station.latitude, station.longitude
-    (25.914, -97.423)
+    (35.021, -94.621)
     >>> station.coords
-    (25.914, -97.423)
+    (35.021, -94.621)
     >>> station.name
-    'BROWNSVILLE/S PADRE  ISLAND INTL AP'
+    'ROBERT S KERR AIRPORT'
     >>> station.iecc_climate_zone
-    '2'
+    '3'
     >>> station.iecc_moisture_regime
     'A'
 
@@ -131,54 +125,107 @@ ISD temperature data as an hourly time series::
     >>> end_date = datetime.datetime(2017, 9, 15)
     >>> tempC = station.load_isd_hourly_temp_data(start_date, end_date)
     >>> tempC.head()
-    2016-06-01 00:00:00+00:00    28.291500
-    2016-06-01 01:00:00+00:00    27.438500
-    2016-06-01 02:00:00+00:00    27.197083
-    2016-06-01 03:00:00+00:00    26.898750
-    2016-06-01 04:00:00+00:00    26.701810
+    2016-06-01 00:00:00+00:00    21.3692
+    2016-06-01 01:00:00+00:00    20.6325
+    2016-06-01 02:00:00+00:00    19.4858
+    2016-06-01 03:00:00+00:00    19.0883
+    2016-06-01 04:00:00+00:00    18.8858
     Freq: H, dtype: float64
     >>> tempF = tempC * 1.8 + 32
     >>> tempF.head()
-    2016-06-01 00:00:00+00:00    82.924700
-    2016-06-01 01:00:00+00:00    81.389300
-    2016-06-01 02:00:00+00:00    80.954750
-    2016-06-01 03:00:00+00:00    80.417750
-    2016-06-01 04:00:00+00:00    80.063259
+    2016-06-01 00:00:00+00:00    70.46456
+    2016-06-01 01:00:00+00:00    69.13850
+    2016-06-01 02:00:00+00:00    67.07444
+    2016-06-01 03:00:00+00:00    66.35894
+    2016-06-01 04:00:00+00:00    65.99444
 
 ISD temperature data as a daily time series::
 
     >>> tempC = station.load_isd_daily_temp_data(start_date, end_date)
     >>> tempC.head()
-    2016-06-01 00:00:00+00:00    26.017917
-    2016-06-02 00:00:00+00:00    26.256624
-    2016-06-03 00:00:00+00:00    24.297847
-    2016-06-04 00:00:00+00:00    23.836875
-    2016-06-05 00:00:00+00:00    23.782465
+    2016-06-01 00:00:00+00:00    21.329063
+    2016-06-02 00:00:00+00:00    21.674583
+    2016-06-03 00:00:00+00:00    22.434306
+    2016-06-04 00:00:00+00:00    22.842674
+    2016-06-05 00:00:00+00:00    21.850521
     Freq: D, dtype: float64
     >>> tempF = tempC * 1.8 + 32
     >>> tempF.head()
-    2016-06-01 00:00:00+00:00    78.83222
-    2016-06-02 00:00:00+00:00    79.26188
-    2016-06-03 00:00:00+00:00    75.73604
-    2016-06-04 00:00:00+00:00    74.90642
-    2016-06-05 00:00:00+00:00    74.80850
+    2016-06-01 00:00:00+00:00    70.392313
+    2016-06-02 00:00:00+00:00    71.014250
+    2016-06-03 00:00:00+00:00    72.381750
+    2016-06-04 00:00:00+00:00    73.116813
+    2016-06-05 00:00:00+00:00    71.330937
     Freq: D, dtype: float64
 
 GSOD temperature data as a daily time series::
 
     >>> tempC = station.load_gsod_daily_temp_data(start_date, end_date)
     >>> tempC.head()
-    2016-06-01 00:00:00+00:00    26.055556
-    2016-06-02 00:00:00+00:00    26.388889
-    2016-06-03 00:00:00+00:00    24.555556
-    2016-06-04 00:00:00+00:00    23.888889
-    2016-06-05 00:00:00+00:00    23.722222
+    2016-06-01 00:00:00+00:00    21.111111
+    2016-06-02 00:00:00+00:00    21.833333
+    2016-06-03 00:00:00+00:00    22.277778
+    2016-06-04 00:00:00+00:00    22.777778
+    2016-06-05 00:00:00+00:00    21.833333
     Freq: D, dtype: float64
     >>> tempF = temps * 1.8 + 32
     >>> tempF.head()
-    2016-06-01 00:00:00+00:00    78.83222
-    2016-06-02 00:00:00+00:00    79.26188
-    2016-06-03 00:00:00+00:00    75.73604
-    2016-06-04 00:00:00+00:00    74.90642
-    2016-06-05 00:00:00+00:00    74.80850
+    2016-06-01 00:00:00+00:00    70.0
+    2016-06-02 00:00:00+00:00    71.3
+    2016-06-03 00:00:00+00:00    72.1
+    2016-06-04 00:00:00+00:00    73.0
+    2016-06-05 00:00:00+00:00    71.3
     Freq: D, dtype: float64
+
+This station does not contain TMY3 data. To require that TMY3 data is available at the matched weather station, replace the default mapping which ones that only maps to stations containing TMY3 data:: 
+
+    >>> from eeweather.mappings import oee_lat_long_tmy3
+    >>> result = eeweather.match_lat_long(35, -95, mapping=oee_lat_long_tmy3)
+    >>> station = result.isd_station
+    ISDStation('785430')
+
+TMY3 temperature data as an hourly time series::
+
+    >>> tempC = station.load_tmy3_hourly_temp_data(start_date, end_date)
+    >>> tempC.head()
+
+    2016-06-01 00:00:00+00:00    26.7
+    2016-06-01 01:00:00+00:00    26.3
+    2016-06-01 02:00:00+00:00    26.0
+    2016-06-01 03:00:00+00:00    25.6
+    2016-06-01 04:00:00+00:00    25.3
+    Freq: D, dtype: float64
+    >>> tempF = temps * 1.8 + 32
+    >>> tempF.head()
+    2016-06-01 00:00:00+00:00    80.06
+    2016-06-01 01:00:00+00:00    79.34
+    2016-06-01 02:00:00+00:00    78.80
+    2016-06-01 03:00:00+00:00    78.08
+    2016-06-01 04:00:00+00:00    77.54
+    Freq: D, dtype: float64
+
+A similar mapping can be done for CZ2010 stations, which are specific to California:: 
+
+    >>> from eeweather.mappings import oee_lat_long_cz2010
+    >>> result = eeweather.match_lat_long(35, -95, mapping=oee_lat_long_cz2010)
+    >>> station = result.isd_station
+    ISDStation('723805')
+
+CZ2010 temperature data as an hourly time series::
+
+    >>> tempC = station.load_cz2010_hourly_temp_data(start_date, end_date)
+    >>> tempC.head()
+    2016-06-01 00:00:00+00:00    26.7
+    2016-06-01 01:00:00+00:00    26.3
+    2016-06-01 02:00:00+00:00    26.0
+    2016-06-01 03:00:00+00:00    25.6
+    2016-06-01 04:00:00+00:00    25.3
+    Freq: D, dtype: float64
+    >>> tempF = temps * 1.8 + 32
+    >>> tempF.head()
+    2016-06-01 00:00:00+00:00    80.06
+    2016-06-01 01:00:00+00:00    79.34
+    2016-06-01 02:00:00+00:00    78.80
+    2016-06-01 03:00:00+00:00    78.08
+    2016-06-01 04:00:00+00:00    77.54
+    Freq: H, dtype: float64

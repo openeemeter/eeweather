@@ -71,11 +71,6 @@ Command-line Usage
 
 Once installed, ``eeweather`` can be run from the command-line. To see all available commands, run ``eeweather --help``.
 
-Find a weather station near the ZIP code 90001::
-
-    $ eeweather match_zcta 90001
-    722874
-
 Find a weather station near the lat-long coordinate (38.561, -121.487)::
 
     $ eeweather match_lat_long -- 38.561 -121.487
@@ -113,11 +108,11 @@ Enter the SQLite command line for the metadata database::
     SQLite version 3.19.3 2017-06-27 16:48:08
     Enter ".help" for usage hints.
     sqlite> .tables
-    ba_climate_zone_metadata       isd_station_metadata
-    ca_climate_zone_metadata       tmy3_station_metadata
-    iecc_climate_zone_metadata     zcta_metadata
-    iecc_moisture_regime_metadata  zcta_to_isd_station
-    isd_file_metadata              zipcode_to_cz2010_station
+    ba_climate_zone_metadata       isd_file_metadata            
+    ca_climate_zone_metadata       isd_station_metadata         
+    cz2010_station_metadata        tmy3_station_metadata        
+    iecc_climate_zone_metadata     zcta_metadata                
+    iecc_moisture_regime_metadata
     sqlite> .headers on
     sqlite> select * from isd_station_metadata where ca_climate_zone = 'CA_06' limit 10;
     usaf_id|wban_ids|recent_wban_id|name|latitude|longitude|elevation|quality|iecc_climate_zone|iecc_moisture_regime|ba_climate_zone|ca_climate_zone

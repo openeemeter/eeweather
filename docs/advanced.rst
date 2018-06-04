@@ -22,41 +22,86 @@ For example::
 
     export EEWEATHER_CACHE_URL=postgres://user:password@host:port/dbname
 
-Custom Weather Mappings
+ZCTA to latitude/longitude conversion
+-----------------------
+
+Convert ZCTA targets into latitude/longitudes based on their centroid::
+
+    >>> eeweather.zcta_to_lat_long(90210)
+    (34.1010279124639, -118.414760978568)
+
+If the ZCTA or station is not recognized, an error will be thrown::
+
+    >>> eeweather.zcta_to_lat_long('BAD_ZCTA')
+    ...
+    UnrecognizedZCTAError: BAD_STATION
+
+Custom weather mappings
 -----------------------
 
 To use a custom weather mapping, a dictionary or function can be passed to one of the matching functions.
 
-Example with dict::
-
-    >>> mapping = {'93505': '723171'}
-    >>> eeweather.match_zcta('93505', mapping=mapping)
-    ISDStationMapping('723171')
-
 Example with function returning ISDStationMapping::
 
-    >>> mapping = lambda zcta: '722860'
-    >>> eeweather.match_zcta('93505', mapping=mapping)
-    ISDStationMapping('723171')
+    >>> lat, long = 34.0522, -118.2437
+    >>> mapping = lambda lat, long: '722880'
+    >>> eeweather.match_lat_long(lat,long, mapping = mapping)
+    ISDStationMapping('722880', distance_meters=19585)
 
-Example with library function returning mappings::
+Example with library function returning mappings based only on distance::
 
-    >>> from eeweather.mappings import zcta_naive_closest_high_quality
-    >>> eeweather.match_zcta('93505', mapping=zcta_naive_closest_high_quality)
-    ISDStationMapping('723171')
+    >>> from eeweather.mappings import lat_long_naive_closest
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest)
+    ISDStationMapping('722874', distance_meters=5372)
 
-If the supplied mapping does not contain the ZCTA target, an empty mapping result will be returned::
+Example with library function returning mappings for stations based only on distance that contain TMY3 data::
 
-    >>> eeweather.match_zcta('93501', mapping=mapping)
-    EmptyMapping(warnings=['ZCTA ID "93501" was not found in mapping dictionary.'])
+    >>> from eeweather.mappings import lat_long_naive_closest_tmy3
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest)
+    ISDStationMapping('722956', distance_meters=16583)
 
-If the ZCTA or station is not recognized, an error will be thrown::
+Example with library function returning mappings for stations based only on distance that contain CZ2010 data::
 
-    >>> mapping = {'93505': 'BAD_STATION'}
-    >>> eeweather.match_zcta('BAD_ZCTA', mapping=mapping)
-    ...
-    eeweather.exceptions.UnrecognizedZCTAError: BAD_ZCTA
-    >>> eeweather.match_zcta('93505', mapping=mapping)
+    >>> from eeweather.mappings import lat_long_naive_closest_cz2010
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest_cz2010)
+    ISDStationMapping('722956', distance_meters=16583)
+
+Example with library function returning mappings based on distance within the same climate_zone::
+
+    >>> from eeweather.mappings import lat_long_closest_within_climate_zone
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone)
+    ISDStationMapping('722880', distance_meters=19585)
+
+Example with library function returning mappings based on distance within the same climate_zone that contain TMY3 data::
+
+    >>> from eeweather.mappings import lat_long_closest_within_climate_zone_tmy3
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone_tmy3)
+    IISDStationMapping('722880', distance_meters=19585)
+
+Example with library function returning mappings based on distance within the same climate_zone that contain CZ2010 data::
+
+    >>> from eeweather.mappings import lat_long_closest_within_climate_zone_cz2010
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone_cz2010)
+    ISDStationMapping('722880', distance_meters=19585)
+
+Example with library function returning mappings for stations based only on distance that contain CZ2010 data::
+
+    >>> from eeweather.mappings import lat_long_naive_closest_cz2010
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest_cz2010)
+    ISDStationMapping('722956', distance_meters=16583)
+
+
+If the station is not recognized, an error will be thrown::
+    >>> lat, long = 34.0522, -1108.2437
+    >>> mapping = lambda lat, long: 'BAD_STATION'
+    >>> eeweather.match_lat_long(lat, long, mapping=mapping)
     ...
     eeweather.exceptions.UnrecognizedUSAFIDError: BAD_STATION
 
@@ -67,7 +112,8 @@ Charting ISDStationMapping objects
 
 Within (for example) a jupyter notebook you can create plots like this::
 
-    result = eeweather.match_zcta('91104')
+    lat, long = 34.0522, -1108.2437
+    result = eeweather.match_lat_long(lat, long)
     result.plot()
 
 This will create a plot like the following:
@@ -113,45 +159,6 @@ Get more information about a specific ISD station.
       isd_station_metadata
     where
       usaf_id = '722860'
-
-List top ten closest ISD stations for a particular ZCTA:
-
-.. code-block:: sql
-
-    select
-      *
-    from
-      zcta_to_isd_station
-    where
-      zcta_id = '90001'
-    order by
-      rank
-
-Find closest high quality ISD station in the same climate zones with high quality data, reporting distance to that station, and the lat/long coordinates of the target ZCTA:
-
-.. code-block:: sql
-
-    select
-      z2i.usaf_id
-      , z2i.distance_meters
-      , zcta.latitude
-      , zcta.longitude
-    from
-      zcta_to_isd_station z2i
-      join isd_station_metadata isd on
-        z2i.usaf_id = isd.usaf_id
-      join zcta_metadata zcta on
-        z2i.zcta_id = zcta.zcta_id
-    where
-      z2i.zcta_id = '90001'
-      and isd.quality = 'high'
-      and z2i.iecc_climate_zone_match
-      and z2i.iecc_moisture_regime_match
-      and z2i.ba_climate_zone_match
-      and z2i.ca_climate_zone_match
-    order by
-      rank
-    limit 1
 
 Rebuilding the Database
 -----------------------
