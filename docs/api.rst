@@ -5,7 +5,6 @@
    eeweather
    resampled
    oee
-   zcta
    metadata
    resample
    matplotlib
@@ -21,21 +20,6 @@ API Docs
 
 Matching
 --------
-
-.. autofunction:: eeweather.match_zcta
-
-Mappings for use with ``eeweather.match_zcta``
-//////////////////////////////////////////////
-
-.. autofunction:: eeweather.mappings.zcta_closest_within_climate_zone
-
-.. autofunction:: eeweather.mappings.zcta_naive_closest_high_quality
-
-.. autofunction:: eeweather.mappings.zcta_naive_closest_medium_quality
-
-.. autofunction:: eeweather.mappings.oee_zcta
-
-------------
 
 .. autofunction:: eeweather.match_lat_long
 
