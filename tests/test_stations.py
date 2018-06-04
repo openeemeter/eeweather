@@ -76,6 +76,7 @@ from eeweather.exceptions import (
     GSODDataNotAvailableError,
     TMY3DataNotAvailableError,
     CZ2010DataNotAvailableError,
+    NonUTCTimezoneInfoError,
 )
 from eeweather.testing import (
     MockNOAAFTPConnectionProxy,
@@ -1586,3 +1587,78 @@ def test_load_correctly_sliced_cz2010_hourly_temp_data(
             assert pd.isnull(ts[i])
         else:
             assert ts[i] == ts_orig[i.replace(year=1900)]
+
+
+def test_isd_station_load_isd_hourly_temp_data_tz_exception(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 4, 10)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_isd_hourly_temp_data(start, end)
+
+    start = datetime(2007, 4, 10, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_isd_hourly_temp_data(start, end)
+
+
+def test_isd_station_load_isd_daily_temp_data_tz_exception(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 4, 10)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_isd_daily_temp_data(start, end)
+
+    start = datetime(2007, 4, 10, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_isd_daily_temp_data(start, end)
+
+
+def test_isd_station_load_gsod_daily_temp_data_tz_exception(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 4, 10)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_gsod_daily_temp_data(start, end)
+
+    start = datetime(2007, 4, 10, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_gsod_daily_temp_data(start, end)
+
+
+def test_isd_station_load_tmy3_hourly_temp_data_tz_exception(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 4, 10)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_tmy3_hourly_temp_data(start, end)
+
+    start = datetime(2007, 4, 10, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_tmy3_hourly_temp_data(start, end)
+
+
+def test_isd_station_load_cz2010_hourly_temp_data_tz_exception(
+        monkeypatch_tmy3_request, monkeypatch_key_value_store):
+
+    station = ISDStation('722880')
+    start = datetime(2007, 4, 10)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_cz2010_hourly_temp_data(start, end)
+
+    start = datetime(2007, 4, 10, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 12)
+    with pytest.raises(NonUTCTimezoneInfoError):
+        ts = station.load_cz2010_hourly_temp_data(start, end)

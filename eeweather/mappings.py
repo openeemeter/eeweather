@@ -9,13 +9,13 @@ __all__ = (
     'MappingResult',
     'EmptyMapping',
     'ISDStationMapping',
-    'lat_long_naive_closest_isd',
+    'lat_long_naive_closest',
     'lat_long_naive_closest_tmy3',
     'lat_long_naive_closest_cz2010',
-    'lat_long_closest_within_climate_zone_isd',
+    'lat_long_closest_within_climate_zone',
     'lat_long_closest_within_climate_zone_tmy3',
     'lat_long_closest_within_climate_zone_cz2010',
-    'oee_lat_long_isd',
+    'oee_lat_long',
     'oee_lat_long_tmy3',
     'oee_lat_long_cz2010',
     'plot_mapping_results',
@@ -295,7 +295,7 @@ class ISDStationMapping(MappingResult):
                 self.isd_station.longitude, self.isd_station.latitude)[2])
 
         if distance_meters > 200000:
-            # CalTrack 2.4.2
+            # CalTRACK 2.4.2
             self.warnings.append(
                 'Distance from target to weather station is greater than 200km.'
             )
