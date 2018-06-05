@@ -210,7 +210,7 @@ def zcta_to_lat_long(zcta):
             zcta_id = ?
         ''', (zcta,))
         match = cur.fetchone()
-        #match existence checked in validate_zcta_or_raise(zcta)
+
+        # match existence checked in validate_zcta_or_raise(zcta)
         (latitude, longitude) = match
         return float(latitude), float(longitude)
-
