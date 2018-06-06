@@ -36,6 +36,10 @@ from .summaries import (
     get_zcta_ids,
     get_isd_station_usaf_ids,
 )
+from .ranking import (
+    get_candidate_stations,
+)
+
 from .stations import (
     ISDStation,
     get_isd_filenames,

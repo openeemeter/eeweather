@@ -15,11 +15,11 @@ def test_get_zcta_ids_by_state():
 
 def test_get_isd_station_usaf_ids():
     usaf_ids = get_isd_station_usaf_ids()
-    assert len(usaf_ids) == 3863
+    assert len(usaf_ids) == 3895
     assert usaf_ids[0] == '102540'
 
 
 def test_get_isd_station_usaf_ids_by_state():
     usaf_ids = get_isd_station_usaf_ids(state='IL')
-    assert len(usaf_ids) == 76
+    assert len(usaf_ids) == 77
     assert usaf_ids[0] == '720137'

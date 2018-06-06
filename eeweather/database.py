@@ -105,10 +105,13 @@ def _load_isd_station_metadata(download_path):
             'recent_wban_id': recent.WBAN,
             'name': recent['STATION NAME'],
             'icao_code': recent.ICAO,
-            'latitude': recent.LAT,
-            'longitude': recent.LON,
+            'latitude': recent.LAT \
+                if recent.LAT not in ('+00.000',) else None,
+            'longitude': recent.LON \
+                if recent.LON not in ('+000.000',) else None,
             'point': Point(float(recent.LON), float(recent.LAT)),
-            'elevation': recent['ELEV(M)'],
+            'elevation': recent['ELEV(M)'] \
+                if not str(float(recent['ELEV(M)'])).startswith('-999') else None,
             'state': recent.STATE,
         }
 
@@ -541,8 +544,8 @@ def _create_table_structures(conn):
         , recent_wban_id text not null
         , name text not null
         , icao_code text
-        , latitude text not null
-        , longitude text not null
+        , latitude text
+        , longitude text
         , elevation text
         , state text
         , quality text default 'low'

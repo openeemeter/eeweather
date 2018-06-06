@@ -649,7 +649,7 @@ def _lat_long_closest_within_climate_zone(latitude, longitude, stations_metadata
             'No weather stations in the target climate zone.'
         ])
 
-    isd_usaf_ids, isd_lats, isd_lngs = isd_results 
+    isd_usaf_ids, isd_lats, isd_lngs = isd_results
 
     isd_lats = np.array(isd_lats)
     isd_lngs = np.array(isd_lngs)
