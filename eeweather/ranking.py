@@ -2,12 +2,15 @@ import pandas as pd
 import numpy as np
 import pyproj
 
+from .mappings import ISDStationMapping, plot_mapping_results
 from .api import get_lat_long_climate_zones
 from .connections import metadata_db_connection_proxy
 from .utils import lazy_property
 
 __all__ = (
-    'get_candidate_stations',
+    'ranked_candidate_stations',
+    'combine_ranked_candidates',
+    'ranked_mappings',
 )
 
 class CachedData(object):
@@ -72,7 +75,7 @@ def _combine_filters(filters, index):
     return combined_filters
 
 
-def get_candidate_stations(
+def ranked_candidate_stations(
     site_latitude, site_longitude, site_state=None, site_elevation=None,
     match_iecc_climate_zone=False, match_iecc_moisture_regime=False,
     match_ba_climate_zone=False, match_ca_climate_zone=False,
@@ -80,6 +83,8 @@ def get_candidate_stations(
     max_distance_meters=None, max_difference_elevation_meters=None,
     is_tmy3=None, is_cz2010=None,
 ):
+    ''' Get a ranked, filtered set of candidate weather stations and metadata.
+    '''
     candidates = cached_data.all_station_metadata
 
     # compute distances
@@ -169,5 +174,48 @@ def get_candidate_stations(
 
     combined_filters = _combine_filters(filters, candidates.index)
     filtered_candidates = candidates[combined_filters]
-    ranked_filtered_candidates = filtered_candidates.sort_values(by=['distance_meters'])
-    return ranked_filtered_candidates
+    ranked_filtered_candidates = filtered_candidates.sort_values(
+        by=['distance_meters'])
+
+    # add rank column
+    ranks = range(1, 1 + len(ranked_filtered_candidates))
+    ranked_filtered_candidates.insert(0, 'rank', ranks)
+
+    return ranked_filtered_candidates[[
+        'rank', 'distance_meters', 'latitude', 'longitude',
+        'iecc_climate_zone', 'iecc_moisture_regime',
+        'ba_climate_zone', 'ca_climate_zone',
+        'rough_quality', 'elevation', 'state',
+        'tmy3_class', 'is_tmy3', 'is_cz2010', 'difference_elevation_meters'
+    ]]
+
+
+def combine_ranked_candidates(rankings):
+    ''' Combine :any:`pandas.DataFrame`s of candidate weather stations to form
+    a hybrid ranking.
+    '''
+
+    if len(rankings) == 0:
+        raise ValueError('Requires at least one ranking.')
+
+    combined_ranking = rankings[0]
+    for ranking in rankings[1:]:
+        filtered_ranking = ranking[~ranking.index.isin(combined_ranking.index)]
+        combined_ranking = pd.concat([combined_ranking, filtered_ranking])
+
+    combined_ranking['rank'] = range(1, 1 + len(combined_ranking))
+    return combined_ranking
+
+
+def ranked_mappings(site_latitude, site_longitude, candidates):
+    ''' Create ISDStationMappings for each candidate.
+    '''
+    return [
+        ISDStationMapping(
+            usaf_id=usaf_id,
+            target_latitude=site_latitude,
+            target_longitude=site_longitude,
+            distance_meters=candidate.distance_meters,
+        )
+        for usaf_id, candidate in candidates.iterrows()
+    ]
