@@ -2,7 +2,7 @@ from .connections import metadata_db_connection_proxy
 
 __all__ = (
     'get_zcta_ids',
-    'get_zcta_ids',
+    'get_isd_station_usaf_ids',
 )
 
 

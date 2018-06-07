@@ -11,16 +11,22 @@ This document describes how to get started with eeweather.
 Matching to weather stations
 ----------------------------
 
-EEweather is designed to support the process of finding sources of data that correspond to particular sites. As there are many approaches to this process of matching, the EEweather package is designed to be flexible and to accommodate many different approaches.
+EEweather is designed to support the process of finding sources of data that
+correspond to particular sites. As there are many approaches to this process
+of matching, the EEweather package is designed to be flexible and to
+accommodate many different approaches.
 
-EEweather provides sensible default mappings from geographical markers to weather stations so that it can be used out of the box.
+EEweather provides sensible default mappings from geographical markers to
+weather stations so that it can be used out of the box.
 
-EEweather uses lat/long coordinates as targets for weather matching. This method is described below.
+EEweather uses lat/long coordinates as targets for weather matching.
+This method is described below.
 
 Latitude/Longitude Coordinates
 //////////////////////////////
 
-The recommended way to find the weather station(s) that correspond to a particular site is to use the lat-long coordinates of that site.
+The recommended way to find the weather station(s) that correspond to a
+particular site is to use the lat-long coordinates of that site.
 
 Example usage::
 
@@ -36,7 +42,10 @@ This ``ISDStationMapping`` object captures some information about the mapping::
     >>> result.warnings
     []
 
-That particular result has no associated warnings, but other mappings may have associated warnings, such as the mapping from this point which is in the middle of the Gulf of Mexico, 700km away from the nearest weather station and outside of the climate zone boundary::
+That particular result has no associated warnings, but other mappings may have
+associated warnings, such as the mapping from this point which is in the middle
+of the Gulf of Mexico, 700km away from the nearest weather station and outside
+of the climate zone boundary::
 
     >>> result = eeweather.match_lat_long(20, -95)
     >>> result.distance_meters
@@ -47,12 +56,24 @@ That particular result has no associated warnings, but other mappings may have a
 ZIP Code Tabulation Areas (ZCTAs)
 /////////////////////////////////
 
-ZIP codes are often abused as rough geographic markers. They are not particularly well set up be used as the basis of a GIS system - some ZIP codes correspond to single buildings or post-offices, some cover thousands of square miles of land. The US Census Bureau transforms census blocks into what they call ZIP Code Tabulation Areas, and use these instead. There are roughly 10k ZIP codes that are not used as ZCTAs, and ZCTAs do not correspond directly to ZIP codes, but for matching to weather stations, which are much sparser than ZIP codes, this rough mapping is usually sufficient. Often tens or hundreds of ZCTAs will be matched to the same weather station. We provide a function :any:`eeweather.zcta_to_lat_long` which allows for a ZCTA to be converted into a latitude and longitude (the centroid of the ZCTA) which can be used to match to a weather station using the latitude/longitude method mentioned above.
+ZIP codes are often abused as rough geographic markers. They are not
+particularly well set up be used as the basis of a GIS system - some ZIP codes
+correspond to single buildings or post-offices, some cover thousands of square
+miles of land. The US Census Bureau transforms census blocks into what they
+call ZIP Code Tabulation Areas, and use these instead. There are roughly 10k
+ZIP codes that are not used as ZCTAs, and ZCTAs do not correspond directly to
+ZIP codes, but for matching to weather stations, which are much sparser than
+ZIP codes, this rough mapping is usually sufficient. Often tens or hundreds of
+ZCTAs will be matched to the same weather station. We provide a function
+:any:`eeweather.zcta_to_lat_long` which allows for a ZCTA to be converted into
+a latitude and longitude (the centroid of the ZCTA) which can be used to match
+to a weather station using the latitude/longitude method mentioned above.
 
 .. image:: _static/station-mapping.png
    :target: _static/station-mapping.png
 
-.. note:: The default mapping concentrates on weather stations in US states (including AK, HI) and territories, including PR, GU, VI etc).
+.. note:: The default mapping concentrates on weather stations in US states
+   (including AK, HI) and territories, including PR, GU, VI etc).
 
 Example usage::
 
@@ -63,7 +84,9 @@ Example usage::
 Obtaining temperature data
 --------------------------
 
-These matching results carry a reference to a weather station object. The weather station object has some associated metadata and - most importantly - has methods for obtaining weather data.
+These matching results carry a reference to a weather station object. The
+weather station object has some associated metadata and - most importantly -
+has methods for obtaining weather data.
 
 Let's look at the following mapping result object::
 
@@ -72,9 +95,11 @@ Let's look at the following mapping result object::
     >>> station
     ISDStation('722178')
 
-This ``ISDStation`` object carries information about that station and methods for fetching corresponding weather data.
+This ``ISDStation`` object carries information about that station and methods
+for fetching corresponding weather data.
 
-The ``.json()`` method gives a quick summary of associated metadata in a format that can easily be serialized::
+The ``.json()`` method gives a quick summary of associated metadata in a
+format that can easily be serialized::
 
     >>> import json
     >>> print(json.dumps(station.json(), indent=2)

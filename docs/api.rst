@@ -32,6 +32,15 @@ Mappings for use with ``eeweather.match_lat_long``
 
 .. autofunction:: eeweather.mappings.oee_lat_long
 
+Ranking
+-------
+
+.. autofunction:: eeweather.ranked_candidate_stations
+
+.. autofunction:: eeweather.combine_ranked_candidates
+
+.. autofunction:: eeweather.ranked_mappings
+
 ``MappingResult`` objects
 -------------------------
 

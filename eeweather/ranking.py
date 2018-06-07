@@ -83,7 +83,84 @@ def ranked_candidate_stations(
     max_distance_meters=None, max_difference_elevation_meters=None,
     is_tmy3=None, is_cz2010=None,
 ):
-    ''' Get a ranked, filtered set of candidate weather stations and metadata.
+    ''' Get a ranked, filtered set of candidate weather stations and metadata
+    for a particular site.
+
+    Parameters
+    ----------
+    site_latitude : float
+        Latitude of target site for which to find candidate weather stations.
+    site_longitude : float
+        Longitude of target site for which to find candidate weather stations.
+    site_state : str, 2 letter abbreviation
+        US state of target site, used optionally to filter potential candidate
+        weather stations. Ignored unless ``match_state=True``.
+    site_elevation : float
+        Elevation of target site in meters, used optionally to filter potential
+        candidate weather stations. Ignored unless
+        ``max_difference_elevation_meters`` is set.
+    match_iecc_climate_zone : bool
+        If ``True``, filter candidate weather stations to those
+        matching the IECC climate zone of the target site.
+    match_iecc_moisture_regime : bool
+        If ``True``, filter candidate weather stations to those
+        matching the IECC moisture regime of the target site.
+    match_ca_climate_zone : bool
+        If ``True``, filter candidate weather stations to those
+        matching the CA climate zone of the target site.
+    match_ba_climate_zone : bool
+        If ``True``, filter candidate weather stations to those
+        matching the Building America climate zone of the target site.
+    match_state : bool
+        If ``True``, filter candidate weather stations to those
+        matching the US state of the target site, as specified by
+        ``site_state=True``.
+    minimum_quality : str, ``'high'``, ``'medium'``, ``'low'``
+        If given, filter candidate weather stations to those meeting or
+        exceeding the given quality, as summarized by the frequency and
+        availability of observations in the NOAA Integrated Surface Database.
+    minimum_tmy3_class : str, ``'I'``, ``'II'``, ``'III'``
+        If given, filter candidate weather stations to those meeting or
+        exceeding the given class, as reported in the NREL TMY3 metadata.
+    max_distance_meters : float
+        If given, filter candidate weather stations to those within the
+        ``max_distance_meters`` of the target site location.
+    max_difference_elevation_meters : float
+        If given, filter candidate weather stations to those with elevations
+        within ``max_difference_elevation_meters`` of the target site elevation.
+    is_tmy3 : bool
+        If given, filter candidate weather stations to those for which TMY3
+        normal year temperature data is available.
+    is_cz2010 : bool
+        If given, filter candidate weather stations to those for which CZ2010
+        normal year temperature data is available.
+
+    Returns
+    -------
+    ranked_filtered_candidates : :any:`pandas.DataFrame`
+        Index is ``usaf_id``.  Each row contains a potential weather station
+        match and metadata. Contains the following columns:
+
+        - ``rank``: Rank of weather station match for the target site.
+        - ``distance_meters``: Distance from target site to weather station site.
+        - ``latitude``: Latitude of weather station site.
+        - ``longitude``: Longitude of weather station site.
+        - ``iecc_climate_zone``: IECC Climate Zone ID (1-8)
+        - ``iecc_moisture_regime``: IECC Moisture Regime ID (A-C)
+        - ``ba_climate_zone``: Building America climate zone name
+        - ``ca_climate_zone``: Califoria climate zone number
+        - ``rough_quality``: Approximate measure of frequency of ISD
+          observations data at weather station.
+        - ``elevation``: Elevation of weather station site, if available.
+        - ``state``: US state of weather station site, if applicable.
+        - ``tmy3_class``: Weather station class as reported by NREL TMY3, if
+          available
+        - ``is_tmy3``: Weather station has associated TMY3 data.
+        - ``is_cz2010``: Weather station has associated CZ2010 data.
+        - ``difference_elevation_meters``: Absolute difference in meters
+          between target site elevation and weather station elevation, if
+          available.
+
     '''
     candidates = cached_data.all_station_metadata
 
@@ -191,8 +268,21 @@ def ranked_candidate_stations(
 
 
 def combine_ranked_candidates(rankings):
-    ''' Combine :any:`pandas.DataFrame`s of candidate weather stations to form
-    a hybrid ranking.
+    ''' Combine :any:`pandas.DataFrame` s of candidate weather stations to form
+    a hybrid ranking dataframe.
+
+    Parameters
+    ----------
+    rankings : list of :any:`pandas.DataFrame`
+        Dataframes of ranked weather station candidates and metadata.
+        All ranking dataframes should have the same columns and must be
+        sorted by rank.
+
+    Returns
+    -------
+    ranked_filtered_candidates : :any:`pandas.DataFrame`
+        Dataframe has a rank column and the same columns given in the source
+        dataframes.
     '''
 
     if len(rankings) == 0:
@@ -209,6 +299,22 @@ def combine_ranked_candidates(rankings):
 
 def ranked_mappings(site_latitude, site_longitude, candidates):
     ''' Create ISDStationMappings for each candidate.
+
+    Parameters
+    ----------
+    site_latitude : float
+        Latitude of target site.
+    site_longitude : float
+        Longitude of target site.
+    candidates : :any:`pandas.DataFrame`
+        Weather station mapping candidates, as returned by
+        :any:`eeweather.ranked_candidate_stations` or
+        :any:`eeweather.combine_ranked_candidates`.
+
+    Returns
+    -------
+    mapping_results : list of :any:`eeweather.ISDStationMapping`
+        Ranked list of ISDStationMappings.
     '''
     return [
         ISDStationMapping(
