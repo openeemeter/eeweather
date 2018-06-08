@@ -10,16 +10,24 @@ def write_isd_file(bytes_string):
     with pkg_resources.resource_stream('eeweather.resources', 'ISD.gz') as f:
         bytes_string.write(f.read())
 
+
 def write_tmy3_file():
     data = pkg_resources.resource_string('eeweather.resources', '722880TYA.CSV')
     return data.decode('ascii')
+
 
 def write_cz2010_file():
     data = pkg_resources.resource_string('eeweather.resources', '722880_CZ2010.CSV')
     return data.decode('ascii')
 
+
 def write_missing_isd_file(bytes_string):
     with pkg_resources.resource_stream('eeweather.resources', 'ISD-MISSING.gz') as f:
+        bytes_string.write(f.read())
+
+
+def write_nan_isd_file(bytes_string):
+    with pkg_resources.resource_stream('eeweather.resources', 'ISD-NAN.gz') as f:
         bytes_string.write(f.read())
 
 
@@ -68,6 +76,8 @@ class MockNOAAFTPConnectionProxy():
             write_isd_file(bytes_string)
         elif re.match('/pub/data/noaa/2006/722874-93134-2006.gz', filename):
             write_missing_isd_file(bytes_string)
+        elif re.match('/pub/data/noaa/2013/994035-99999-2013.gz', filename):
+            write_nan_isd_file(bytes_string)
         elif re.match('/pub/data/gsod/2007/722874-93134-2007.op.gz', filename):
             write_gsod_file(bytes_string)
         elif re.match('/pub/data/gsod/2006/722874-93134-2006.op.gz', filename):
