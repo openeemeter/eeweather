@@ -90,13 +90,26 @@ Example with library function returning mappings based on distance within the sa
     >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone_cz2010)
     ISDStationMapping('722880', distance_meters=19585)
 
-Example with library function returning mappings for stations based only on distance that contain CZ2010 data::
+Example with library function returning mappings based on distance within the same climate_zone, falling back on just distance if there are none in the same climate zone::
 
-    >>> from eeweather.mappings import lat_long_naive_closest_cz2010
+    >>> from eeweather.mappings import oee_lat_long
     >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest_cz2010)
-    ISDStationMapping('722956', distance_meters=16583)
+    >>> eeweather.match_lat_long(lat, long, mapping=oee_lat_long)
+    ISDStationMapping('722880', distance_meters=19585)
 
+Example with library function returning mappings for stations with TMY3 data based on distance within the same climate_zone, falling back on just distance if there are none in the same climate zone::
+
+    >>> from eeweather.mappings import oee_lat_long_tmy3
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=oee_lat_long_tmy3)
+    ISDStationMapping('722880', distance_meters=19585)
+
+Example with library function returning mappings for stations with CZ2010 data based on distance within the same climate_zone, falling back on just distance if there are none in the same climate zone::
+
+    >>> from eeweather.mappings import oee_lat_long_cz2010
+    >>> lat, long = 34.0522, -118.2437
+    >>> eeweather.match_lat_long(lat, long, mapping=oee_lat_long_cz2010)
+    ISDStationMapping('722880', distance_meters=19585)
 
 If the station is not recognized, an error will be thrown::
     >>> lat, long = 34.0522, -1108.2437
