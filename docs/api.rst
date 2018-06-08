@@ -1,42 +1,14 @@
 API Docs
 ========
 
-Matching
---------
-
-.. autofunction:: eeweather.match_lat_long
-
-Mappings for use with ``eeweather.match_lat_long``
-//////////////////////////////////////////////////
-
-.. autofunction:: eeweather.mappings.lat_long_closest_within_climate_zone
-
-.. autofunction:: eeweather.mappings.lat_long_naive_closest
-
-.. autofunction:: eeweather.mappings.oee_lat_long
-
 Ranking
 -------
 
-.. autofunction:: eeweather.ranked_candidate_stations
+.. autofunction:: eeweather.rank_stations
 
-.. autofunction:: eeweather.combine_ranked_candidates
+.. autofunction:: eeweather.combine_ranked_stations
 
-.. autofunction:: eeweather.ranked_mappings
-
-``MappingResult`` objects
--------------------------
-
-.. autoclass:: eeweather.MappingResult
-   :members: is_empty
-
-.. autoclass:: eeweather.EmptyMapping
-   :members: is_empty
-
-.. autoclass:: eeweather.ISDStationMapping
-   :members: is_empty, plot
-
-.. autofunction:: eeweather.plot_mapping_results
+.. autofunction:: eeweather.select_station
 
 ``ISDStation`` objects
 ----------------------
@@ -54,9 +26,11 @@ Summaries
 Geography
 ---------
 
-.. autofunction:: eeweather.api.get_lat_long_climate_zones
+.. autofunction:: eeweather.geo.get_lat_long_climate_zones
 
-.. autofunction:: eeweather.api.get_zcta_metadata
+.. autofunction:: eeweather.geo.get_zcta_metadata
+
+.. autofunction:: eeweather.geo.zcta_to_lat_long
 
 Database
 --------
@@ -80,3 +54,10 @@ Validators
 .. autofunction:: eeweather.validation.valid_zcta_or_raise
 
 .. autofunction:: eeweather.validation.valid_usaf_id_or_raise
+
+Visualization
+-------------
+
+.. autofunction:: eeweather.plot_station_mapping
+
+.. autofunction:: eeweather.plot_station_mappings

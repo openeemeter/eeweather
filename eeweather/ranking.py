@@ -3,7 +3,7 @@ import numpy as np
 import pyproj
 
 import eeweather.mockable
-from .api import get_lat_long_climate_zones
+from .geo import get_lat_long_climate_zones
 from .connections import metadata_db_connection_proxy
 from .stations import ISDStation
 from .utils import lazy_property

@@ -66,11 +66,6 @@ Command-line Usage
 
 Once installed, ``eeweather`` can be run from the command-line. To see all available commands, run ``eeweather --help``.
 
-Find a weather station near the lat-long coordinate (38.561, -121.487)::
-
-    $ eeweather match_lat_long -- 38.561 -121.487
-    724830
-
 View ISD station metadata::
 
     $ eeweather inspect_isd_station 722874

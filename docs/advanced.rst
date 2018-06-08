@@ -31,85 +31,16 @@ If the ZCTA or station is not recognized, an error will be thrown::
     ...
     UnrecognizedZCTAError: BAD_STATION
 
-Custom weather mappings
------------------------
-
-To use a custom weather mapping, a dictionary or function can be passed to one of the matching functions.
-
-Example with function returning ISDStationMapping::
-
-    >>> lat, long = 34.0522, -118.2437
-    >>> mapping = lambda lat, long: '722880'
-    >>> eeweather.match_lat_long(lat,long, mapping = mapping)
-    ISDStationMapping('722880', distance_meters=19585)
-
-Example with library function returning mappings based only on distance::
-
-    >>> from eeweather.mappings import lat_long_naive_closest
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest)
-    ISDStationMapping('722874', distance_meters=5372)
-
-Example with library function returning mappings for stations based only on distance that contain TMY3 data::
-
-    >>> from eeweather.mappings import lat_long_naive_closest_tmy3
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest)
-    ISDStationMapping('722956', distance_meters=16583)
-
-Example with library function returning mappings for stations based only on distance that contain CZ2010 data::
-
-    >>> from eeweather.mappings import lat_long_naive_closest_cz2010
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest_cz2010)
-    ISDStationMapping('722956', distance_meters=16583)
-
-Example with library function returning mappings based on distance within the same climate_zone::
-
-    >>> from eeweather.mappings import lat_long_closest_within_climate_zone
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone)
-    ISDStationMapping('722880', distance_meters=19585)
-
-Example with library function returning mappings based on distance within the same climate_zone that contain TMY3 data::
-
-    >>> from eeweather.mappings import lat_long_closest_within_climate_zone_tmy3
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone_tmy3)
-    IISDStationMapping('722880', distance_meters=19585)
-
-Example with library function returning mappings based on distance within the same climate_zone that contain CZ2010 data::
-
-    >>> from eeweather.mappings import lat_long_closest_within_climate_zone_cz2010
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_closest_within_climate_zone_cz2010)
-    ISDStationMapping('722880', distance_meters=19585)
-
-Example with library function returning mappings for stations based only on distance that contain CZ2010 data::
-
-    >>> from eeweather.mappings import lat_long_naive_closest_cz2010
-    >>> lat, long = 34.0522, -118.2437
-    >>> eeweather.match_lat_long(lat, long, mapping=lat_long_naive_closest_cz2010)
-    ISDStationMapping('722956', distance_meters=16583)
-
-
-If the station is not recognized, an error will be thrown::
-    >>> lat, long = 34.0522, -1108.2437
-    >>> mapping = lambda lat, long: 'BAD_STATION'
-    >>> eeweather.match_lat_long(lat, long, mapping=mapping)
-    ...
-    eeweather.exceptions.UnrecognizedUSAFIDError: BAD_STATION
-
-Charting ISDStationMapping objects
-----------------------------------
+Charting Station mappings
+-------------------------
 
 .. note:: Requires `matplotlib` to be installed.
 
 Within (for example) a jupyter notebook you can create plots like this::
 
-    lat, long = 34.0522, -1108.2437
-    result = eeweather.match_lat_long(lat, long)
-    result.plot()
+    >>> station = eeweather.ISDStation('722990')
+    >>> eeweather.plot_station_mapping(
+    ...     lat, lng, station, distance_meters=21900, target='91104')
 
 This will create a plot like the following:
 

@@ -3,14 +3,12 @@ Basic Usage
 
 This document describes how to get started with eeweather.
 
-
 Matching to weather stations
 ----------------------------
 
 EEweather is designed to support the process of finding sources of data that
 correspond to particular sites. As there are many approaches to this process
-of matching, the EEweather package is designed to be flexible and to
-accommodate many different approaches.
+of matching, the EEweather package is designed to be flexible.
 
 EEweather provides sensible default mappings from geographical markers to
 weather stations so that it can be used out of the box.
@@ -27,15 +25,28 @@ particular site is to use the lat-long coordinates of that site.
 Example usage::
 
     >>> import eeweather
-    >>> result = eeweather.match_lat_long(35, -95)
-    >>> result
-    ISDStationMapping('722178')
-
-This ``ISDStationMapping`` object captures some information about the mapping::
-
-    >>> result.distance_meters
-    34672.136079403026
-    >>> result.warnings
+    >>> ranked_stations = eeweather.rank_stations(35, -95)
+    >>> station, warnings = eeweather.select_station(ranked_stations)
+    >>> station
+    ISDStation('720627')
+    >>> ranked_stations.loc[station.usaf_id]
+    rank                                     1
+    distance_meters                    32692.7
+    latitude                            35.283
+    longitude                            -95.1
+    iecc_climate_zone                        3
+    iecc_moisture_regime                     A
+    ba_climate_zone                Mixed-Humid
+    ca_climate_zone                       None
+    rough_quality                          low
+    elevation                            183.2
+    state                                   OK
+    tmy3_class                            None
+    is_tmy3                              False
+    is_cz2010                            False
+    difference_elevation_meters           None
+    Name: 720627, dtype: object
+    >>> warnings
     []
 
 That particular result has no associated warnings, but other mappings may have
@@ -43,11 +54,10 @@ associated warnings, such as the mapping from this point which is in the middle
 of the Gulf of Mexico, 700km away from the nearest weather station and outside
 of the climate zone boundary::
 
-    >>> result = eeweather.match_lat_long(20, -95)
-    >>> result.distance_meters
-    700435
-    >>> result.warnings
-    ['Distance from target to weather station is greater than 50km.', 'Mapped weather station is not in the same climate zone as the provided lat/long point.']
+    >>> ranked_stations = eeweather.rank_stations(20, -95)
+    >>> station, warnings = eeweather.select_station(ranked_stations)
+    >>> warnings
+    ['Distance from target to weather station is greater than 50km.', 'Distance from target to weather station is greater than 200km.']
 
 ZIP Code Tabulation Areas (ZCTAs)
 /////////////////////////////////
@@ -84,9 +94,8 @@ These matching results carry a reference to a weather station object. The
 weather station object has some associated metadata and - most importantly -
 has methods for obtaining weather data.
 
-Let's look at the following mapping result object::
+Let's look at the station object from above::
 
-    >>> result = eeweather.match_lat_long(35, -95)
     >>> station = result.isd_station
     >>> station
     ISDStation('722178')
@@ -199,12 +208,14 @@ GSOD temperature data as a daily time series::
     2016-06-05 00:00:00+00:00    71.3
     Freq: D, dtype: float64
 
-This station does not contain TMY3 data. To require that TMY3 data is available at the matched weather station, replace the default mapping which ones that only maps to stations containing TMY3 data:: 
+This station does not contain TMY3 data. To require that TMY3 data is
+available at the matched weather station, restrict the ranked weather
+stations to only those which have TMY3 data::
 
-    >>> from eeweather.mappings import oee_lat_long_tmy3
-    >>> result = eeweather.match_lat_long(35, -95, mapping=oee_lat_long_tmy3)
-    >>> station = result.isd_station
-    ISDStation('785430')
+    >>> ranked_stations = eeweather.rank_stations(35, -95, is_tmy3=True)
+    >>> station, warnings = eeweather.select_station(ranked_stations)
+    >>> station
+    ISDStation('723440')
 
 TMY3 temperature data as an hourly time series::
 
@@ -226,11 +237,12 @@ TMY3 temperature data as an hourly time series::
     2016-06-01 04:00:00+00:00    77.54
     Freq: D, dtype: float64
 
-A similar mapping can be done for CZ2010 stations, which are specific to California:: 
+A similar restriction can be made for CZ2010 stations, which are specific to
+California::
 
-    >>> from eeweather.mappings import oee_lat_long_cz2010
-    >>> result = eeweather.match_lat_long(35, -95, mapping=oee_lat_long_cz2010)
-    >>> station = result.isd_station
+    >>> ranked_stations = eeweather.rank_stations(35, -95, is_cz2010=True)
+    >>> station, warnings = eeweather.select_station(ranked_stations)
+    >>> station
     ISDStation('723805')
 
 CZ2010 temperature data as an hourly time series::
@@ -251,3 +263,19 @@ CZ2010 temperature data as an hourly time series::
     2016-06-01 03:00:00+00:00    78.08
     2016-06-01 04:00:00+00:00    77.54
     Freq: H, dtype: float64
+
+The station ranking function :any:`eeweather.rank_stations` has many more
+options, including distance restriction and climate zone restriction, which
+may come in handy.
+
+
+If desired, :any:`eeweather.ISDStation` objects can also be created directly::
+
+    >>> eeweather.ISDStation('722880')
+    ISDStation('722880')
+
+If the station is not recognized, an error will be thrown::
+
+    >>> eeweather.ISDStation('BAD_STATION')
+    ...
+    eeweather.exceptions.UnrecognizedUSAFIDError: BAD_STATION

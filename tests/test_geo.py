@@ -1,7 +1,7 @@
 import pytest
 
 from eeweather import get_version
-from eeweather.api import (
+from eeweather.geo import (
     get_lat_long_climate_zones,
     get_zcta_metadata,
     zcta_to_lat_long,
