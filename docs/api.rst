@@ -1,50 +1,14 @@
-.. spelling::
-
-   EmptyMapping
-   ISDStationMapping
-   eeweather
-   resampled
-   oee
-   metadata
-   resample
-   matplotlib
-   cartopy
-   Deserialize
-   UnrecognizedZCTAError
-   UnrecognizedUSAFIDError
-   Validators
-   isd
-
 API Docs
 ========
 
-Matching
---------
+Ranking
+-------
 
-.. autofunction:: eeweather.match_lat_long
+.. autofunction:: eeweather.rank_stations
 
-Mappings for use with ``eeweather.match_lat_long``
-//////////////////////////////////////////////////
+.. autofunction:: eeweather.combine_ranked_stations
 
-.. autofunction:: eeweather.mappings.lat_long_closest_within_climate_zone
-
-.. autofunction:: eeweather.mappings.lat_long_naive_closest
-
-.. autofunction:: eeweather.mappings.oee_lat_long
-
-``MappingResult`` objects
--------------------------
-
-.. autoclass:: eeweather.MappingResult
-   :members: is_empty
-
-.. autoclass:: eeweather.EmptyMapping
-   :members: is_empty
-
-.. autoclass:: eeweather.ISDStationMapping
-   :members: is_empty, plot
-
-.. autofunction:: eeweather.plot_mapping_results
+.. autofunction:: eeweather.select_station
 
 ``ISDStation`` objects
 ----------------------
@@ -62,9 +26,11 @@ Summaries
 Geography
 ---------
 
-.. autofunction:: eeweather.api.get_lat_long_climate_zones
+.. autofunction:: eeweather.geo.get_lat_long_climate_zones
 
-.. autofunction:: eeweather.api.get_zcta_metadata
+.. autofunction:: eeweather.geo.get_zcta_metadata
+
+.. autofunction:: eeweather.geo.zcta_to_lat_long
 
 Database
 --------
@@ -88,3 +54,10 @@ Validators
 .. autofunction:: eeweather.validation.valid_zcta_or_raise
 
 .. autofunction:: eeweather.validation.valid_usaf_id_or_raise
+
+Visualization
+-------------
+
+.. autofunction:: eeweather.plot_station_mapping
+
+.. autofunction:: eeweather.plot_station_mappings

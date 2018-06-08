@@ -964,7 +964,8 @@ def load_cached_cz2010_hourly_temp_data(usaf_id):
 class ISDStation(object):
     ''' A representation of an Integrated Surface Database weather station.
 
-    Contains data about a particular ISD station, as well as methods to pull data for this station.
+    Contains data about a particular ISD station, as well as methods to pull
+    data for this station.
 
     Parameters
     ----------

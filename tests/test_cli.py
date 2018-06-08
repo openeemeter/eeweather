@@ -4,7 +4,6 @@ from click.testing import CliRunner
 
 from eeweather.cli import (
     cli,
-    match_lat_long,
     inspect_isd_station,
     inspect_isd_file_years,
     inspect_isd_filenames,
@@ -18,14 +17,6 @@ def test_eeweather_cli():
     result = runner.invoke(cli)
     assert result.exit_code == 0
     assert len(result.output) > 100
-
-
-def test_match_lat_long():
-    runner = CliRunner()
-
-    result = runner.invoke(match_lat_long, ['--', '40', '-120'])
-    assert result.exit_code == 0
-    assert result.output == '725846\n'
 
 
 def test_inspect_isd_station():
