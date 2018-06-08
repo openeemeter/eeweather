@@ -4,7 +4,6 @@ import subprocess
 import click
 
 from . import (
-    match_lat_long as _match_lat_long,
     get_isd_station_metadata as _get_isd_station_metadata,
     get_isd_file_metadata as _get_isd_file_metadata,
     get_isd_filenames as _get_isd_filenames,
@@ -18,12 +17,6 @@ from .database import build_metadata_db, inspect_metadata_db
 @click.group()
 def cli():
     '''Example usage
-
-    Match lat/long to weather station:
-
-    \b
-        $ eeweather match_lat_long -- 35.5 -94.3
-        723440
 
     See station metadata:
 
@@ -70,14 +63,6 @@ def cli():
 
     '''
     pass  # pragma: no cover
-
-
-@cli.command()
-@click.argument('latitude', type=float)
-@click.argument('longitude', type=float)
-def match_lat_long(latitude, longitude):
-    station = _match_lat_long(latitude, longitude)
-    click.echo(station)
 
 
 @cli.command()

@@ -195,22 +195,22 @@ def zcta_to_lat_long(zcta):
     longitude : float
         Target Longitude of centroid of ZCTA.
     '''
-    if valid_zcta_or_raise(zcta):
+    valid_zcta_or_raise(zcta)
 
-        conn = metadata_db_connection_proxy.get_connection()
-        cur = conn.cursor()
+    conn = metadata_db_connection_proxy.get_connection()
+    cur = conn.cursor()
 
-        cur.execute('''
-          select
-            latitude
-            , longitude
-          from
-            zcta_metadata
-          where
-            zcta_id = ?
-        ''', (zcta,))
-        match = cur.fetchone()
-        #match existence checked in validate_zcta_or_raise(zcta)
-        (latitude, longitude) = match
-        return float(latitude), float(longitude)
+    cur.execute('''
+      select
+        latitude
+        , longitude
+      from
+        zcta_metadata
+      where
+        zcta_id = ?
+    ''', (zcta,))
+    # match existence checked in validate_zcta_or_raise(zcta)
+    latitude, longitude = cur.fetchone()
+
+    return float(latitude), float(longitude)
 

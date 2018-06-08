@@ -4,6 +4,7 @@ from eeweather import get_version
 from eeweather.api import (
     get_lat_long_climate_zones,
     get_zcta_metadata,
+    zcta_to_lat_long,
 )
 from eeweather.exceptions import (
     UnrecognizedZCTAError,
@@ -52,3 +53,12 @@ def test_get_lat_long_climate_zones_out_of_range():
         'ba_climate_zone': None,
         'ca_climate_zone': None,
     }
+
+
+def test_zcta_to_lat_long():
+    with pytest.raises(UnrecognizedZCTAError) as excinfo:
+        zcta_to_lat_long('00000')
+
+    lat, lng = zcta_to_lat_long('70001')
+    assert round(lat) == 30
+    assert round(lng) == -90

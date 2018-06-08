@@ -1,7 +1,3 @@
-.. spelling::
-
-    metadata
-
 Basic Usage
 ===========
 

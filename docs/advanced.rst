@@ -1,8 +1,3 @@
-.. spelling::
-
-   jupyter
-   metadata
-
 Advanced Usage
 ==============
 

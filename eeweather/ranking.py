@@ -2,15 +2,16 @@ import pandas as pd
 import numpy as np
 import pyproj
 
-from .mappings import ISDStationMapping, plot_mapping_results
+import eeweather.mockable
 from .api import get_lat_long_climate_zones
 from .connections import metadata_db_connection_proxy
+from .stations import ISDStation
 from .utils import lazy_property
 
 __all__ = (
-    'ranked_candidate_stations',
-    'combine_ranked_candidates',
-    'ranked_mappings',
+    'rank_stations',
+    'combine_ranked_stations',
+    'select_station',
 )
 
 class CachedData(object):
@@ -75,7 +76,7 @@ def _combine_filters(filters, index):
     return combined_filters
 
 
-def ranked_candidate_stations(
+def rank_stations(
     site_latitude, site_longitude, site_state=None, site_elevation=None,
     match_iecc_climate_zone=False, match_iecc_moisture_regime=False,
     match_ba_climate_zone=False, match_ca_climate_zone=False,
@@ -267,7 +268,7 @@ def ranked_candidate_stations(
     ]]
 
 
-def combine_ranked_candidates(rankings):
+def combine_ranked_stations(rankings):
     ''' Combine :any:`pandas.DataFrame` s of candidate weather stations to form
     a hybrid ranking dataframe.
 
@@ -297,31 +298,57 @@ def combine_ranked_candidates(rankings):
     return combined_ranking
 
 
-def ranked_mappings(site_latitude, site_longitude, candidates):
-    ''' Create ISDStationMappings for each candidate.
+
+@eeweather.mockable.mockable()
+def load_isd_hourly_temp_data(station, start_date, end_date):  # pragma: no cover
+    return station.load_isd_hourly_temp_data(start_date, end_date)
+
+
+def select_station(
+    candidates, coverage_range=None, min_fraction_coverage=0.9,
+    distance_warnings=(50000, 200000), rank=1
+):
+    ''' Select a station from a list of candidates that meets given data
+    quality criteria.
 
     Parameters
     ----------
-    site_latitude : float
-        Latitude of target site.
-    site_longitude : float
-        Longitude of target site.
     candidates : :any:`pandas.DataFrame`
-        Weather station mapping candidates, as returned by
-        :any:`eeweather.ranked_candidate_stations` or
-        :any:`eeweather.combine_ranked_candidates`.
+        A dataframe of the form given by :any:`eeweather.rank_stations` or
+        :any:`eeweather.combine_ranked_stations`, specifically having at least
+        an index with ``usaf_id`` values and the column ``distance_meters``.
 
     Returns
     -------
-    mapping_results : list of :any:`eeweather.ISDStationMapping`
-        Ranked list of ISDStationMappings.
+    isd_station, warnings : tuple of (:any:`eeweather.ISDStation`, list of str)
+        A qualified weather station. ``None`` if no station meets criteria.
     '''
-    return [
-        ISDStationMapping(
-            usaf_id=usaf_id,
-            target_latitude=site_latitude,
-            target_longitude=site_longitude,
-            distance_meters=candidate.distance_meters,
-        )
-        for usaf_id, candidate in candidates.iterrows()
-    ]
+    def _test_station(station):
+        if coverage_range is None:
+            return True
+        else:
+            start_date, end_date = coverage_range
+            tempC = eeweather.mockable.load_isd_hourly_temp_data(station, start_date, end_date)
+            # TODO(philngo): also need to incorporate within-day limits
+            fraction_coverage = tempC.notnull().sum() / float(len(tempC))
+            return fraction_coverage > min_fraction_coverage
+
+    def _station_warnings(station, distance_meters):
+        return [
+            (
+                'Distance from target to weather station is greater than {}km.'
+                .format(round(d / 1000))
+            )
+            for d in distance_warnings
+            if distance_meters > d
+        ]
+
+    n_stations_passed = 0
+    for usaf_id, row in candidates.iterrows():
+        station = ISDStation(usaf_id)
+        if _test_station(station):
+            n_stations_passed += 1
+        if n_stations_passed == rank:
+            return station, _station_warnings(station, row.distance_meters)
+
+    return None, ['No weather station qualified.']
