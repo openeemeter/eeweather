@@ -213,4 +213,3 @@ def zcta_to_lat_long(zcta):
     latitude, longitude = cur.fetchone()
 
     return float(latitude), float(longitude)
-

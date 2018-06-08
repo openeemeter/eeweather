@@ -418,8 +418,8 @@ def test_isd_station_get_isd_file_metadata():
 # fetch raw
 def test_fetch_isd_raw_temp_data(monkeypatch_noaa_ftp):
     data = fetch_isd_raw_temp_data('722874', 2007)
-    assert data.sum() == 185945.40000000002
-    assert data.shape == (10719,)
+    assert round(data.sum()) == 185945
+    assert data.shape == (11094,)
 
 
 def test_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
@@ -432,8 +432,8 @@ def test_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
 def test_isd_station_fetch_isd_raw_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation('722874')
     data = station.fetch_isd_raw_temp_data(2007)
-    assert data.sum() == 185945.40000000002
-    assert data.shape == (10719,)
+    assert round(data.sum()) == 185945
+    assert data.shape == (11094,)
 
 
 def test_isd_station_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
@@ -463,6 +463,14 @@ def test_fetch_isd_raw_temp_data_invalid_year(monkeypatch_noaa_ftp):
 def test_fetch_gsod_raw_temp_data_invalid_year(monkeypatch_noaa_ftp):
     with pytest.raises(GSODDataNotAvailableError):
         fetch_gsod_raw_temp_data('722874', 1800)
+
+
+# fetch file full of nans
+def test_isd_station_fetch_isd_raw_temp_data_all_nan(monkeypatch_noaa_ftp):
+    station = ISDStation('994035')
+    data = station.fetch_isd_raw_temp_data(2013)
+    assert round(data.sum()) == 0
+    assert data.shape == (8611,)
 
 
 # fetch

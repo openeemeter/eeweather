@@ -277,8 +277,6 @@ def fetch_isd_raw_temp_data(usaf_id, year):
                     tempC = float('nan')
                 else:
                     tempC = float(line[87:92]) / 10.
-                if pd.isnull(tempC):
-                    continue
                 date_str = line[15:27].decode('utf-8')
                 dt = pytz.UTC.localize(datetime.strptime(date_str, '%Y%m%d%H%M'))
                 data.append([dt, tempC])
