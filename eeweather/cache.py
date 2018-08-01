@@ -88,10 +88,20 @@ class KeyValueStore(object):
         s = select([self.items.c.updated]).where(self.items.c.key == key)
         result = s.execute()
         data = result.fetchone()
+        return self._get_datetime_if_exists(data)
+
+    def _get_datetime_if_exists(self, data):
         if data is None:
             return None
         else:
+            dt = data[0]
+        if self._is_tz_naive(dt):
             return pytz.UTC.localize(data[0])
+        else:
+            return dt
+
+    def _is_tz_naive(self, dt):
+        return dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None
 
     def clear(self, key=None):
         if key is None:

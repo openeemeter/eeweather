@@ -51,3 +51,17 @@ def test_key_value_store_clear_single_key(s):
     s.clear('b')
     assert s.key_exists('a') is True
     assert s.key_exists('b') is False
+
+
+def test_get_datetime_if_exists(s):
+    data = None
+    result = s._get_datetime_if_exists(data)
+    assert result == None
+
+    data = [datetime(2018,1,1)]
+    result = s._get_datetime_if_exists(data)
+    assert result == pytz.utc.localize(datetime(2018,1,1))
+
+    data = [pytz.utc.localize(datetime(2018,1,1))]
+    result = s._get_datetime_if_exists(data)
+    assert result == pytz.utc.localize(datetime(2018,1,1))
