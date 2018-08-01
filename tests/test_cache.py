@@ -1,5 +1,5 @@
 import tempfile
-from eeweather.cache import KeyValueStore
+from eeweather.cache import KeyValueStore, get_datetime_if_exists
 from datetime import datetime
 import pytz
 
@@ -51,3 +51,17 @@ def test_key_value_store_clear_single_key(s):
     s.clear('b')
     assert s.key_exists('a') is True
     assert s.key_exists('b') is False
+
+
+def test_get_datetime_if_exists(s):
+    data = None
+    result = get_datetime_if_exists(data)
+    assert result == None
+
+    data = [datetime(2018,1,1)]
+    result = get_datetime_if_exists(data)
+    assert result == pytz.utc.localize(datetime(2018,1,1))
+
+    data = [pytz.utc.localize(datetime(2018,1,1))]
+    result = get_datetime_if_exists(data)
+    assert result == pytz.utc.localize(datetime(2018,1,1))
