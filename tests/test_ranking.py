@@ -8,6 +8,7 @@ from eeweather import (
     combine_ranked_stations,
     select_station,
 )
+from eeweather.exceptions import ISDDataNotAvailableError
 
 
 @pytest.fixture
@@ -258,3 +259,61 @@ def test_select_station_full_data(
         min_fraction_coverage=0.99
     )
     assert station is None
+
+
+@pytest.fixture
+def monkeypatch_load_isd_hourly_temp_data_with_error(monkeypatch):
+
+    def load_isd_hourly_temp_data(station, start, end):
+        index = pd.date_range(start, end, freq='H', tz='UTC')
+        if station.usaf_id == '723890':
+            raise ISDDataNotAvailableError('723890', start.year)  # first choice not available
+        elif station.usaf_id == '747020':
+            return pd.Series(1, index=index)[:-24*10].reindex(index)
+    monkeypatch.setattr(
+        'eeweather.mockable.load_isd_hourly_temp_data',
+        load_isd_hourly_temp_data
+    )
+
+
+def test_select_station_with_isd_data_not_available_error(
+    cz_candidates, monkeypatch_load_isd_hourly_temp_data_with_error
+):
+    start = datetime(2017, 1, 1, tzinfo=pytz.UTC)
+    end = datetime(2018, 1, 1, tzinfo=pytz.UTC)
+
+    # 1st misses qualification because data not available
+    station, warnings = select_station(
+        cz_candidates, coverage_range=(start, end),
+        min_fraction_coverage=0.8
+    )
+    assert station.usaf_id == '747020'
+
+
+@pytest.fixture
+def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
+
+    def load_isd_hourly_temp_data(station, start, end):
+        index = pd.date_range(start, end, freq='H', tz='UTC')
+        if station.usaf_id == '723890':
+            return pd.Series(1, index=index)[:0]
+        elif station.usaf_id == '747020':
+            return pd.Series(1, index=index)[:-24*10].reindex(index)
+    monkeypatch.setattr(
+        'eeweather.mockable.load_isd_hourly_temp_data',
+        load_isd_hourly_temp_data
+    )
+
+
+def test_select_station_with_empty_tempC(
+    cz_candidates, monkeypatch_load_isd_hourly_temp_data_with_empty
+):
+    start = datetime(2017, 1, 1, tzinfo=pytz.UTC)
+    end = datetime(2018, 1, 1, tzinfo=pytz.UTC)
+
+    # 1st misses qualification because data not available
+    station, warnings = select_station(
+        cz_candidates, coverage_range=(start, end),
+        min_fraction_coverage=0.8
+    )
+    assert station.usaf_id == '747020'
