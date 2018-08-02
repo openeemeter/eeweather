@@ -3,8 +3,9 @@ import numpy as np
 import pyproj
 
 import eeweather.mockable
-from .geo import get_lat_long_climate_zones
+from .exceptions import ISDDataNotAvailableError
 from .connections import metadata_db_connection_proxy
+from .geo import get_lat_long_climate_zones
 from .stations import ISDStation
 from .utils import lazy_property
 
@@ -328,10 +329,17 @@ def select_station(
             return True
         else:
             start_date, end_date = coverage_range
-            tempC = eeweather.mockable.load_isd_hourly_temp_data(station, start_date, end_date)
+            try:
+                tempC = eeweather.mockable.load_isd_hourly_temp_data(station, start_date, end_date)
+            except ISDDataNotAvailableError:
+                return False  # reject
+
             # TODO(philngo): also need to incorporate within-day limits
-            fraction_coverage = tempC.notnull().sum() / float(len(tempC))
-            return fraction_coverage > min_fraction_coverage
+            if len(tempC) > 0:
+                fraction_coverage = tempC.notnull().sum() / float(len(tempC))
+                return fraction_coverage > min_fraction_coverage
+            else:
+                return False  # reject
 
     def _station_warnings(station, distance_meters):
         return [
