@@ -39,7 +39,7 @@ def test_isd_station_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 3895
+    assert count == 3864
 
 
 def test_isd_station_metadata_table_content():
@@ -72,7 +72,7 @@ def test_isd_file_metadata_table_count():
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 35180  # this count is brittle b/c of frequent updates
+    assert count == 32853  # this count is brittle b/c of frequent updates
 
 
 def test_isd_file_metadata_table_content():
