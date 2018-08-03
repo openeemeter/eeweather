@@ -23,7 +23,7 @@ def lat_long_africa():
 def test_rank_stations_no_filter(lat_long_fresno):
     lat, lng = lat_long_fresno
     df = rank_stations(lat, lng)
-    assert df.shape == (3895, 15)
+    assert df.shape == (3864, 15)
     assert list(df.columns) == [
         'rank',
         'distance_meters',
@@ -49,43 +49,43 @@ def test_rank_stations_no_filter(lat_long_fresno):
 def test_rank_stations_match_climate_zones_not_null(lat_long_fresno):
     lat, lng = lat_long_fresno
     df = rank_stations(lat, lng, match_iecc_climate_zone=True)
-    assert df.shape == (747, 15)
+    assert df.shape == (737, 15)
 
     df = rank_stations(lat, lng, match_iecc_moisture_regime=True)
-    assert df.shape == (711, 15)
+    assert df.shape == (708, 15)
 
     df = rank_stations(lat, lng, match_ba_climate_zone=True)
-    assert df.shape == (281, 15)
+    assert df.shape == (277, 15)
 
     df = rank_stations(lat, lng, match_ca_climate_zone=True)
-    assert df.shape == (10, 15)
+    assert df.shape == (9, 15)
 
 
 def test_rank_stations_match_climate_zones_null(lat_long_africa):
     lat, lng = lat_long_africa
     df = rank_stations(lat, lng, match_iecc_climate_zone=True)
-    assert df.shape == (506, 15)
+    assert df.shape == (501, 15)
 
     df = rank_stations(lat, lng, match_iecc_moisture_regime=True)
-    assert df.shape == (947, 15)
+    assert df.shape == (942, 15)
 
     df = rank_stations(lat, lng, match_ba_climate_zone=True)
-    assert df.shape == (511, 15)
+    assert df.shape == (506, 15)
 
     df = rank_stations(lat, lng, match_ca_climate_zone=True)
-    assert df.shape == (3658, 15)
+    assert df.shape == (3630, 15)
 
 
 def test_rank_stations_match_state(lat_long_fresno):
     lat, lng = lat_long_fresno
     df = rank_stations(lat, lng, site_state='CA')
-    assert df.shape == (3895, 15)
+    assert df.shape == (3864, 15)
 
     df = rank_stations(lat, lng, site_state='CA', match_state=True)
-    assert df.shape == (312, 15)
+    assert df.shape == (309, 15)
 
     df = rank_stations(lat, lng, site_state=None, match_state=True)
-    assert df.shape == (75, 15)
+    assert df.shape == (73, 15)
 
 
 def test_rank_stations_is_tmy3(lat_long_fresno):
@@ -94,7 +94,7 @@ def test_rank_stations_is_tmy3(lat_long_fresno):
     assert df.shape == (1019, 15)
 
     df = rank_stations(lat, lng, is_tmy3=False)
-    assert df.shape == (2876, 15)
+    assert df.shape == (2845, 15)
 
 
 def test_rank_stations_is_cz2010(lat_long_fresno):
@@ -103,19 +103,19 @@ def test_rank_stations_is_cz2010(lat_long_fresno):
     assert df.shape == (86, 15)
 
     df = rank_stations(lat, lng, is_cz2010=False)
-    assert df.shape == (3809, 15)
+    assert df.shape == (3778, 15)
 
 
 def test_rank_stations_minimum_quality(lat_long_fresno):
     lat, lng = lat_long_fresno
     df = rank_stations(lat, lng, minimum_quality='low')
-    assert df.shape == (3895, 15)
+    assert df.shape == (3864, 15)
 
     df = rank_stations(lat, lng, minimum_quality='medium')
-    assert df.shape == (1972, 15)
+    assert df.shape == (1724, 15)
 
     df = rank_stations(lat, lng, minimum_quality='high')
-    assert df.shape == (1778, 15)
+    assert df.shape == (1619, 15)
 
 
 def test_rank_stations_minimum_tmy3_class(lat_long_fresno):
@@ -134,7 +134,7 @@ def test_rank_stations_max_distance_meters(lat_long_fresno):
     lat, lng = lat_long_fresno
 
     df = rank_stations(lat, lng, max_distance_meters=200000)
-    assert df.shape == (54, 15)
+    assert df.shape == (51, 15)
 
     df = rank_stations(lat, lng, max_distance_meters=50000)
     assert df.shape == (5, 15)
@@ -146,17 +146,17 @@ def test_rank_stations_max_difference_elevation_meters(lat_long_fresno):
     # no site_elevation
     df = rank_stations(
         lat, lng, max_difference_elevation_meters=200)
-    assert df.shape == (3895, 15)
+    assert df.shape == (3864, 15)
 
     df = rank_stations(
         lat, lng, site_elevation=0,
         max_difference_elevation_meters=200)
-    assert df.shape == (2208, 15)
+    assert df.shape == (2184, 15)
 
     df = rank_stations(
         lat, lng, site_elevation=0,
         max_difference_elevation_meters=50)
-    assert df.shape == (1385, 15)
+    assert df.shape == (1371, 15)
 
     df = rank_stations(
         lat, lng, site_elevation=1000,
