@@ -2,6 +2,7 @@ import pytest
 
 from eeweather.utils import EEWeatherWarning
 
+
 @pytest.fixture
 def generic_eeweather_warning():
     return EEWeatherWarning(
@@ -9,6 +10,7 @@ def generic_eeweather_warning():
         description='description',
         data={}
     )
+
 
 def test_str_repr(generic_eeweather_warning):
     assert str(generic_eeweather_warning) == (
