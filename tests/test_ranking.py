@@ -317,3 +317,14 @@ def test_select_station_with_empty_tempC(
         min_fraction_coverage=0.8
     )
     assert station.usaf_id == '747020'
+
+
+def test_select_station_distance_warnings_check(lat_long_africa):
+    lat, lng = lat_long_africa
+    df = rank_stations(lat, lng)
+    station, warnings = select_station(df)
+    assert len(warnings) == 2
+    assert warnings[0].qualified_name == 'eeweather.exceeds_maximum_distance'
+    assert warnings[1].qualified_name == 'eeweather.exceeds_maximum_distance'
+    assert warnings[0].data['max_distance_meters'] == 50000
+    assert warnings[1].data['max_distance_meters'] == 200000

@@ -7,7 +7,7 @@ from .exceptions import ISDDataNotAvailableError
 from .connections import metadata_db_connection_proxy
 from .geo import get_lat_long_climate_zones
 from .stations import ISDStation
-from .utils import lazy_property
+from .utils import lazy_property, EEWeatherWarning
 
 __all__ = (
     'rank_stations',
@@ -343,9 +343,16 @@ def select_station(
 
     def _station_warnings(station, distance_meters):
         return [
-            (
-                'Distance from target to weather station is greater than {}km.'
-                .format(round(d / 1000))
+            EEWeatherWarning(
+                qualified_name='eeweather.exceeds_maximum_distance',
+                description=(
+                    'Distance from target to weather station is greater'
+                    'than the specified km.'
+                ),
+                data={
+                    'distance_meters': distance_meters,
+                    'max_distance_meters': d
+                }
             )
             for d in distance_warnings
             if distance_meters > d
