@@ -1,6 +1,6 @@
 import pytest
 
-from eeweather.utils import EEWeatherWarning
+from eeweather.warnings import EEWeatherWarning
 
 
 @pytest.fixture

@@ -7,7 +7,8 @@ from .exceptions import ISDDataNotAvailableError
 from .connections import metadata_db_connection_proxy
 from .geo import get_lat_long_climate_zones
 from .stations import ISDStation
-from .utils import lazy_property, EEWeatherWarning
+from .utils import lazy_property
+from .warnings import EEWeatherWarning
 
 __all__ = (
     'rank_stations',
