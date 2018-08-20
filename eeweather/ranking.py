@@ -366,4 +366,15 @@ def select_station(
         if n_stations_passed == rank:
             return station, _station_warnings(station, row.distance_meters)
 
-    return None, ['No weather station qualified.']
+    no_station_warning = EEWeatherWarning(
+        qualified_name='eeweather.no_weather_station_selected',
+        description=(
+            'No weather station found with the specified rank and'
+            ' minimum fracitional coverage.'
+        ),
+        data={
+            'rank': rank,
+            'min_fraction_coverage': min_fraction_coverage
+        }
+    )
+    return None, [no_station_warning]

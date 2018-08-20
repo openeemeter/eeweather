@@ -328,3 +328,13 @@ def test_select_station_distance_warnings_check(lat_long_africa):
     assert warnings[1].qualified_name == 'eeweather.exceeds_maximum_distance'
     assert warnings[0].data['max_distance_meters'] == 50000
     assert warnings[1].data['max_distance_meters'] == 200000
+
+
+def test_select_station_no_station_warnings_check():
+    df = pd.DataFrame()
+    station, warnings = select_station(df)
+    assert warnings[0].qualified_name == 'eeweather.no_weather_station_selected'
+    assert warnings[0].data == {
+        'rank': 1,
+        'min_fraction_coverage': 0.9
+    }
