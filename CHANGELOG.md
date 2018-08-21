@@ -3,7 +3,7 @@
 Information about version updates and instructions for upgrading where
 needed.
 
-## DEVELOPMENT
+## 0.3.5
 
 Added the `rank` parameter in the data field for a station distance EEWeatherWarning.
 
