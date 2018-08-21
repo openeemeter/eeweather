@@ -352,7 +352,8 @@ def select_station(
                 ),
                 data={
                     'distance_meters': distance_meters,
-                    'max_distance_meters': d
+                    'max_distance_meters': d,
+                    'rank': rank,
                 }
             )
             for d in distance_warnings
