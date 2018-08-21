@@ -8,6 +8,7 @@ from .connections import metadata_db_connection_proxy
 from .geo import get_lat_long_climate_zones
 from .stations import ISDStation
 from .utils import lazy_property
+from .warnings import EEWeatherWarning
 
 __all__ = (
     'rank_stations',
@@ -343,9 +344,16 @@ def select_station(
 
     def _station_warnings(station, distance_meters):
         return [
-            (
-                'Distance from target to weather station is greater than {}km.'
-                .format(round(d / 1000))
+            EEWeatherWarning(
+                qualified_name='eeweather.exceeds_maximum_distance',
+                description=(
+                    'Distance from target to weather station is greater'
+                    'than the specified km.'
+                ),
+                data={
+                    'distance_meters': distance_meters,
+                    'max_distance_meters': d
+                }
             )
             for d in distance_warnings
             if distance_meters > d
@@ -359,4 +367,15 @@ def select_station(
         if n_stations_passed == rank:
             return station, _station_warnings(station, row.distance_meters)
 
-    return None, ['No weather station qualified.']
+    no_station_warning = EEWeatherWarning(
+        qualified_name='eeweather.no_weather_station_selected',
+        description=(
+            'No weather station found with the specified rank and'
+            ' minimum fracitional coverage.'
+        ),
+        data={
+            'rank': rank,
+            'min_fraction_coverage': min_fraction_coverage
+        }
+    )
+    return None, [no_station_warning]
