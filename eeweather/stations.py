@@ -1035,24 +1035,27 @@ class ISDStation(object):
 
     def _load_metadata(self):
         metadata = get_isd_station_metadata(self.usaf_id)
-        self.iecc_climate_zone = metadata['iecc_climate_zone']
-        self.iecc_moisture_regime = metadata['iecc_moisture_regime']
-        self.ba_climate_zone = metadata['ba_climate_zone']
-        self.ca_climate_zone = metadata['ca_climate_zone']
-        self.icao_code = metadata['icao_code']
-        self.elevation = float(metadata['elevation'])  # meters
-        self.latitude = float(metadata['latitude'])
-        self.longitude = float(metadata['longitude'])
+        def _float_or_none(field):
+            value = metadata.get(field)
+            return None if value is None else float(value)
+        self.iecc_climate_zone = metadata.get('iecc_climate_zone')
+        self.iecc_moisture_regime = metadata.get('iecc_moisture_regime')
+        self.ba_climate_zone = metadata.get('ba_climate_zone')
+        self.ca_climate_zone = metadata.get('ca_climate_zone')
+        self.icao_code = metadata.get('icao_code')
+        self.elevation = _float_or_none('elevation')  # meters
+        self.latitude = _float_or_none('latitude')
+        self.longitude = _float_or_none('longitude')
         self.coords = (self.latitude, self.longitude)
-        self.name = metadata['name']
-        self.quality = metadata['quality']
-        self.wban_ids = metadata['wban_ids'].split(',')
-        self.recent_wban_id = metadata['recent_wban_id']
+        self.name = metadata.get('name')
+        self.quality = metadata.get('quality')
+        self.wban_ids = metadata.get('wban_ids', '').split(',')
+        self.recent_wban_id = metadata.get('recent_wban_id')
         self.climate_zones = {
-            'iecc_climate_zone': metadata['iecc_climate_zone'],
-            'iecc_moisture_regime': metadata['iecc_moisture_regime'],
-            'ba_climate_zone': metadata['ba_climate_zone'],
-            'ca_climate_zone': metadata['ca_climate_zone'],
+            'iecc_climate_zone': metadata.get('iecc_climate_zone'),
+            'iecc_moisture_regime': metadata.get('iecc_moisture_regime'),
+            'ba_climate_zone': metadata.get('ba_climate_zone'),
+            'ca_climate_zone': metadata.get('ca_climate_zone'),
         }
 
     def json(self):
