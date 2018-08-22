@@ -3,7 +3,7 @@
 Information about version updates and instructions for upgrading where
 needed.
 
-## DEVELOPMENT
+## 0.3.6
 
 * Bug fix in ISDStation initialization with handling of null fields.
 
