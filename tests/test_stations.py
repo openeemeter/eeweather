@@ -1670,3 +1670,11 @@ def test_isd_station_load_cz2010_hourly_temp_data_tz_exception(
     end = datetime(2007, 4, 12)
     with pytest.raises(NonUTCTimezoneInfoError):
         ts = station.load_cz2010_hourly_temp_data(start, end)
+
+
+def test_isd_station_metadata_null_elevation():
+    usaf_id = '724953'
+    metadata = get_isd_station_metadata(usaf_id)
+    assert metadata['elevation'] is None
+    isd_station = ISDStation(usaf_id)
+    assert isd_station.elevation is None
