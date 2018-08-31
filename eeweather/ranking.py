@@ -331,7 +331,8 @@ def select_station(
         else:
             start_date, end_date = coverage_range
             try:
-                tempC = eeweather.mockable.load_isd_hourly_temp_data(station, start_date, end_date)
+                tempC = eeweather.mockable.load_isd_hourly_temp_data(
+                    station, start_date, end_date)
             except ISDDataNotAvailableError:
                 return False  # reject
 

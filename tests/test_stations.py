@@ -1291,6 +1291,18 @@ def test_load_isd_hourly_temp_data(
     assert pd.notnull(ts[-1])
 
 
+def test_load_isd_hourly_temp_data_non_normalized_dates(
+        monkeypatch_noaa_ftp, monkeypatch_key_value_store):
+
+    start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
+    ts = load_isd_hourly_temp_data('722874', start, end)
+    assert ts.index[0] == datetime(2006, 1, 3, 12, tzinfo=pytz.UTC)
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == datetime(2007, 4, 3, 12, tzinfo=pytz.UTC)
+    assert pd.notnull(ts[-1])
+
+
 def test_load_isd_daily_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
 
@@ -1303,6 +1315,18 @@ def test_load_isd_daily_temp_data(
     assert pd.notnull(ts[-1])
 
 
+def test_load_isd_daily_temp_data_non_normalized_dates(
+        monkeypatch_noaa_ftp, monkeypatch_key_value_store):
+
+    start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
+    ts = load_isd_daily_temp_data('722874', start, end)
+    assert ts.index[0] == datetime(2006, 1, 4, tzinfo=pytz.UTC)
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == datetime(2007, 4, 3, tzinfo=pytz.UTC)
+    assert pd.notnull(ts[-1])
+
+
 def test_load_gsod_daily_temp_data(
         monkeypatch_noaa_ftp, monkeypatch_key_value_store):
 
@@ -1312,6 +1336,18 @@ def test_load_gsod_daily_temp_data(
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])
+
+
+def test_load_gsod_daily_temp_data_non_normalized_dates(
+        monkeypatch_noaa_ftp, monkeypatch_key_value_store):
+
+    start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
+    end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
+    ts = load_gsod_daily_temp_data('722874', start, end)
+    assert ts.index[0] == datetime(2006, 1, 4, tzinfo=pytz.UTC)
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == datetime(2007, 4, 3, tzinfo=pytz.UTC)
     assert pd.notnull(ts[-1])
 
 
