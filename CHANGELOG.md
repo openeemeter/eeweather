@@ -3,7 +3,7 @@
 Information about version updates and instructions for upgrading where
 needed.
 
-## Development
+## 0.3.8
 
 * Update internal database (2018-08-31).
 
