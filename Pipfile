@@ -32,3 +32,4 @@ Sphinx = "*"
 sphinx-autobuild = "*"
 typing = "*"
 sphinxcontrib-spelling = "*"
+snapshottest = {git = "git://github.com/syrusakbary/snapshottest.git", editable = true, ref = "54117098bd756c0fa6936f3bafab4bf85c58e943"}

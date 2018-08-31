@@ -33,13 +33,13 @@ def test_database_tables():
     ]
 
 
-def test_isd_station_metadata_table_count():
+def test_isd_station_metadata_table_count(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_station_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 3864
+    snapshot.assert_match(count, 'count')
 
 
 def test_isd_station_metadata_table_content():
@@ -66,13 +66,13 @@ def test_isd_station_metadata_table_content():
         'wban_ids': '93121,99999'
     }
 
-def test_isd_file_metadata_table_count():
+def test_isd_file_metadata_table_count(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
     cur.execute(''' select count(*) from isd_file_metadata ''')
     (count,) = cur.fetchone()
-    assert count == 32853  # this count is brittle b/c of frequent updates
+    snapshot.assert_match(count, 'count')
 
 
 def test_isd_file_metadata_table_content():
