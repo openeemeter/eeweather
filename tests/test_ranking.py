@@ -222,12 +222,21 @@ def test_select_station_no_coverage_check(cz_candidates):
 @pytest.fixture
 def monkeypatch_load_isd_hourly_temp_data(monkeypatch):
     def load_isd_hourly_temp_data(station, start, end):
-        index = pd.date_range(start, end, freq='H', tz='UTC')
+        # because result datetimes should fall exactly on hours
+        normalized_start = datetime(
+            start.year, start.month, start.day, start.hour, tzinfo=pytz.UTC)
+        normalized_end = datetime(
+            end.year, end.month, end.day, end.hour, tzinfo=pytz.UTC)
+        index = pd.date_range(
+            normalized_start, normalized_end, freq='H', tz='UTC')
+
+        # simulate missing data
         if station.usaf_id == '723890':
             return pd.Series(1, index=index)[:-24*50].reindex(index)
         elif station.usaf_id == '747020':
             return pd.Series(1, index=index)[:-24*30].reindex(index)
         return pd.Series(1, index=index)[:-24*10].reindex(index)
+
     monkeypatch.setattr(
         'eeweather.mockable.load_isd_hourly_temp_data',
         load_isd_hourly_temp_data
@@ -338,3 +347,16 @@ def test_select_station_no_station_warnings_check():
         'rank': 1,
         'min_fraction_coverage': 0.9
     }
+
+
+def test_select_station_with_second_level_dates(
+    cz_candidates, monkeypatch_load_isd_hourly_temp_data
+):
+    # dates don't fall exactly on the hour
+    start = datetime(2017, 1, 1, 2, 3, 4, tzinfo=pytz.UTC)
+    end = datetime(2018, 1, 1, 12, 13, 14, tzinfo=pytz.UTC)
+
+    station, warnings = select_station(
+        cz_candidates, coverage_range=(start, end),
+    )
+    assert station.usaf_id == '747020'

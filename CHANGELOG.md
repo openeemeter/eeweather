@@ -3,6 +3,13 @@
 Information about version updates and instructions for upgrading where
 needed.
 
+## Development
+
+* Allow using non-normalized dates, (i.e., dates with non-zero minutes or
+  seconds that do not fall exactly on an hour or a day boundary) to access
+  `station.load_isd_hourly_temp_data`, `station.load_isd_daily_temp_data`,
+  and `station.load_gsod_daily_temp_data`.
+
 ## 0.3.6
 
 * Bug fix in ISDStation initialization with handling of null fields.

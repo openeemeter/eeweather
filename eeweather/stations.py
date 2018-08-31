@@ -776,15 +776,26 @@ def load_isd_hourly_temp_data(usaf_id, start, end, read_from_cache=True, write_t
         for year in range(start.year, end.year + 1)
     ]
 
-    # get raw data
+    # get raw data from loaded years into hourly form
     ts = pd.concat(data).resample('H').mean()
 
-    # whittle down
+    # whittle down to desired range
     ts = ts[start:end]
 
-    # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='H'))
+    if len(ts) > 0:
+        # because start and end dates need.to fall exactly on hours
+        ts_start = datetime(
+            start.year, start.month, start.day, start.hour, tzinfo=pytz.UTC)
+        # add an hour if not already exactly on an hour, which guarantees
+        # that ts_start is greater than or equal to start.
+        if ts_start < start:
+            ts_start += timedelta(seconds=3600)
+        ts_end = datetime(
+            end.year, end.month, end.day, end.hour, tzinfo=pytz.UTC)
+        # fill in gaps
+        ts = ts.reindex(pd.date_range(ts_start, ts_end, freq='H', tz=pytz.UTC))
     return ts
+
 
 
 def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to_cache=True):
@@ -808,8 +819,17 @@ def load_isd_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_to
     # whittle down
     ts = ts[start:end]
 
-    # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='D', tz=pytz.UTC))
+    if len(ts) > 0:
+        # because start and end dates need.to fall exactly on days
+        ts_start = datetime(
+            start.year, start.month, start.day, tzinfo=pytz.UTC)
+        # add a day if not already exactly on a day, which guarantees
+        # that ts_start is greater than or equal to start.
+        if ts_start < start:
+            ts_start += timedelta(days=1)
+        ts_end = datetime(end.year, end.month, end.day, tzinfo=pytz.UTC)
+        # fill in gaps
+        ts = ts.reindex(pd.date_range(ts_start, ts_end, freq='D', tz=pytz.UTC))
     return ts
 
 
@@ -833,8 +853,17 @@ def load_gsod_daily_temp_data(usaf_id, start, end, read_from_cache=True, write_t
     # whittle down
     ts = ts[start:end]
 
-    # fill in gaps
-    ts = ts.reindex(pd.date_range(start, end, freq='D', tz=pytz.UTC))
+    if len(ts) > 0:
+        # because start and end dates need.to fall exactly on days
+        ts_start = datetime(
+            start.year, start.month, start.day, tzinfo=pytz.UTC)
+        # add a day if not already exactly on a day, which guarantees
+        # that ts_start is greater than or equal to start.
+        if ts_start < start:
+            ts_start += timedelta(days=1)
+        ts_end = datetime(end.year, end.month, end.day, tzinfo=pytz.UTC)
+        # fill in gaps
+        ts = ts.reindex(pd.date_range(ts_start, ts_end, freq='D', tz=pytz.UTC))
     return ts
 
 
