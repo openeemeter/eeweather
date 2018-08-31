@@ -3,7 +3,7 @@
 Information about version updates and instructions for upgrading where
 needed.
 
-## Development
+## 0.3.7
 
 * Allow using non-normalized dates, (i.e., dates with non-zero minutes or
   seconds that do not fall exactly on an hour or a day boundary) to access
