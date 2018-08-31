@@ -46,3 +46,9 @@ services:
       - .:/app
     depends_on:
       - shell
+
+  pipenv:
+    image: eemeter_shell
+    entrypoint: pipenv
+    volumes:
+      - .:/app
