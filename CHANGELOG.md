@@ -3,6 +3,10 @@
 Information about version updates and instructions for upgrading where
 needed.
 
+## Development
+
+* Update internal database (2018-08-31).
+
 ## 0.3.7
 
 * Allow using non-normalized dates, (i.e., dates with non-zero minutes or
@@ -21,6 +25,10 @@ needed.
 ## 0.3.4
 
 * Created an EEWeatherWarning object to capture distance warnings.
+
+## 0.3.3
+
+* Update internal database (2018-08-03).
 
 ## 0.3.2
 
