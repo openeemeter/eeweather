@@ -64,7 +64,7 @@ def test_inspect_isd_station():
 def test_inspect_isd_station_unrecognized():
     runner = CliRunner()
     result = runner.invoke(inspect_isd_station, ["INVALID"])
-    assert result.exit_code == -1
+    assert result.exit_code == 1
 
 
 def test_inspect_isd_file_years():
@@ -92,7 +92,7 @@ def test_inspect_isd_file_years():
 def test_inspect_isd_file_years_unrecognized():
     runner = CliRunner()
     result = runner.invoke(inspect_isd_file_years, ["INVALID"])
-    assert result.exit_code == -1
+    assert result.exit_code == 1
 
 
 def test_inspect_isd_filenames():
@@ -108,7 +108,7 @@ def test_inspect_isd_filenames():
 def test_inspect_isd_filenames_unrecognized():
     runner = CliRunner()
     result = runner.invoke(inspect_isd_filenames, ["INVALID", "2017"])
-    assert result.exit_code == -1
+    assert result.exit_code == 1
 
 
 def test_inspect_gsod_filenames():
@@ -124,4 +124,4 @@ def test_inspect_gsod_filenames():
 def test_inspect_gsod_filenames_unrecognized():
     runner = CliRunner()
     result = runner.invoke(inspect_gsod_filenames, ["INVALID", "2017"])
-    assert result.exit_code == -1
+    assert result.exit_code == 1
