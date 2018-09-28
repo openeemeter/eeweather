@@ -9,7 +9,7 @@ name = "pypi"
 
 "beautifulsoup4" = "*"
 Cython = "*"
-matplotlib = "*"
+matplotlib = "<3.0.0"  # until we drop python 2 support
 Pillow = "*"
 pandas = "*"
 pyproj = "*"
