@@ -8,28 +8,29 @@ name = "pypi"
 [packages]
 
 "beautifulsoup4" = "*"
-pyproj = "*"
-Shapely = {extras = ["vectorized"]}
-simplejson = "*"
-pandas = "*"
-SQLAlchemy = "*"
-matplotlib = "*"
 Cython = "*"
+matplotlib = "*"
 Pillow = "*"
-scipy = "*"
+pandas = "*"
+pyproj = "*"
 requests ="*"
+Shapely = {extras = ["vectorized"]}
+SQLAlchemy = "*"
+scipy = "*"
+simplejson = "*"
 
 
 [dev-packages]
 
-pytest = "*"
+black = {version = "==18.6b4", markers="python_version >= '3.6'"}
 coverage = "*"
+pytest = "*"
 pytest-cov = "*"
+pytest-xdist = "*"
 tox = "*"
 twine = "*"
-pytest-xdist = "*"
 Sphinx = "*"
-sphinx-autobuild = "*"
-typing = "*"
-sphinxcontrib-spelling = "*"
 snapshottest = {git = "git://github.com/syrusakbary/snapshottest.git", editable = true, ref = "54117098bd756c0fa6936f3bafab4bf85c58e943"}
+sphinx-autobuild = "*"
+sphinxcontrib-spelling = "*"
+typing = "*"

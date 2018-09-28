@@ -16,8 +16,6 @@ services:
     entrypoint: make -C docs livehtml
     volumes:
       - .:/app
-    depends_on:
-      - shell
 
   test:
     image: eeweather_shell
@@ -25,8 +23,6 @@ services:
     volumes:
       - .:/app
       - /app/tests/__pycache__/
-    depends_on:
-      - shell
 
   jupyter:
     ports:
@@ -36,19 +32,23 @@ services:
       jupyter lab scripts/ --ip=0.0.0.0 --port=${HOST_PORT_JUPYTER:-8888} --allow-root --no-browser
     volumes:
       - .:/app
-    depends_on:
-      - shell
 
   eeweather:
     image: eeweather_shell
     entrypoint: eeweather
     volumes:
       - .:/app
-    depends_on:
-      - shell
 
   pipenv:
-    image: eemeter_shell
+    image: eeweather_shell
     entrypoint: pipenv
+    environment:
+      - PIPENV_CACHE_DIR=/app/.docker-pipenv-cache
+    volumes:
+      - .:/app
+
+  blacken:
+    image: eeweather_shell
+    entrypoint: black .
     volumes:
       - .:/app
