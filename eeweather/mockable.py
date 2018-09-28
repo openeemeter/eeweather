@@ -17,7 +17,7 @@
    limitations under the License.
 
 """
-'''
+"""
 Usage:
 
     # module.py
@@ -46,7 +46,7 @@ Usage:
     def test_function_a(mock_expensive_function):
         function_a()
 
-'''
+"""
 
 import sys
 
@@ -55,4 +55,5 @@ def mockable():
     def decorator(func):
         setattr(sys.modules[__name__], func.__name__, func)
         return func
+
     return decorator

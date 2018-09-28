@@ -35,7 +35,7 @@ from .database import build_metadata_db, inspect_metadata_db
 
 @click.group()
 def cli():
-    '''Example usage
+    """Example usage
 
     See station metadata:
 
@@ -80,27 +80,27 @@ def cli():
         $ eeweather inspect_db
 
 
-    '''
+    """
     pass  # pragma: no cover
 
 
 @cli.command()
-@click.argument('usaf_id')
+@click.argument("usaf_id")
 def inspect_isd_station(usaf_id):
     metadata = _get_isd_station_metadata(usaf_id)
     click.echo(json.dumps(metadata, indent=2))
 
 
 @cli.command()
-@click.argument('usaf_id')
+@click.argument("usaf_id")
 def inspect_isd_file_years(usaf_id):
     metadata = _get_isd_file_metadata(usaf_id)
     click.echo(json.dumps(metadata, indent=2))
 
 
 @cli.command()
-@click.argument('usaf_id')
-@click.argument('year')
+@click.argument("usaf_id")
+@click.argument("year")
 def inspect_isd_filenames(usaf_id, year):
     filenames = _get_isd_filenames(usaf_id, year, with_host=True)
     for f in filenames:
@@ -108,8 +108,8 @@ def inspect_isd_filenames(usaf_id, year):
 
 
 @cli.command()
-@click.argument('usaf_id')
-@click.argument('year')
+@click.argument("usaf_id")
+@click.argument("year")
 def inspect_gsod_filenames(usaf_id, year):
     filenames = _get_gsod_filenames(usaf_id, year, with_host=True)
     for f in filenames:
@@ -117,17 +117,29 @@ def inspect_gsod_filenames(usaf_id, year):
 
 
 @cli.command()
-@click.option('--zcta-geometry/--no-zcta-geometry', default=False)
-@click.option('--iecc-climate-zone-geometry/--no-iecc-climate-zone-geometry', default=True)
-@click.option('--iecc-moisture-regime-geometry/--no-iecc-moisture-regime-geometry', default=True)
-@click.option('--ba-climate-zone-geometry/--no-ba-climate-zone-geometry', default=True)
-@click.option('--ca-climate-zone-geometry/--no-ca-climate-zone-geometry', default=True)
+@click.option("--zcta-geometry/--no-zcta-geometry", default=False)
+@click.option(
+    "--iecc-climate-zone-geometry/--no-iecc-climate-zone-geometry", default=True
+)
+@click.option(
+    "--iecc-moisture-regime-geometry/--no-iecc-moisture-regime-geometry", default=True
+)
+@click.option("--ba-climate-zone-geometry/--no-ba-climate-zone-geometry", default=True)
+@click.option("--ca-climate-zone-geometry/--no-ca-climate-zone-geometry", default=True)
 def rebuild_db(
-        zcta_geometry, iecc_climate_zone_geometry, iecc_moisture_regime_geometry,
-        ba_climate_zone_geometry, ca_climate_zone_geometry):
+    zcta_geometry,
+    iecc_climate_zone_geometry,
+    iecc_moisture_regime_geometry,
+    ba_climate_zone_geometry,
+    ca_climate_zone_geometry,
+):
     build_metadata_db(  # pragma: no cover
-        zcta_geometry, iecc_climate_zone_geometry, iecc_moisture_regime_geometry,
-        ba_climate_zone_geometry, ca_climate_zone_geometry)
+        zcta_geometry,
+        iecc_climate_zone_geometry,
+        iecc_moisture_regime_geometry,
+        ba_climate_zone_geometry,
+        ca_climate_zone_geometry,
+    )
 
 
 @cli.command()

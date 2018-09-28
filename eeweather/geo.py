@@ -20,78 +20,75 @@
 import json
 
 from .connections import metadata_db_connection_proxy
-from .exceptions import (
-    UnrecognizedUSAFIDError,
-    UnrecognizedZCTAError,
-)
+from .exceptions import UnrecognizedUSAFIDError, UnrecognizedZCTAError
 
 from .utils import lazy_property
 from .validation import valid_zcta_or_raise
 
 
-__all__ = (
-    'get_lat_long_climate_zones',
-    'get_zcta_metadata',
-    'zcta_to_lat_long'
-)
+__all__ = ("get_lat_long_climate_zones", "get_zcta_metadata", "zcta_to_lat_long")
 
 
 class CachedData(object):
-
     @lazy_property
     def climate_zone_geometry(self):
         try:
             from shapely.geometry import shape
         except ImportError:  # pragma: no cover
-            raise ImportError('Matching by lat/lng within climate zone requires shapely')
+            raise ImportError(
+                "Matching by lat/lng within climate zone requires shapely"
+            )
 
         conn = metadata_db_connection_proxy.get_connection()
         cur = conn.cursor()
 
-        cur.execute('''
+        cur.execute(
+            """
           select
             iecc_climate_zone, geometry
           from
             iecc_climate_zone_metadata
-        ''')
+        """
+        )
         iecc_climate_zones = [
-            (cz_id, shape(json.loads(geometry)))
-            for (cz_id, geometry) in cur.fetchall()
+            (cz_id, shape(json.loads(geometry))) for (cz_id, geometry) in cur.fetchall()
         ]
 
-        cur.execute('''
+        cur.execute(
+            """
           select
             iecc_moisture_regime, geometry
           from
             iecc_moisture_regime_metadata
-        ''')
+        """
+        )
         iecc_moisture_regimes = [
-            (cz_id, shape(json.loads(geometry)))
-            for (cz_id, geometry) in cur.fetchall()
+            (cz_id, shape(json.loads(geometry))) for (cz_id, geometry) in cur.fetchall()
         ]
 
-        cur.execute('''
+        cur.execute(
+            """
           select
             ba_climate_zone, geometry
           from
             ba_climate_zone_metadata
-        ''')
+        """
+        )
         ba_climate_zones = [
-            (cz_id, shape(json.loads(geometry)))
-            for (cz_id, geometry) in cur.fetchall()
+            (cz_id, shape(json.loads(geometry))) for (cz_id, geometry) in cur.fetchall()
         ]
 
-        cur.execute('''
+        cur.execute(
+            """
           select
             ca_climate_zone, geometry
           from
             ca_climate_zone_metadata
-        ''')
+        """
+        )
         ca_climate_zones = [
-            (cz_id, shape(json.loads(geometry)))
-            for (cz_id, geometry) in cur.fetchall()
+            (cz_id, shape(json.loads(geometry))) for (cz_id, geometry) in cur.fetchall()
         ]
-
 
         return (
             iecc_climate_zones,
@@ -105,7 +102,7 @@ cached_data = CachedData()
 
 
 def get_lat_long_climate_zones(latitude, longitude):
-    ''' Get climate zones that contain lat/long coordinates.
+    """ Get climate zones that contain lat/long coordinates.
 
     Parameters
     ----------
@@ -118,11 +115,11 @@ def get_lat_long_climate_zones(latitude, longitude):
     -------
     climate_zones: dict of str
         Region ids for each climate zone type.
-    '''
+    """
     try:
         from shapely.geometry import Point
     except ImportError:  # pragma: no cover
-        raise ImportError('Finding climate zone of lat/long points requires shapely.')
+        raise ImportError("Finding climate zone of lat/long points requires shapely.")
 
     (
         iecc_climate_zones,
@@ -135,37 +132,37 @@ def get_lat_long_climate_zones(latitude, longitude):
     climate_zones = {}
     for iecc_climate_zone, shape in iecc_climate_zones:
         if shape.contains(point):
-            climate_zones['iecc_climate_zone'] = iecc_climate_zone
+            climate_zones["iecc_climate_zone"] = iecc_climate_zone
             break
     else:
-        climate_zones['iecc_climate_zone'] = None
+        climate_zones["iecc_climate_zone"] = None
 
     for iecc_moisture_regime, shape in iecc_moisture_regimes:
         if shape.contains(point):
-            climate_zones['iecc_moisture_regime'] = iecc_moisture_regime
+            climate_zones["iecc_moisture_regime"] = iecc_moisture_regime
             break
     else:
-        climate_zones['iecc_moisture_regime'] = None
+        climate_zones["iecc_moisture_regime"] = None
 
     for ba_climate_zone, shape in ba_climate_zones:
         if shape.contains(point):
-            climate_zones['ba_climate_zone'] = ba_climate_zone
+            climate_zones["ba_climate_zone"] = ba_climate_zone
             break
     else:
-        climate_zones['ba_climate_zone'] = None
+        climate_zones["ba_climate_zone"] = None
 
     for ca_climate_zone, shape in ca_climate_zones:
         if shape.contains(point):
-            climate_zones['ca_climate_zone'] = ca_climate_zone
+            climate_zones["ca_climate_zone"] = ca_climate_zone
             break
     else:
-        climate_zones['ca_climate_zone'] = None
+        climate_zones["ca_climate_zone"] = None
 
     return climate_zones
 
 
 def get_zcta_metadata(zcta):
-    ''' Get metadata about a ZIP Code Tabulation Area (ZCTA).
+    """ Get metadata about a ZIP Code Tabulation Area (ZCTA).
 
     Parameters
     ----------
@@ -176,28 +173,28 @@ def get_zcta_metadata(zcta):
     -------
     metadata : dict
         Dict of data about the ZCTA, including lat/long coordinates.
-    '''
+    """
     conn = metadata_db_connection_proxy.get_connection()
     cur = conn.cursor()
-    cur.execute('''
+    cur.execute(
+        """
       select
         *
       from
         zcta_metadata
       where
         zcta_id = ?
-    ''', (zcta,))
+    """,
+        (zcta,),
+    )
     row = cur.fetchone()
     if row is None:
         raise UnrecognizedZCTAError(zcta)
-    return {
-        col[0]: row[i]
-        for i, col in enumerate(cur.description)
-    }
+    return {col[0]: row[i] for i, col in enumerate(cur.description)}
 
 
 def zcta_to_lat_long(zcta):
-    '''Get location of ZCTA centroid
+    """Get location of ZCTA centroid
 
     Retrieves latitude and longitude of centroid of ZCTA
     to use for matching with weather station.
@@ -213,13 +210,14 @@ def zcta_to_lat_long(zcta):
         Latitude of centroid of ZCTA.
     longitude : float
         Target Longitude of centroid of ZCTA.
-    '''
+    """
     valid_zcta_or_raise(zcta)
 
     conn = metadata_db_connection_proxy.get_connection()
     cur = conn.cursor()
 
-    cur.execute('''
+    cur.execute(
+        """
       select
         latitude
         , longitude
@@ -227,7 +225,9 @@ def zcta_to_lat_long(zcta):
         zcta_metadata
       where
         zcta_id = ?
-    ''', (zcta,))
+    """,
+        (zcta,),
+    )
     # match existence checked in validate_zcta_or_raise(zcta)
     latitude, longitude = cur.fetchone()
 

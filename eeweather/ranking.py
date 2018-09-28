@@ -29,19 +29,16 @@ from .stations import ISDStation
 from .utils import lazy_property
 from .warnings import EEWeatherWarning
 
-__all__ = (
-    'rank_stations',
-    'combine_ranked_stations',
-    'select_station',
-)
+__all__ = ("rank_stations", "combine_ranked_stations", "select_station")
+
 
 class CachedData(object):
-
     @lazy_property
     def all_station_metadata(self):
         conn = metadata_db_connection_proxy.get_connection()
         cur = conn.cursor()
-        cur.execute('''
+        cur.execute(
+            """
           select
             isd.usaf_id
             , isd.latitude
@@ -64,28 +61,38 @@ class CachedData(object):
               isd.usaf_id = tmy3.usaf_id
           order by
             isd.usaf_id
-        ''')
+        """
+        )
 
-        df = pd.DataFrame([
-            {
-                col[0]: val
-                for col, val in zip(cur.description, row)
-            }
-            for row in cur.fetchall()
-        ], columns=[
-            'usaf_id', 'latitude', 'longitude',
-            'iecc_climate_zone', 'iecc_moisture_regime',
-            'ba_climate_zone', 'ca_climate_zone',
-            'rough_quality', 'elevation', 'state',
-            'tmy3_class', 'is_tmy3', 'is_cz2010',
-        ]).set_index('usaf_id')
+        df = pd.DataFrame(
+            [
+                {col[0]: val for col, val in zip(cur.description, row)}
+                for row in cur.fetchall()
+            ],
+            columns=[
+                "usaf_id",
+                "latitude",
+                "longitude",
+                "iecc_climate_zone",
+                "iecc_moisture_regime",
+                "ba_climate_zone",
+                "ca_climate_zone",
+                "rough_quality",
+                "elevation",
+                "state",
+                "tmy3_class",
+                "is_tmy3",
+                "is_cz2010",
+            ],
+        ).set_index("usaf_id")
 
-        df['latitude'] = df.latitude.astype(float)
-        df['longitude'] = df.longitude.astype(float)
-        df['elevation'] = df.elevation.astype(float)
-        df['is_tmy3'] = df.is_tmy3.astype(bool)
-        df['is_cz2010'] = df.is_cz2010.astype(bool)
+        df["latitude"] = df.latitude.astype(float)
+        df["longitude"] = df.longitude.astype(float)
+        df["elevation"] = df.elevation.astype(float)
+        df["is_tmy3"] = df.is_tmy3.astype(bool)
+        df["is_cz2010"] = df.is_cz2010.astype(bool)
         return df
+
 
 cached_data = CachedData()
 
@@ -98,14 +105,23 @@ def _combine_filters(filters, index):
 
 
 def rank_stations(
-    site_latitude, site_longitude, site_state=None, site_elevation=None,
-    match_iecc_climate_zone=False, match_iecc_moisture_regime=False,
-    match_ba_climate_zone=False, match_ca_climate_zone=False,
-    match_state=False, minimum_quality=None, minimum_tmy3_class=None,
-    max_distance_meters=None, max_difference_elevation_meters=None,
-    is_tmy3=None, is_cz2010=None,
+    site_latitude,
+    site_longitude,
+    site_state=None,
+    site_elevation=None,
+    match_iecc_climate_zone=False,
+    match_iecc_moisture_regime=False,
+    match_ba_climate_zone=False,
+    match_ca_climate_zone=False,
+    match_state=False,
+    minimum_quality=None,
+    minimum_tmy3_class=None,
+    max_distance_meters=None,
+    max_difference_elevation_meters=None,
+    is_tmy3=None,
+    is_cz2010=None,
 ):
-    ''' Get a ranked, filtered set of candidate weather stations and metadata
+    """ Get a ranked, filtered set of candidate weather stations and metadata
     for a particular site.
 
     Parameters
@@ -183,37 +199,40 @@ def rank_stations(
           between target site elevation and weather station elevation, if
           available.
 
-    '''
+    """
     candidates = cached_data.all_station_metadata
 
     # compute distances
     candidates_defined_lat_long = candidates[
-        candidates.latitude.notnull() & candidates.longitude.notnull()]
+        candidates.latitude.notnull() & candidates.longitude.notnull()
+    ]
     candidates_latitude = candidates_defined_lat_long.latitude
     candidates_longitude = candidates_defined_lat_long.longitude
     tiled_site_latitude = np.tile(site_latitude, candidates_latitude.shape)
     tiled_site_longitude = np.tile(site_longitude, candidates_longitude.shape)
-    geod = pyproj.Geod(ellps='WGS84')
+    geod = pyproj.Geod(ellps="WGS84")
     dists = geod.inv(
-        tiled_site_longitude, tiled_site_latitude,
-        candidates_longitude.values, candidates_latitude.values)[2]
-    distance_meters = pd.Series(
-        dists, index=candidates_defined_lat_long.index
-    ).reindex(candidates.index)
-    candidates['distance_meters'] = distance_meters
+        tiled_site_longitude,
+        tiled_site_latitude,
+        candidates_longitude.values,
+        candidates_latitude.values,
+    )[2]
+    distance_meters = pd.Series(dists, index=candidates_defined_lat_long.index).reindex(
+        candidates.index
+    )
+    candidates["distance_meters"] = distance_meters
 
     if site_elevation is not None:
-        difference_elevation_meters = (
-            candidates.elevation - site_elevation).abs()
+        difference_elevation_meters = (candidates.elevation - site_elevation).abs()
     else:
         difference_elevation_meters = None
-    candidates['difference_elevation_meters'] = difference_elevation_meters
+    candidates["difference_elevation_meters"] = difference_elevation_meters
 
     site_climate_zones = get_lat_long_climate_zones(site_latitude, site_longitude)
-    site_iecc_climate_zone = site_climate_zones['iecc_climate_zone']
-    site_iecc_moisture_regime = site_climate_zones['iecc_moisture_regime']
-    site_ca_climate_zone = site_climate_zones['ca_climate_zone']
-    site_ba_climate_zone = site_climate_zones['ba_climate_zone']
+    site_iecc_climate_zone = site_climate_zones["iecc_climate_zone"]
+    site_iecc_moisture_regime = site_climate_zones["iecc_moisture_regime"]
+    site_ca_climate_zone = site_climate_zones["ca_climate_zone"]
+    site_ba_climate_zone = site_climate_zones["ba_climate_zone"]
 
     # create filters
     filters = []
@@ -250,47 +269,59 @@ def rank_stations(
     if is_cz2010 is not None:
         filters.append(candidates.is_cz2010.isin([is_cz2010]))
 
-    if minimum_quality == 'low':
-        filters.append(candidates.rough_quality.isin(['high', 'medium', 'low']))
-    elif minimum_quality == 'medium':
-        filters.append(candidates.rough_quality.isin(['high', 'medium']))
-    elif minimum_quality == 'high':
-        filters.append(candidates.rough_quality.isin(['high']))
+    if minimum_quality == "low":
+        filters.append(candidates.rough_quality.isin(["high", "medium", "low"]))
+    elif minimum_quality == "medium":
+        filters.append(candidates.rough_quality.isin(["high", "medium"]))
+    elif minimum_quality == "high":
+        filters.append(candidates.rough_quality.isin(["high"]))
 
-    if minimum_tmy3_class == 'III':
-        filters.append(candidates.tmy3_class.isin(['I', 'II', 'III']))
-    elif minimum_tmy3_class == 'II':
-        filters.append(candidates.tmy3_class.isin(['I', 'II']))
-    elif minimum_tmy3_class == 'I':
-        filters.append(candidates.tmy3_class.isin(['I']))
+    if minimum_tmy3_class == "III":
+        filters.append(candidates.tmy3_class.isin(["I", "II", "III"]))
+    elif minimum_tmy3_class == "II":
+        filters.append(candidates.tmy3_class.isin(["I", "II"]))
+    elif minimum_tmy3_class == "I":
+        filters.append(candidates.tmy3_class.isin(["I"]))
 
     if max_distance_meters is not None:
         filters.append(candidates.distance_meters <= max_distance_meters)
 
     if max_difference_elevation_meters is not None and site_elevation is not None:
         filters.append(
-            candidates.difference_elevation_meters <= max_difference_elevation_meters)
+            candidates.difference_elevation_meters <= max_difference_elevation_meters
+        )
 
     combined_filters = _combine_filters(filters, candidates.index)
     filtered_candidates = candidates[combined_filters]
-    ranked_filtered_candidates = filtered_candidates.sort_values(
-        by=['distance_meters'])
+    ranked_filtered_candidates = filtered_candidates.sort_values(by=["distance_meters"])
 
     # add rank column
     ranks = range(1, 1 + len(ranked_filtered_candidates))
-    ranked_filtered_candidates.insert(0, 'rank', ranks)
+    ranked_filtered_candidates.insert(0, "rank", ranks)
 
-    return ranked_filtered_candidates[[
-        'rank', 'distance_meters', 'latitude', 'longitude',
-        'iecc_climate_zone', 'iecc_moisture_regime',
-        'ba_climate_zone', 'ca_climate_zone',
-        'rough_quality', 'elevation', 'state',
-        'tmy3_class', 'is_tmy3', 'is_cz2010', 'difference_elevation_meters'
-    ]]
+    return ranked_filtered_candidates[
+        [
+            "rank",
+            "distance_meters",
+            "latitude",
+            "longitude",
+            "iecc_climate_zone",
+            "iecc_moisture_regime",
+            "ba_climate_zone",
+            "ca_climate_zone",
+            "rough_quality",
+            "elevation",
+            "state",
+            "tmy3_class",
+            "is_tmy3",
+            "is_cz2010",
+            "difference_elevation_meters",
+        ]
+    ]
 
 
 def combine_ranked_stations(rankings):
-    ''' Combine :any:`pandas.DataFrame` s of candidate weather stations to form
+    """ Combine :any:`pandas.DataFrame` s of candidate weather stations to form
     a hybrid ranking dataframe.
 
     Parameters
@@ -305,19 +336,18 @@ def combine_ranked_stations(rankings):
     ranked_filtered_candidates : :any:`pandas.DataFrame`
         Dataframe has a rank column and the same columns given in the source
         dataframes.
-    '''
+    """
 
     if len(rankings) == 0:
-        raise ValueError('Requires at least one ranking.')
+        raise ValueError("Requires at least one ranking.")
 
     combined_ranking = rankings[0]
     for ranking in rankings[1:]:
         filtered_ranking = ranking[~ranking.index.isin(combined_ranking.index)]
         combined_ranking = pd.concat([combined_ranking, filtered_ranking])
 
-    combined_ranking['rank'] = range(1, 1 + len(combined_ranking))
+    combined_ranking["rank"] = range(1, 1 + len(combined_ranking))
     return combined_ranking
-
 
 
 @eeweather.mockable.mockable()
@@ -326,10 +356,13 @@ def load_isd_hourly_temp_data(station, start_date, end_date):  # pragma: no cove
 
 
 def select_station(
-    candidates, coverage_range=None, min_fraction_coverage=0.9,
-    distance_warnings=(50000, 200000), rank=1
+    candidates,
+    coverage_range=None,
+    min_fraction_coverage=0.9,
+    distance_warnings=(50000, 200000),
+    rank=1,
 ):
-    ''' Select a station from a list of candidates that meets given data
+    """ Select a station from a list of candidates that meets given data
     quality criteria.
 
     Parameters
@@ -343,7 +376,8 @@ def select_station(
     -------
     isd_station, warnings : tuple of (:any:`eeweather.ISDStation`, list of str)
         A qualified weather station. ``None`` if no station meets criteria.
-    '''
+    """
+
     def _test_station(station):
         if coverage_range is None:
             return True
@@ -351,7 +385,8 @@ def select_station(
             start_date, end_date = coverage_range
             try:
                 tempC = eeweather.mockable.load_isd_hourly_temp_data(
-                    station, start_date, end_date)
+                    station, start_date, end_date
+                )
             except ISDDataNotAvailableError:
                 return False  # reject
 
@@ -365,16 +400,16 @@ def select_station(
     def _station_warnings(station, distance_meters):
         return [
             EEWeatherWarning(
-                qualified_name='eeweather.exceeds_maximum_distance',
+                qualified_name="eeweather.exceeds_maximum_distance",
                 description=(
-                    'Distance from target to weather station is greater'
-                    'than the specified km.'
+                    "Distance from target to weather station is greater"
+                    "than the specified km."
                 ),
                 data={
-                    'distance_meters': distance_meters,
-                    'max_distance_meters': d,
-                    'rank': rank,
-                }
+                    "distance_meters": distance_meters,
+                    "max_distance_meters": d,
+                    "rank": rank,
+                },
             )
             for d in distance_warnings
             if distance_meters > d
@@ -389,14 +424,11 @@ def select_station(
             return station, _station_warnings(station, row.distance_meters)
 
     no_station_warning = EEWeatherWarning(
-        qualified_name='eeweather.no_weather_station_selected',
+        qualified_name="eeweather.no_weather_station_selected",
         description=(
-            'No weather station found with the specified rank and'
-            ' minimum fracitional coverage.'
+            "No weather station found with the specified rank and"
+            " minimum fracitional coverage."
         ),
-        data={
-            'rank': rank,
-            'min_fraction_coverage': min_fraction_coverage
-        }
+        data={"rank": rank, "min_fraction_coverage": min_fraction_coverage},
     )
     return None, [no_station_warning]

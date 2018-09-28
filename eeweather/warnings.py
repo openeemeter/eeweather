@@ -17,8 +17,10 @@
    limitations under the License.
 
 """
+
+
 class EEWeatherWarning(object):
-    ''' An object representing a warning and data associated with it.
+    """ An object representing a warning and data associated with it.
 
     Attributes
     ----------
@@ -28,7 +30,7 @@ class EEWeatherWarning(object):
         Prose describing the nature of the warning.
     data : :any:`dict`
         Data that reproducibly shows why the warning was issued.
-    '''
+    """
 
     def __init__(self, qualified_name, description, data):
         self.qualified_name = qualified_name
@@ -36,16 +38,16 @@ class EEWeatherWarning(object):
         self.data = data
 
     def __repr__(self):
-        return 'EEWeatherWarning(qualified_name={})'.format(self.qualified_name)
+        return "EEWeatherWarning(qualified_name={})".format(self.qualified_name)
 
     def json(self):
-        ''' Return a JSON-serializable representation of this result.
+        """ Return a JSON-serializable representation of this result.
 
         The output of this function can be converted to a serialized string
         with :any:`json.dumps`.
-        '''
+        """
         return {
-            'qualified_name': self.qualified_name,
-            'description': self.description,
-            'data': self.data,
+            "qualified_name": self.qualified_name,
+            "description": self.description,
+            "data": self.data,
         }

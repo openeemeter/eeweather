@@ -17,8 +17,10 @@
    limitations under the License.
 
 """
+
+
 class lazy_property(object):
-    '''
+    """
     Meant to be used for lazy evaluation of an object attribute.
     Property should represent non-mutable data, as it replaces itself.
 
@@ -32,7 +34,7 @@ class lazy_property(object):
             return calcs
 
     from https://stackoverflow.com/a/6849299/1965736
-    '''
+    """
 
     def __init__(self, fget):
         self.fget = fget
