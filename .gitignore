@@ -15,6 +15,7 @@ dist/
 
 # config files
 .*
+!.github/
 !.gitignore
 !.coveragerc
 !.travis.yml

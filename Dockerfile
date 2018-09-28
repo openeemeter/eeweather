@@ -1,7 +1,7 @@
-FROM python:3.6.4-stretch
+FROM python:3.6.6-stretch
 
 # -- Install Pipenv:
-RUN set -ex && pip install pipenv --upgrade
+RUN set -ex && pip install pip pipenv --upgrade
 
 #### begin node
 RUN groupadd --gid 1000 node \

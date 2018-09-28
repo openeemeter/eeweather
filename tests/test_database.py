@@ -1,4 +1,23 @@
-''' Note about database tests.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+
+   Copyright 2018 Open Energy Efficiency, Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+"""
+""" Note about database tests.
 
     The database can be rebuilt from scratch using the command:
 
@@ -10,7 +29,7 @@
 
     These tests do not cover these main functions - instead, they test the
     content of the database. They can be thought of as integration tests.
-'''
+"""
 from eeweather.connections import metadata_db_connection_proxy
 
 
@@ -18,18 +37,18 @@ def test_database_tables():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select name from sqlite_master where type='table' ''')
+    cur.execute(""" select name from sqlite_master where type='table' """)
     tables = [name for (name,) in cur.fetchall()]
     assert tables == [
-        'isd_station_metadata',
-        'isd_file_metadata',
-        'zcta_metadata',
-        'iecc_climate_zone_metadata',
-        'iecc_moisture_regime_metadata',
-        'ba_climate_zone_metadata',
-        'ca_climate_zone_metadata',
-        'tmy3_station_metadata',
-        'cz2010_station_metadata',
+        "isd_station_metadata",
+        "isd_file_metadata",
+        "zcta_metadata",
+        "iecc_climate_zone_metadata",
+        "iecc_moisture_regime_metadata",
+        "ba_climate_zone_metadata",
+        "ca_climate_zone_metadata",
+        "tmy3_station_metadata",
+        "cz2010_station_metadata",
     ]
 
 
@@ -37,59 +56,60 @@ def test_isd_station_metadata_table_count(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from isd_station_metadata ''')
+    cur.execute(""" select count(*) from isd_station_metadata """)
     (count,) = cur.fetchone()
-    snapshot.assert_match(count, 'count')
+    snapshot.assert_match(count, "count")
 
 
 def test_isd_station_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from isd_station_metadata where quality='high' limit 1 ''')
+    cur.execute(""" select * from isd_station_metadata where quality='high' limit 1 """)
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
     assert data == {
-        'ba_climate_zone': 'Hot-Dry',
-        'ca_climate_zone': 'CA_14',
-        'elevation': '+0625.1',
-        'icao_code': 'KNXP',
-        'iecc_climate_zone': '3',
-        'iecc_moisture_regime': 'B',
-        'latitude': '+34.300',
-        'longitude': '-116.167',
-        'name': 'TWENTY NINE PALMS',
-        'quality': 'high',
-        'recent_wban_id': '93121',
-        'state': 'CA',
-        'usaf_id': '690150',
-        'wban_ids': '93121,99999'
+        "ba_climate_zone": "Hot-Dry",
+        "ca_climate_zone": "CA_14",
+        "elevation": "+0625.1",
+        "icao_code": "KNXP",
+        "iecc_climate_zone": "3",
+        "iecc_moisture_regime": "B",
+        "latitude": "+34.300",
+        "longitude": "-116.167",
+        "name": "TWENTY NINE PALMS",
+        "quality": "high",
+        "recent_wban_id": "93121",
+        "state": "CA",
+        "usaf_id": "690150",
+        "wban_ids": "93121,99999",
     }
+
 
 def test_isd_file_metadata_table_count(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from isd_file_metadata ''')
+    cur.execute(""" select count(*) from isd_file_metadata """)
     (count,) = cur.fetchone()
-    snapshot.assert_match(count, 'count')
+    snapshot.assert_match(count, "count")
 
 
 def test_isd_file_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from isd_file_metadata limit 1''')
+    cur.execute(""" select * from isd_file_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'usaf_id': '407330', 'wban_id': '99999', 'year': '2007'}
+    assert data == {"usaf_id": "407330", "wban_id": "99999", "year": "2007"}
 
 
 def test_zcta_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from zcta_metadata ''')
+    cur.execute(""" select count(*) from zcta_metadata """)
     (count,) = cur.fetchone()
     assert count == 33144
 
@@ -98,19 +118,19 @@ def test_zcta_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from zcta_metadata limit 1''')
+    cur.execute(""" select * from zcta_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
     assert data == {
-        'ba_climate_zone': 'Hot-Humid',
-        'ca_climate_zone': None,
-        'geometry': None,
-        'iecc_climate_zone': '1',
-        'iecc_moisture_regime': 'A',
-        'latitude': '18.1800455429617',
-        'longitude': '-66.752178136408',
-        'state': 'PR',
-        'zcta_id': '00601'
+        "ba_climate_zone": "Hot-Humid",
+        "ca_climate_zone": None,
+        "geometry": None,
+        "iecc_climate_zone": "1",
+        "iecc_moisture_regime": "A",
+        "latitude": "18.1800455429617",
+        "longitude": "-66.752178136408",
+        "state": "PR",
+        "zcta_id": "00601",
     }
 
 
@@ -118,7 +138,7 @@ def test_iecc_climate_zone_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from iecc_climate_zone_metadata ''')
+    cur.execute(""" select count(*) from iecc_climate_zone_metadata """)
     (count,) = cur.fetchone()
     assert count == 8
 
@@ -127,17 +147,17 @@ def test_iecc_climate_zone_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select iecc_climate_zone from iecc_climate_zone_metadata limit 1''')
+    cur.execute(""" select iecc_climate_zone from iecc_climate_zone_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'iecc_climate_zone': '1'}
+    assert data == {"iecc_climate_zone": "1"}
 
 
 def test_iecc_moisture_regime_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from iecc_moisture_regime_metadata ''')
+    cur.execute(""" select count(*) from iecc_moisture_regime_metadata """)
     (count,) = cur.fetchone()
     assert count == 3
 
@@ -146,17 +166,19 @@ def test_iecc_moisture_regime_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select iecc_moisture_regime from iecc_moisture_regime_metadata limit 1''')
+    cur.execute(
+        """ select iecc_moisture_regime from iecc_moisture_regime_metadata limit 1"""
+    )
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'iecc_moisture_regime': 'A'}
+    assert data == {"iecc_moisture_regime": "A"}
 
 
 def test_ba_climate_zone_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from ba_climate_zone_metadata ''')
+    cur.execute(""" select count(*) from ba_climate_zone_metadata """)
     (count,) = cur.fetchone()
     assert count == 8
 
@@ -165,17 +187,17 @@ def test_ba_climate_zone_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select ba_climate_zone from ba_climate_zone_metadata limit 1''')
+    cur.execute(""" select ba_climate_zone from ba_climate_zone_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {'ba_climate_zone': 'Cold'}
+    assert data == {"ba_climate_zone": "Cold"}
 
 
 def test_ca_climate_zone_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from ca_climate_zone_metadata ''')
+    cur.execute(""" select count(*) from ca_climate_zone_metadata """)
     (count,) = cur.fetchone()
     assert count == 16
 
@@ -184,20 +206,19 @@ def test_ca_climate_zone_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select ca_climate_zone, name from ca_climate_zone_metadata limit 1''')
+    cur.execute(
+        """ select ca_climate_zone, name from ca_climate_zone_metadata limit 1"""
+    )
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {
-        'ca_climate_zone': 'CA_01',
-        'name': 'Arcata',
-    }
+    assert data == {"ca_climate_zone": "CA_01", "name": "Arcata"}
 
 
 def test_tmy3_station_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from tmy3_station_metadata ''')
+    cur.execute(""" select count(*) from tmy3_station_metadata """)
     (count,) = cur.fetchone()
     assert count == 1020
 
@@ -206,14 +227,14 @@ def test_tmy3_station_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from tmy3_station_metadata limit 1''')
+    cur.execute(""" select * from tmy3_station_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
     assert data == {
-        'class': 'I',
-        'name': 'Twentynine Palms',
-        'state': 'CA',
-        'usaf_id': '690150',
+        "class": "I",
+        "name": "Twentynine Palms",
+        "state": "CA",
+        "usaf_id": "690150",
     }
 
 
@@ -221,7 +242,7 @@ def test_cz2010_station_metadata_table_count():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select count(*) from cz2010_station_metadata ''')
+    cur.execute(""" select count(*) from cz2010_station_metadata """)
     (count,) = cur.fetchone()
     assert count == 86
 
@@ -230,9 +251,7 @@ def test_cz2010_station_metadata_table_content():
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
-    cur.execute(''' select * from cz2010_station_metadata limit 1''')
+    cur.execute(""" select * from cz2010_station_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {
-        'usaf_id': '690150',
-    }
+    assert data == {"usaf_id": "690150"}

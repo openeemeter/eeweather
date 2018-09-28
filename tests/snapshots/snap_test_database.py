@@ -7,6 +7,6 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots['test_isd_station_metadata_table_count count'] = 3890
+snapshots["test_isd_station_metadata_table_count count"] = 3890
 
-snapshots['test_isd_file_metadata_table_count count'] = 31946
+snapshots["test_isd_file_metadata_table_count count"] = 31946

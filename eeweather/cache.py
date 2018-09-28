@@ -1,15 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+
+   Copyright 2018 Open Energy Efficiency, Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+"""
 import os
 import json
 
 try:
-    from sqlalchemy import (
-        create_engine,
-        MetaData,
-        Table,
-        Column,
-        String,
-        DateTime,
-    )
+    from sqlalchemy import create_engine, MetaData, Table, Column, String, DateTime
     from sqlalchemy.sql import select, func
 except ImportError:  # pragma: no cover
     has_sqlalchemy = False
@@ -34,22 +46,21 @@ def is_tz_naive(dt):
 
 
 class KeyValueStore(object):
-
     def __init__(self, url=None):
         if not has_sqlalchemy:  # pragma: no cover
-            raise ImportError('KeyValueStore requires sqlalchemy.')
+            raise ImportError("KeyValueStore requires sqlalchemy.")
         self._prepare_db(url)
 
     def __repr__(self):
         return 'KeyValueStore("{}")'.format(self.url)
 
     def _get_url(self):  # pragma: no cover (tests always provide url)
-        url = os.environ.get('EEWEATHER_CACHE_URL')
+        url = os.environ.get("EEWEATHER_CACHE_URL")
         if url is None:
-            directory = '{}/.eeweather'.format(os.path.expanduser('~'))
+            directory = "{}/.eeweather".format(os.path.expanduser("~"))
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            url = 'sqlite:///{}/cache.db'.format(directory)
+            url = "sqlite:///{}/cache.db".format(directory)
         return url
 
     def _prepare_db(self, url=None):
@@ -67,7 +78,7 @@ class KeyValueStore(object):
             metadata,
             Column("key", String, unique=True, index=True),  # arbitrary unique key
             Column("data", String),  # arbitrary json
-            Column("updated", DateTime(timezone=True))  # time of last transaction
+            Column("updated", DateTime(timezone=True)),  # time of last transaction
         )
 
         # only create if not already created
@@ -81,11 +92,14 @@ class KeyValueStore(object):
         return result.fetchone() is not None
 
     def save_json(self, key, data):
-        data = json.dumps(data, separators=(',', ':'))
+        data = json.dumps(data, separators=(",", ":"))
         updated = func.now()
         if self.key_exists(key):
-            s = self.items.update().where(self.items.c.key == key).values(
-                key=key, data=data, updated=updated)
+            s = (
+                self.items.update()
+                .where(self.items.c.key == key)
+                .values(key=key, data=data, updated=updated)
+            )
         else:
             s = self.items.insert().values(key=key, data=data, updated=updated)
         s.execute()

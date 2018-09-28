@@ -1,14 +1,21 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-eeweather library usage
-~~~~~~~~~~~~~~~~~~~~~
-The eeweather libary pulls weather from public sources to support eemeter
-calculations
-Basic usage:
-   >>> import eeweather
-Full documentation is at <https://openee.io>.
-:copyright: (c) 2017 by Open Energy Efficiency.
-:license: Apache 2.0, see LICENSE for more details.
+
+   Copyright 2018 Open Energy Efficiency, Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
 """
 
 import logging
@@ -16,11 +23,7 @@ import logging
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
 from .__version__ import __copyright__
-from .geo import (
-    get_lat_long_climate_zones,
-    get_zcta_metadata,
-    zcta_to_lat_long,
-)
+from .geo import get_lat_long_climate_zones, get_zcta_metadata, zcta_to_lat_long
 from .database import build_metadata_db
 from .exceptions import (
     EEWeatherError,
@@ -29,15 +32,8 @@ from .exceptions import (
     ISDDataNotAvailableError,
     GSODDataNotAvailableError,
 )
-from .summaries import (
-    get_zcta_ids,
-    get_isd_station_usaf_ids,
-)
-from .ranking import (
-    rank_stations,
-    combine_ranked_stations,
-    select_station,
-)
+from .summaries import get_zcta_ids, get_isd_station_usaf_ids
+from .ranking import rank_stations, combine_ranked_stations, select_station
 from .stations import (
     ISDStation,
     get_isd_filenames,
@@ -105,10 +101,7 @@ from .stations import (
     load_cached_tmy3_hourly_temp_data,
     load_cached_cz2010_hourly_temp_data,
 )
-from .visualization import (
-    plot_station_mapping,
-    plot_station_mappings,
-)
+from .visualization import plot_station_mapping, plot_station_mappings
 
 
 def get_version():

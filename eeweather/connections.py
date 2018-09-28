@@ -1,3 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+
+   Copyright 2018 Open Energy Efficiency, Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+"""
 import ftplib
 from io import BytesIO
 import logging
@@ -9,33 +28,29 @@ from .cache import KeyValueStore
 
 logger = logging.getLogger(__name__)
 
-__all__ = (
-    'noaa_ftp_connection_proxy'
-    'csv_request_proxy'
-    'metadata_db_connection_proxy'
-)
+__all__ = "noaa_ftp_connection_proxy" "csv_request_proxy" "metadata_db_connection_proxy"
 
 
 def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
-    host = 'ftp.ncdc.noaa.gov'
+    host = "ftp.ncdc.noaa.gov"
     for i in range(n_tries):
         # attempt anonymous connection
         try:
             ftp = ftplib.FTP(host)
             ftp.login()  # default u='anonymous' p='anonymous@'
-            logger.info('Connected to {}.'.format(host))
+            logger.info("Connected to {}.".format(host))
             return ftp
         except ftplib.all_errors as e:
             logger.warn(
-                'Failed attempt ({} of {}) to connect to {}:\n{}'
-                .format(i + 1, n_tries, host, e)
+                "Failed attempt ({} of {}) to connect to {}:\n{}".format(
+                    i + 1, n_tries, host, e
+                )
             )
 
-    raise RuntimeError('Could not connect to {}.'.format(host))
+    raise RuntimeError("Could not connect to {}.".format(host))
 
 
 class CSVRequestProxy(object):
-
     def __init__(self):
         self.response = None
         self.text = None
@@ -46,7 +61,7 @@ class CSVRequestProxy(object):
         if self.response.status_code == 200:
             self.text = self.response.text
         else:
-            raise RuntimeError('Could not find {}.'.format(url))
+            raise RuntimeError("Could not find {}.".format(url))
 
     def get_text(self, url):  # pragma: no cover
         if self.response is None:
@@ -55,7 +70,6 @@ class CSVRequestProxy(object):
 
 
 class NOAAFTPConnectionProxy(object):
-
     def __init__(self):
         self._connection = None
 
@@ -76,46 +90,38 @@ class NOAAFTPConnectionProxy(object):
         bytes_string = BytesIO()
         try:
             try:
-                ftp.retrbinary('RETR {}'.format(filename), bytes_string.write)
+                ftp.retrbinary("RETR {}".format(filename), bytes_string.write)
             except (ftplib.error_temp, ftplib.error_perm, EOFError, IOError) as e:
                 # Bad connection. attempt to reconnect.
                 logger.warn(
-                    'Failed RETR {}:\n{}\n'
-                    'Attempting reconnect.'
-                    .format(filename, e)
+                    "Failed RETR {}:\n{}\n" "Attempting reconnect.".format(filename, e)
                 )
                 ftp = self.reconnect()
-                ftp.retrbinary('RETR {}'.format(filename), bytes_string.write)
+                ftp.retrbinary("RETR {}".format(filename), bytes_string.write)
         except Exception as e:
             logger.warn(
-                'Failed RETR {}:\n{}\n'
-                'Not attempting reconnect.'
-                .format(filename, e)
+                "Failed RETR {}:\n{}\n" "Not attempting reconnect.".format(filename, e)
             )
             return None
 
         bytes_string.seek(0)
-        logger.info(
-            'Successfully retrieved ftp://ftp.ncdc.noaa.gov{}'
-            .format(filename)
-        )
+        logger.info("Successfully retrieved ftp://ftp.ncdc.noaa.gov{}".format(filename))
         return bytes_string
 
 
 class MetadataDBConnectionProxy(object):
-
     def __init__(self):
         self._connection = None
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(root_dir, 'eeweather', 'resources')
-        self.db_path = os.path.join(path, 'metadata.db')
+        path = os.path.join(root_dir, "eeweather", "resources")
+        self.db_path = os.path.join(path, "metadata.db")
 
     def get_connection(self):
         if self._connection is None:
             self._connection = sqlite3.connect(self.db_path)
         return self._connection
 
-    def reset_database(self): # pragma: no cover
+    def reset_database(self):  # pragma: no cover
         if self._connection is not None:
             self._connection.close()
             self._connection is None
@@ -125,7 +131,6 @@ class MetadataDBConnectionProxy(object):
 
 
 class KeyValueStoreProxy(object):
-
     def __init__(self):
         self._store = None
 
