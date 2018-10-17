@@ -783,8 +783,12 @@ def load_cz2010_hourly_temp_data_cached_proxy(
 
 
 def load_isd_hourly_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True,
-    error_on_missing_years=True
+    usaf_id,
+    start,
+    end,
+    read_from_cache=True,
+    write_to_cache=True,
+    error_on_missing_years=True,
 ):
 
     # CalTRACK 2.3.3

@@ -1820,8 +1820,7 @@ def test_isd_station_metadata_null_elevation():
 
 
 def test_load_isd_hourly_temp_data_missing_years(
-    monkeypatch_noaa_ftp,
-    monkeypatch_key_value_store
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
     start = datetime(2005, 1, 1, tzinfo=pytz.UTC)
     end = datetime(2007, 12, 31, tzinfo=pytz.UTC)
