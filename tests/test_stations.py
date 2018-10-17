@@ -1817,3 +1817,17 @@ def test_isd_station_metadata_null_elevation():
     assert metadata["elevation"] is None
     isd_station = ISDStation(usaf_id)
     assert isd_station.elevation is None
+
+
+def test_load_isd_hourly_temp_data_missing_years(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    start = datetime(2005, 1, 1, tzinfo=pytz.UTC)
+    end = datetime(2007, 12, 31, tzinfo=pytz.UTC)
+    with pytest.raises(ISDDataNotAvailableError):
+        ts = load_isd_hourly_temp_data("722874", start, end)
+    ts = load_isd_hourly_temp_data("722874", start, end, error_on_missing_years=False)
+    assert ts.index[0] == start
+    assert pd.isnull(ts[0])
+    assert ts.index[-1] == end
+    assert pd.notnull(ts[-1])

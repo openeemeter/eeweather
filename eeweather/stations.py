@@ -783,7 +783,12 @@ def load_cz2010_hourly_temp_data_cached_proxy(
 
 
 def load_isd_hourly_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True
+    usaf_id,
+    start,
+    end,
+    read_from_cache=True,
+    write_to_cache=True,
+    error_on_missing_years=True,
 ):
 
     # CalTRACK 2.3.3
@@ -791,15 +796,30 @@ def load_isd_hourly_temp_data(
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
-    data = [
-        load_isd_hourly_temp_data_cached_proxy(
-            usaf_id,
-            year,
-            read_from_cache=read_from_cache,
-            write_to_cache=write_to_cache,
-        )
-        for year in range(start.year, end.year + 1)
-    ]
+    if not error_on_missing_years:
+        data = []
+        for year in range(start.year, end.year + 1):
+            try:
+                data.append(
+                    load_isd_hourly_temp_data_cached_proxy(
+                        usaf_id,
+                        year,
+                        read_from_cache=read_from_cache,
+                        write_to_cache=write_to_cache,
+                    )
+                )
+            except ISDDataNotAvailableError:
+                pass
+    else:
+        data = [
+            load_isd_hourly_temp_data_cached_proxy(
+                usaf_id,
+                year,
+                read_from_cache=read_from_cache,
+                write_to_cache=write_to_cache,
+            )
+            for year in range(start.year, end.year + 1)
+        ]
 
     # get raw data from loaded years into hourly form
     ts = pd.concat(data).resample("H").mean()
