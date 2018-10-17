@@ -4,7 +4,10 @@ Changelog
 Development
 -----------
 
-* [placeholder]
+* Add `error_on_missing_years` parameter to `load_isd_hourly_temp_data`,
+  if True, an ISDDataAvailableError exception is raised if there are years,
+  within the requested dates that are unavailable. If False, the values in
+  the missing years are set to nan.
 
 0.3.8
 -----
