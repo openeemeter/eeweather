@@ -1843,9 +1843,7 @@ def test_isd_station_load_isd_hourly_temp_data_missing_years(
     isd_station = ISDStation(usaf_id)
     with pytest.raises(ISDDataNotAvailableError):
         isd_station.load_isd_hourly_temp_data(start, end)
-    ts = isd_station.load_isd_hourly_temp_data(
-        start, end, error_on_missing_years=False
-    )
+    ts = isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=False)
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end
