@@ -1407,6 +1407,7 @@ class ISDStation(object):
             end,
             read_from_cache=read_from_cache,
             write_to_cache=write_to_cache,
+            error_on_missing_years=error_on_missing_years,
         )
 
     def load_isd_daily_temp_data(

@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* [placeholder]
+* Added `error_on_missing_years` parameter to the model as well.
 
 0.3.9
 -----
