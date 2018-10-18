@@ -6,6 +6,11 @@ Development
 
 * [placeholder]
 
+0.3.11
+------
+
+* Bumped version due to pypi mixup.
+
 0.3.10
 ------
 
