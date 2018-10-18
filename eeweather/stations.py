@@ -1379,7 +1379,12 @@ class ISDStation(object):
 
     # main interface: load data from start date to end date
     def load_isd_hourly_temp_data(
-        self, start, end, read_from_cache=True, write_to_cache=True
+        self,
+        start,
+        end,
+        read_from_cache=True,
+        write_to_cache=True,
+        error_on_missing_years=True,
     ):
         """ Load resampled hourly ISD temperature data from start date to end date (inclusive).
 
@@ -1402,6 +1407,7 @@ class ISDStation(object):
             end,
             read_from_cache=read_from_cache,
             write_to_cache=write_to_cache,
+            error_on_missing_years=error_on_missing_years,
         )
 
     def load_isd_daily_temp_data(
