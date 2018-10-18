@@ -37,7 +37,7 @@ git pull
 git checkout -b release/vX.X.X
 
 # then bump versions
-vim eemeter/__version__.py
+vim eeweather/__version__.py
 vim CHANGELOG.md
 git commit -am "Bump version"
 
