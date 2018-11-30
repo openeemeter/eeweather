@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* [placeholder]
+* Bump requests version (and others).
 
 0.3.11
 ------
