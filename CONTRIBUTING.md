@@ -49,3 +49,22 @@ git pull
 git merge release/vX.X.X
 git push
 ```
+
+Updating the internal db
+------------------------
+
+The interal source file database needs to be periodically updated.
+
+TODO: automate this!
+
+Here are is the current process to use to update the internal db.
+
+```
+git checkout master
+git pull
+git checkout -b feature/update-db-YYYY-MM-DD
+
+docker-compose build
+docker-compose run --rm eeweather rebuild_db
+git commit -am "Rebuild db YYYY-MM-DD"
+```
