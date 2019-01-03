@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.12
+------
+
 * Update internal database (2019-01-02).
 * Bump requests version (and others).
 
