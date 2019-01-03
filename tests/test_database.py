@@ -61,29 +61,14 @@ def test_isd_station_metadata_table_count(snapshot):
     snapshot.assert_match(count, "count")
 
 
-def test_isd_station_metadata_table_content():
+def test_isd_station_metadata_table_content(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
     cur.execute(""" select * from isd_station_metadata where quality='high' limit 1 """)
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {
-        "ba_climate_zone": "Hot-Dry",
-        "ca_climate_zone": "CA_14",
-        "elevation": "+0625.1",
-        "icao_code": "KNXP",
-        "iecc_climate_zone": "3",
-        "iecc_moisture_regime": "B",
-        "latitude": "+34.300",
-        "longitude": "-116.167",
-        "name": "TWENTY NINE PALMS",
-        "quality": "high",
-        "recent_wban_id": "93121",
-        "state": "CA",
-        "usaf_id": "690150",
-        "wban_ids": "93121,99999",
-    }
+    snapshot.assert_match(data, "data")
 
 
 def test_isd_file_metadata_table_count(snapshot):
@@ -95,14 +80,14 @@ def test_isd_file_metadata_table_count(snapshot):
     snapshot.assert_match(count, "count")
 
 
-def test_isd_file_metadata_table_content():
+def test_isd_file_metadata_table_content(snapshot):
     conn = metadata_db_connection_proxy.get_connection()
 
     cur = conn.cursor()
     cur.execute(""" select * from isd_file_metadata limit 1""")
     row = cur.fetchone()
     data = {desc[0]: value for value, desc in zip(row, cur.description)}
-    assert data == {"usaf_id": "407330", "wban_id": "99999", "year": "2007"}
+    snapshot.assert_match(data, "data")
 
 
 def test_zcta_metadata_table_count():
