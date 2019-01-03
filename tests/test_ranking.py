@@ -211,19 +211,13 @@ def test_combine_ranked_stations_empty():
 
 
 def test_combine_ranked_stations(cz_candidates, naive_candidates):
-    assert list(cz_candidates.index) == [
-        "723890",
-        "747020",
-        "723896",
-        "723895",
-        "723840",
-    ]
+    assert list(cz_candidates.index) == ["723890", "723896", "723895", "723840"]
     assert list(naive_candidates.index) == [
         "723890",
-        "747020",
         "723896",
         "724815",
         "723895",
+        "723965",
     ]
 
     combined_candidates = combine_ranked_stations([cz_candidates, naive_candidates])
@@ -233,11 +227,11 @@ def test_combine_ranked_stations(cz_candidates, naive_candidates):
     assert combined_candidates["rank"].iloc[-1] == 6
     assert list(combined_candidates.index) == [
         "723890",
-        "747020",
         "723896",
         "723895",
         "723840",
         "724815",
+        "723965",
     ]
 
 
@@ -259,10 +253,8 @@ def monkeypatch_load_isd_hourly_temp_data(monkeypatch):
         index = pd.date_range(normalized_start, normalized_end, freq="H", tz="UTC")
 
         # simulate missing data
-        if station.usaf_id == "723890":
+        if station.usaf_id in ("723890", "723896"):
             return pd.Series(1, index=index)[: -24 * 50].reindex(index)
-        elif station.usaf_id == "747020":
-            return pd.Series(1, index=index)[: -24 * 30].reindex(index)
         return pd.Series(1, index=index)[: -24 * 10].reindex(index)
 
     monkeypatch.setattr(
@@ -276,7 +268,7 @@ def test_select_station_full_data(cz_candidates, monkeypatch_load_isd_hourly_tem
 
     # 1st misses qualification
     station, warnings = select_station(cz_candidates, coverage_range=(start, end))
-    assert station.usaf_id == "747020"
+    assert station.usaf_id == "723895"
 
     # 1st meets qualification
     station, warnings = select_station(
@@ -299,8 +291,14 @@ def monkeypatch_load_isd_hourly_temp_data_with_error(monkeypatch):
             raise ISDDataNotAvailableError(
                 "723890", start.year
             )  # first choice not available
-        elif station.usaf_id == "747020":
+        elif station.usaf_id == "723896":
             return pd.Series(1, index=index)[: -24 * 10].reindex(index)
+        else:  # pragma: no cover - only for helping to debug failing tests
+            raise ValueError(
+                "The requested station is not specified in the monkeypatched data: {}.".format(
+                    station
+                )
+            )
 
     monkeypatch.setattr(
         "eeweather.mockable.load_isd_hourly_temp_data", load_isd_hourly_temp_data
@@ -317,7 +315,7 @@ def test_select_station_with_isd_data_not_available_error(
     station, warnings = select_station(
         cz_candidates, coverage_range=(start, end), min_fraction_coverage=0.8
     )
-    assert station.usaf_id == "747020"
+    assert station.usaf_id == "723896"
 
 
 @pytest.fixture
@@ -326,8 +324,14 @@ def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
         index = pd.date_range(start, end, freq="H", tz="UTC")
         if station.usaf_id == "723890":
             return pd.Series(1, index=index)[:0]
-        elif station.usaf_id == "747020":
+        elif station.usaf_id == "723896":
             return pd.Series(1, index=index)[: -24 * 10].reindex(index)
+        else:  # pragma: no cover - only for helping to debug failing tests
+            raise ValueError(
+                "The requested station is not specified in the monkeypatched data: {}.".format(
+                    station
+                )
+            )
 
     monkeypatch.setattr(
         "eeweather.mockable.load_isd_hourly_temp_data", load_isd_hourly_temp_data
@@ -335,7 +339,7 @@ def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
 
 
 def test_select_station_with_empty_tempC(
-    cz_candidates, monkeypatch_load_isd_hourly_temp_data_with_empty
+    cz_candidates, monkeypatch_load_isd_hourly_temp_data_with_empty, snapshot
 ):
     start = datetime(2017, 1, 1, tzinfo=pytz.UTC)
     end = datetime(2018, 1, 1, tzinfo=pytz.UTC)
@@ -344,7 +348,7 @@ def test_select_station_with_empty_tempC(
     station, warnings = select_station(
         cz_candidates, coverage_range=(start, end), min_fraction_coverage=0.8
     )
-    assert station.usaf_id == "747020"
+    snapshot.assert_match(station.usaf_id, "station_id")
 
 
 def test_select_station_distance_warnings_check(lat_long_africa):
@@ -366,11 +370,11 @@ def test_select_station_no_station_warnings_check():
 
 
 def test_select_station_with_second_level_dates(
-    cz_candidates, monkeypatch_load_isd_hourly_temp_data
+    cz_candidates, monkeypatch_load_isd_hourly_temp_data, snapshot
 ):
     # dates don't fall exactly on the hour
     start = datetime(2017, 1, 1, 2, 3, 4, tzinfo=pytz.UTC)
     end = datetime(2018, 1, 1, 12, 13, 14, tzinfo=pytz.UTC)
 
     station, warnings = select_station(cz_candidates, coverage_range=(start, end))
-    assert station.usaf_id == "747020"
+    snapshot.assert_match(station.usaf_id, "station_id")

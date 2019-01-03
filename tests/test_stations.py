@@ -236,32 +236,14 @@ def test_get_isd_filenames_bad_usaf_id():
     assert excinfo.value.value == "000000"
 
 
-def test_get_isd_filenames_single_year():
+def test_get_isd_filenames_single_year(snapshot):
     filenames = get_isd_filenames("722860", 2007)
-    assert filenames == [
-        "/pub/data/noaa/2007/722860-23119-2007.gz",
-        "/pub/data/noaa/2007/722860-99999-2007.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
-def test_get_isd_filenames_multiple_year():
+def test_get_isd_filenames_multiple_year(snapshot):
     filenames = get_isd_filenames("722860")
-    assert filenames == [
-        "/pub/data/noaa/2006/722860-23119-2006.gz",
-        "/pub/data/noaa/2007/722860-23119-2007.gz",
-        "/pub/data/noaa/2007/722860-99999-2007.gz",
-        "/pub/data/noaa/2008/722860-23119-2008.gz",
-        "/pub/data/noaa/2009/722860-23119-2009.gz",
-        "/pub/data/noaa/2010/722860-23119-2010.gz",
-        "/pub/data/noaa/2011/722860-23119-2011.gz",
-        "/pub/data/noaa/2012/722860-23119-2012.gz",
-        "/pub/data/noaa/2013/722860-23119-2013.gz",
-        "/pub/data/noaa/2014/722860-23119-2014.gz",
-        "/pub/data/noaa/2015/722860-23119-2015.gz",
-        "/pub/data/noaa/2016/722860-23119-2016.gz",
-        "/pub/data/noaa/2017/722860-23119-2017.gz",
-        "/pub/data/noaa/2018/722860-23119-2018.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
 def test_get_isd_filenames_future_year():
@@ -276,34 +258,16 @@ def test_get_isd_filenames_with_host():
     ]
 
 
-def test_isd_station_get_isd_filenames():
+def test_isd_station_get_isd_filenames(snapshot):
     station = ISDStation("722860")
     filenames = station.get_isd_filenames()
-    assert filenames == [
-        "/pub/data/noaa/2006/722860-23119-2006.gz",
-        "/pub/data/noaa/2007/722860-23119-2007.gz",
-        "/pub/data/noaa/2007/722860-99999-2007.gz",
-        "/pub/data/noaa/2008/722860-23119-2008.gz",
-        "/pub/data/noaa/2009/722860-23119-2009.gz",
-        "/pub/data/noaa/2010/722860-23119-2010.gz",
-        "/pub/data/noaa/2011/722860-23119-2011.gz",
-        "/pub/data/noaa/2012/722860-23119-2012.gz",
-        "/pub/data/noaa/2013/722860-23119-2013.gz",
-        "/pub/data/noaa/2014/722860-23119-2014.gz",
-        "/pub/data/noaa/2015/722860-23119-2015.gz",
-        "/pub/data/noaa/2016/722860-23119-2016.gz",
-        "/pub/data/noaa/2017/722860-23119-2017.gz",
-        "/pub/data/noaa/2018/722860-23119-2018.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
-def test_isd_station_get_isd_filenames_with_year():
+def test_isd_station_get_isd_filenames_with_year(snapshot):
     station = ISDStation("722860")
     filenames = station.get_isd_filenames(2007)
-    assert filenames == [
-        "/pub/data/noaa/2007/722860-23119-2007.gz",
-        "/pub/data/noaa/2007/722860-99999-2007.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
 def test_isd_station_get_isd_filenames_with_host():
@@ -320,32 +284,14 @@ def test_get_gsod_filenames_bad_usaf_id():
     assert excinfo.value.value == "000000"
 
 
-def test_get_gsod_filenames_single_year():
+def test_get_gsod_filenames_single_year(snapshot):
     filenames = get_gsod_filenames("722860", 2007)
-    assert filenames == [
-        "/pub/data/gsod/2007/722860-23119-2007.op.gz",
-        "/pub/data/gsod/2007/722860-99999-2007.op.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
-def test_get_gsod_filenames_multiple_year():
+def test_get_gsod_filenames_multiple_year(snapshot):
     filenames = get_gsod_filenames("722860")
-    assert filenames == [
-        "/pub/data/gsod/2006/722860-23119-2006.op.gz",
-        "/pub/data/gsod/2007/722860-23119-2007.op.gz",
-        "/pub/data/gsod/2007/722860-99999-2007.op.gz",
-        "/pub/data/gsod/2008/722860-23119-2008.op.gz",
-        "/pub/data/gsod/2009/722860-23119-2009.op.gz",
-        "/pub/data/gsod/2010/722860-23119-2010.op.gz",
-        "/pub/data/gsod/2011/722860-23119-2011.op.gz",
-        "/pub/data/gsod/2012/722860-23119-2012.op.gz",
-        "/pub/data/gsod/2013/722860-23119-2013.op.gz",
-        "/pub/data/gsod/2014/722860-23119-2014.op.gz",
-        "/pub/data/gsod/2015/722860-23119-2015.op.gz",
-        "/pub/data/gsod/2016/722860-23119-2016.op.gz",
-        "/pub/data/gsod/2017/722860-23119-2017.op.gz",
-        "/pub/data/gsod/2018/722860-23119-2018.op.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
 def test_get_gsod_filenames_future_year():
@@ -360,34 +306,16 @@ def test_get_gsod_filenames_with_host():
     ]
 
 
-def test_isd_station_get_gsod_filenames():
+def test_isd_station_get_gsod_filenames(snapshot):
     station = ISDStation("722860")
     filenames = station.get_gsod_filenames()
-    assert filenames == [
-        "/pub/data/gsod/2006/722860-23119-2006.op.gz",
-        "/pub/data/gsod/2007/722860-23119-2007.op.gz",
-        "/pub/data/gsod/2007/722860-99999-2007.op.gz",
-        "/pub/data/gsod/2008/722860-23119-2008.op.gz",
-        "/pub/data/gsod/2009/722860-23119-2009.op.gz",
-        "/pub/data/gsod/2010/722860-23119-2010.op.gz",
-        "/pub/data/gsod/2011/722860-23119-2011.op.gz",
-        "/pub/data/gsod/2012/722860-23119-2012.op.gz",
-        "/pub/data/gsod/2013/722860-23119-2013.op.gz",
-        "/pub/data/gsod/2014/722860-23119-2014.op.gz",
-        "/pub/data/gsod/2015/722860-23119-2015.op.gz",
-        "/pub/data/gsod/2016/722860-23119-2016.op.gz",
-        "/pub/data/gsod/2017/722860-23119-2017.op.gz",
-        "/pub/data/gsod/2018/722860-23119-2018.op.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
-def test_isd_station_get_gsod_filenames_with_year():
+def test_isd_station_get_gsod_filenames_with_year(snapshot):
     station = ISDStation("722860")
     filenames = station.get_gsod_filenames(2007)
-    assert filenames == [
-        "/pub/data/gsod/2007/722860-23119-2007.op.gz",
-        "/pub/data/gsod/2007/722860-99999-2007.op.gz",
-    ]
+    snapshot.assert_match(filenames, "filenames")
 
 
 def test_isd_station_get_gsod_filenames_with_host():

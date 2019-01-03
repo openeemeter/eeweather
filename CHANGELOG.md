@@ -4,6 +4,7 @@ Changelog
 Development
 -----------
 
+* Update internal database (2019-01-02).
 * Bump requests version (and others).
 
 0.3.11
