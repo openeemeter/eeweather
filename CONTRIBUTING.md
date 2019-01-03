@@ -64,10 +64,15 @@ git checkout master
 git pull
 git checkout -b feature/update-db-YYYY-MM-DD
 
+# Rebuild the internal DB
 docker-compose build
 docker-compose run --rm eeweather rebuild_db
 git commit -am "Rebuild db YYYY-MM-DD"
 vim CHANGELOG.md  # write "Update internal database (YYYY-MM-DD)."
+
+# Update the tests and snapshots if everything looks good
+docker-compose run --rm test
+docker-compose run --rm test --snapshot-update
 ```
 
 Then make a PR and review as normal. Rinse and repeat as necessary.
