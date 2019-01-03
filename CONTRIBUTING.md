@@ -50,6 +50,9 @@ git merge release/vX.X.X
 git push
 ```
 
+Or, use the `./bump_version.sh X.X.X Y.Y.Y` command to generate some more
+specific commands.
+
 Updating the internal db
 ------------------------
 
