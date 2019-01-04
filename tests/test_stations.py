@@ -1290,7 +1290,7 @@ def test_load_isd_hourly_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_s
 
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
-    ts = load_isd_hourly_temp_data("722874", start, end)
+    ts, warnings = load_isd_hourly_temp_data("722874", start, end)
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end
@@ -1303,7 +1303,7 @@ def test_load_isd_hourly_temp_data_non_normalized_dates(
 
     start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
-    ts = load_isd_hourly_temp_data("722874", start, end)
+    ts, warnings = load_isd_hourly_temp_data("722874", start, end)
     assert ts.index[0] == datetime(2006, 1, 3, 12, tzinfo=pytz.UTC)
     assert pd.isnull(ts[0])
     assert ts.index[-1] == datetime(2007, 4, 3, 12, tzinfo=pytz.UTC)
@@ -1392,7 +1392,7 @@ def test_isd_station_load_isd_hourly_temp_data(
     station = ISDStation("722874")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
-    ts = station.load_isd_hourly_temp_data(start, end)
+    ts, warnings = station.load_isd_hourly_temp_data(start, end)
     assert ts.index[0] == start
     assert ts.index[-1] == end
 
@@ -1754,8 +1754,8 @@ def test_load_isd_hourly_temp_data_missing_years(
     start = datetime(2005, 1, 1, tzinfo=pytz.UTC)
     end = datetime(2007, 12, 31, tzinfo=pytz.UTC)
     with pytest.raises(ISDDataNotAvailableError):
-        ts = load_isd_hourly_temp_data(usaf_id, start, end)
-    ts = load_isd_hourly_temp_data(usaf_id, start, end, error_on_missing_years=False)
+        ts = load_isd_hourly_temp_data(usaf_id, start, end, error_on_missing_years=True)
+    ts, warnings = load_isd_hourly_temp_data(usaf_id, start, end, error_on_missing_years=False)
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end
@@ -1770,8 +1770,8 @@ def test_isd_station_load_isd_hourly_temp_data_missing_years(
     end = datetime(2007, 12, 31, tzinfo=pytz.UTC)
     isd_station = ISDStation(usaf_id)
     with pytest.raises(ISDDataNotAvailableError):
-        isd_station.load_isd_hourly_temp_data(start, end)
-    ts = isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=False)
+        isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=True)
+    ts, warnings = isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=False)
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end

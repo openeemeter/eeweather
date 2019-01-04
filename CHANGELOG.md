@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Selects station with missing yearly data by default.
 
 0.3.12
 ------
