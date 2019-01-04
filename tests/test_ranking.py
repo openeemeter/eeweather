@@ -254,8 +254,8 @@ def monkeypatch_load_isd_hourly_temp_data(monkeypatch):
 
         # simulate missing data
         if station.usaf_id in ("723890", "723896"):
-            return pd.Series(1, index=index)[: -24 * 50].reindex(index)
-        return pd.Series(1, index=index)[: -24 * 10].reindex(index)
+            return pd.Series(1, index=index)[: -24 * 50].reindex(index), []
+        return pd.Series(1, index=index)[: -24 * 10].reindex(index), []
 
     monkeypatch.setattr(
         "eeweather.mockable.load_isd_hourly_temp_data", load_isd_hourly_temp_data
@@ -292,7 +292,7 @@ def monkeypatch_load_isd_hourly_temp_data_with_error(monkeypatch):
                 "723890", start.year
             )  # first choice not available
         elif station.usaf_id == "723896":
-            return pd.Series(1, index=index)[: -24 * 10].reindex(index)
+            return pd.Series(1, index=index)[: -24 * 10].reindex(index), []
         else:  # pragma: no cover - only for helping to debug failing tests
             raise ValueError(
                 "The requested station is not specified in the monkeypatched data: {}.".format(
@@ -323,9 +323,9 @@ def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
     def load_isd_hourly_temp_data(station, start, end):
         index = pd.date_range(start, end, freq="H", tz="UTC")
         if station.usaf_id == "723890":
-            return pd.Series(1, index=index)[:0]
+            return pd.Series(1, index=index)[:0], []
         elif station.usaf_id == "723896":
-            return pd.Series(1, index=index)[: -24 * 10].reindex(index)
+            return pd.Series(1, index=index)[: -24 * 10].reindex(index), []
         else:  # pragma: no cover - only for helping to debug failing tests
             raise ValueError(
                 "The requested station is not specified in the monkeypatched data: {}.".format(

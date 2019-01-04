@@ -39,6 +39,7 @@ from .exceptions import (
     NonUTCTimezoneInfoError,
 )
 from .validation import valid_usaf_id_or_raise
+from .warnings import EEWeatherWarning
 
 DATA_EXPIRATION_DAYS = 1
 
@@ -788,9 +789,10 @@ def load_isd_hourly_temp_data(
     end,
     read_from_cache=True,
     write_to_cache=True,
-    error_on_missing_years=True,
+    error_on_missing_years=False,
 ):
 
+    warnings = []
     # CalTRACK 2.3.3
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
@@ -809,6 +811,17 @@ def load_isd_hourly_temp_data(
                     )
                 )
             except ISDDataNotAvailableError:
+                warnings.append(
+                    EEWeatherWarning(
+                        qualified_name="eeweather.isd_data_not_available",
+                        description=(
+                            "ISD Data not available"
+                        ),
+                        data={
+                            "year": year
+                        },
+                    )
+                )
                 pass
     else:
         data = [
@@ -839,7 +852,7 @@ def load_isd_hourly_temp_data(
         ts_end = datetime(end.year, end.month, end.day, end.hour, tzinfo=pytz.UTC)
         # fill in gaps
         ts = ts.reindex(pd.date_range(ts_start, ts_end, freq="H", tz=pytz.UTC))
-    return ts
+    return ts, warnings
 
 
 def load_isd_daily_temp_data(
