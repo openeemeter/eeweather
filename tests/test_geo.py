@@ -78,3 +78,7 @@ def test_zcta_to_lat_long():
     lat, lng = zcta_to_lat_long("70001")
     assert round(lat) == 30
     assert round(lng) == -90
+
+    lat, lng = zcta_to_lat_long("94574")
+    assert round(lat) == 39
+    assert round(lng) == -122

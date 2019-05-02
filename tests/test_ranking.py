@@ -242,7 +242,7 @@ def test_select_station_no_coverage_check(cz_candidates):
 
 @pytest.fixture
 def monkeypatch_load_isd_hourly_temp_data(monkeypatch):
-    def load_isd_hourly_temp_data(station, start, end):
+    def load_isd_hourly_temp_data(station, start, end, fetch_from_web=True):
         # because result datetimes should fall exactly on hours
         normalized_start = datetime(
             start.year, start.month, start.day, start.hour, tzinfo=pytz.UTC
@@ -285,7 +285,7 @@ def test_select_station_full_data(cz_candidates, monkeypatch_load_isd_hourly_tem
 
 @pytest.fixture
 def monkeypatch_load_isd_hourly_temp_data_with_error(monkeypatch):
-    def load_isd_hourly_temp_data(station, start, end):
+    def load_isd_hourly_temp_data(station, start, end, fetch_from_web=True):
         index = pd.date_range(start, end, freq="H", tz="UTC")
         if station.usaf_id == "723890":
             raise ISDDataNotAvailableError(
@@ -320,7 +320,7 @@ def test_select_station_with_isd_data_not_available_error(
 
 @pytest.fixture
 def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
-    def load_isd_hourly_temp_data(station, start, end):
+    def load_isd_hourly_temp_data(station, start, end, fetch_from_web=True):
         index = pd.date_range(start, end, freq="H", tz="UTC")
         if station.usaf_id == "723890":
             return pd.Series(1, index=index)[:0], []
