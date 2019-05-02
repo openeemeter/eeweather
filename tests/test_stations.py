@@ -745,6 +745,42 @@ def test_isd_station_validate_cz2010_hourly_temp_data_cache_empty(
     assert station.validate_cz2010_hourly_temp_data_cache() is False
 
 
+# error on non-existent when relying on cache
+def test_raise_on_missing_isd_hourly_temp_data_cache_data_no_web_fetch(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    with pytest.raises(ISDDataNotAvailableError):
+        load_isd_hourly_temp_data_cached_proxy("722874", 1907, fetch_from_web=False)
+
+
+def test_raise_on_missing_isd_daily_temp_data_cache_data_no_web_fetch(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    with pytest.raises(ISDDataNotAvailableError):
+        load_isd_daily_temp_data_cached_proxy("722874", 1907, fetch_from_web=False)
+
+
+def test_raise_on_missing_gsod_daily_temp_data_cache_data_no_web_fetch(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    with pytest.raises(GSODDataNotAvailableError):
+        load_gsod_daily_temp_data_cached_proxy("722874", 1907, fetch_from_web=False)
+
+
+def test_raise_on_missing_tmy3_hourly_temp_data_cache_data_no_web_fetch(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    with pytest.raises(TMY3DataNotAvailableError):
+        load_tmy3_hourly_temp_data_cached_proxy("722874", fetch_from_web=False)
+
+
+def test_raise_on_missing_cz2010_hourly_temp_data_cache_data_no_web_fetch(
+    monkeypatch_noaa_ftp, monkeypatch_key_value_store
+):
+    with pytest.raises(CZ2010DataNotAvailableError):
+        load_cz2010_hourly_temp_data_cached_proxy("722874", fetch_from_web=False)
+
+
 # validate updated recently
 def test_validate_isd_hourly_temp_data_cache_updated_recently(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
@@ -1755,7 +1791,9 @@ def test_load_isd_hourly_temp_data_missing_years(
     end = datetime(2007, 12, 31, tzinfo=pytz.UTC)
     with pytest.raises(ISDDataNotAvailableError):
         ts = load_isd_hourly_temp_data(usaf_id, start, end, error_on_missing_years=True)
-    ts, warnings = load_isd_hourly_temp_data(usaf_id, start, end, error_on_missing_years=False)
+    ts, warnings = load_isd_hourly_temp_data(
+        usaf_id, start, end, error_on_missing_years=False
+    )
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end
@@ -1771,7 +1809,9 @@ def test_isd_station_load_isd_hourly_temp_data_missing_years(
     isd_station = ISDStation(usaf_id)
     with pytest.raises(ISDDataNotAvailableError):
         isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=True)
-    ts, warnings = isd_station.load_isd_hourly_temp_data(start, end, error_on_missing_years=False)
+    ts, warnings = isd_station.load_isd_hourly_temp_data(
+        start, end, error_on_missing_years=False
+    )
     assert ts.index[0] == start
     assert pd.isnull(ts[0])
     assert ts.index[-1] == end

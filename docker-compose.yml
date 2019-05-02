@@ -39,6 +39,12 @@ services:
     volumes:
       - .:/app
 
+  python:
+    image: eeweather_shell
+    entrypoint: python
+    volumes:
+      - .:/app
+
   pipenv:
     image: eeweather_shell
     entrypoint: pipenv
