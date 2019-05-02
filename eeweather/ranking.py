@@ -351,8 +351,8 @@ def combine_ranked_stations(rankings):
 
 
 @eeweather.mockable.mockable()
-def load_isd_hourly_temp_data(station, start_date, end_date):  # pragma: no cover
-    return station.load_isd_hourly_temp_data(start_date, end_date)
+def load_isd_hourly_temp_data(station, start_date, end_date, fetch_from_web=True):  # pragma: no cover
+    return station.load_isd_hourly_temp_data(start_date, end_date, fetch_from_web)
 
 
 def select_station(
@@ -361,6 +361,7 @@ def select_station(
     min_fraction_coverage=0.9,
     distance_warnings=(50000, 200000),
     rank=1,
+    fetch_from_web=True,
 ):
     """ Select a station from a list of candidates that meets given data
     quality criteria.
@@ -385,7 +386,7 @@ def select_station(
             start_date, end_date = coverage_range
             try:
                 tempC, warnings = eeweather.mockable.load_isd_hourly_temp_data(
-                    station, start_date, end_date
+                    station, start_date, end_date, fetch_from_web,
                 )
             except ISDDataNotAvailableError:
                 return False, []  # reject

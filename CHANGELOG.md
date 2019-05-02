@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Add option to not fetch from NOAA and only use cache.
 
 0.3.13
 ------
