@@ -103,3 +103,5 @@ snapshots["test_rank_stations_match_climate_zones_not_null match_ca_climate_zone
 snapshots["test_select_station_with_second_level_dates station_id"] = "723895"
 
 snapshots["test_select_station_with_empty_tempC station_id"] = "723896"
+
+snapshots["test_select_station_with_empty_tempC_no_web_fetch station_id"] = "723896"

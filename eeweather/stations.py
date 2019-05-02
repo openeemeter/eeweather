@@ -699,13 +699,14 @@ def destroy_cached_cz2010_hourly_temp_data(usaf_id):
 
 
 def load_isd_hourly_temp_data_cached_proxy(
-    usaf_id, year, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True
+    usaf_id, year, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # take from cache?
     data_ok = validate_isd_hourly_temp_data_cache(usaf_id, year)
 
-    if fetch_from_web and (not read_from_cache or not data_ok):
+    if not fetch_from_web and not data_ok:
+        raise ISDDataNotAvailableError(usaf_id, year)
+    elif fetch_from_web and (not read_from_cache or not data_ok):
         # need to actually fetch the data
         ts = fetch_isd_hourly_temp_data(usaf_id, year)
         if write_to_cache:
@@ -717,13 +718,14 @@ def load_isd_hourly_temp_data_cached_proxy(
 
 
 def load_isd_daily_temp_data_cached_proxy(
-    usaf_id, year, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True
+    usaf_id, year, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # take from cache?
     data_ok = validate_isd_daily_temp_data_cache(usaf_id, year)
 
-    if fetch_from_web and (not read_from_cache or not data_ok):
+    if not fetch_from_web and not data_ok:
+        raise ISDDataNotAvailableError(usaf_id, year)
+    elif fetch_from_web and (not read_from_cache or not data_ok):
         # need to actually fetch the data
         ts = fetch_isd_daily_temp_data(usaf_id, year)
         if write_to_cache:
@@ -735,13 +737,14 @@ def load_isd_daily_temp_data_cached_proxy(
 
 
 def load_gsod_daily_temp_data_cached_proxy(
-    usaf_id, year, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True,
+    usaf_id, year, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # take from cache?
     data_ok = validate_gsod_daily_temp_data_cache(usaf_id, year)
 
-    if fetch_from_web and (not read_from_cache or not data_ok):
+    if not fetch_from_web and not data_ok:
+        raise GSODDataNotAvailableError(usaf_id, year)
+    elif fetch_from_web and (not read_from_cache or not data_ok):
         # need to actually fetch the data
         ts = fetch_gsod_daily_temp_data(usaf_id, year)
         if write_to_cache:
@@ -753,13 +756,14 @@ def load_gsod_daily_temp_data_cached_proxy(
 
 
 def load_tmy3_hourly_temp_data_cached_proxy(
-    usaf_id, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True
+    usaf_id, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # take from cache?
     data_ok = validate_tmy3_hourly_temp_data_cache(usaf_id)
 
-    if fetch_from_web and (not read_from_cache or not data_ok):
+    if not fetch_from_web and not data_ok:
+        raise TMY3DataNotAvailableError(usaf_id)
+    elif fetch_from_web and (not read_from_cache or not data_ok):
         # need to actually fetch the data
         ts = fetch_tmy3_hourly_temp_data(usaf_id)
         if write_to_cache:
@@ -771,13 +775,14 @@ def load_tmy3_hourly_temp_data_cached_proxy(
 
 
 def load_cz2010_hourly_temp_data_cached_proxy(
-    usaf_id, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True
+    usaf_id, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # take from cache?
     data_ok = validate_cz2010_hourly_temp_data_cache(usaf_id)
 
-    if fetch_from_web and (not read_from_cache or not data_ok):
+    if not fetch_from_web and not data_ok:
+        raise CZ2010DataNotAvailableError(usaf_id)
+    elif fetch_from_web and (not read_from_cache or not data_ok):
         # need to actually fetch the data
         ts = fetch_cz2010_hourly_temp_data(usaf_id)
         if write_to_cache:
@@ -821,12 +826,8 @@ def load_isd_hourly_temp_data(
                 warnings.append(
                     EEWeatherWarning(
                         qualified_name="eeweather.isd_data_not_available",
-                        description=(
-                            "ISD Data not available"
-                        ),
-                        data={
-                            "year": year
-                        },
+                        description=("ISD Data not available"),
+                        data={"year": year},
                     )
                 )
                 pass
@@ -864,8 +865,7 @@ def load_isd_hourly_temp_data(
 
 
 def load_isd_daily_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True,
+    usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
 
     # CalTRACK 2.3.3
@@ -904,8 +904,7 @@ def load_isd_daily_temp_data(
 
 
 def load_gsod_daily_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True,
+    usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
 
     # CalTRACK 2.3.3
@@ -943,8 +942,7 @@ def load_gsod_daily_temp_data(
 
 
 def load_tmy3_hourly_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True,
+    usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
 
     # CalTRACK 2.3.3
@@ -953,7 +951,9 @@ def load_tmy3_hourly_temp_data(
     if end.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     single_year_data = load_tmy3_hourly_temp_data_cached_proxy(
-        usaf_id, read_from_cache=read_from_cache, write_to_cache=write_to_cache,
+        usaf_id,
+        read_from_cache=read_from_cache,
+        write_to_cache=write_to_cache,
         fetch_from_web=fetch_from_web,
     )
 
@@ -976,8 +976,7 @@ def load_tmy3_hourly_temp_data(
 
 
 def load_cz2010_hourly_temp_data(
-    usaf_id, start, end, read_from_cache=True, write_to_cache=True,
-    fetch_from_web=True,
+    usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
 
     # CalTRACK 2.3.3
@@ -986,7 +985,9 @@ def load_cz2010_hourly_temp_data(
     if end.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     single_year_data = load_cz2010_hourly_temp_data_cached_proxy(
-        usaf_id, read_from_cache=read_from_cache, write_to_cache=write_to_cache,
+        usaf_id,
+        read_from_cache=read_from_cache,
+        write_to_cache=write_to_cache,
         fetch_from_web=fetch_from_web,
     )
 
@@ -1388,7 +1389,9 @@ class ISDStation(object):
     # load data either from cache if valid or directly from source
     def load_isd_hourly_temp_data_cached_proxy(self, year, fetch_from_web=True):
         """ Load resampled hourly ISD temperature data from cache, or if it is expired or hadn't been cached, fetch from FTP for given year. """
-        return load_isd_hourly_temp_data_cached_proxy(self.usaf_id, year, fetch_from_web)
+        return load_isd_hourly_temp_data_cached_proxy(
+            self.usaf_id, year, fetch_from_web
+        )
 
     def load_isd_daily_temp_data_cached_proxy(self, year, fetch_from_web=True):
         """ Load resampled daily ISD temperature data from cache, or if it is expired or hadn't been cached, fetch from FTP for given year. """
@@ -1396,7 +1399,9 @@ class ISDStation(object):
 
     def load_gsod_daily_temp_data_cached_proxy(self, year, fetch_from_web=True):
         """ Load resampled daily GSOD temperature data from cache, or if it is expired or hadn't been cached, fetch from FTP for given year. """
-        return load_gsod_daily_temp_data_cached_proxy(self.usaf_id, year, fetch_from_web)
+        return load_gsod_daily_temp_data_cached_proxy(
+            self.usaf_id, year, fetch_from_web
+        )
 
     def load_tmy3_hourly_temp_data_cached_proxy(self, fetch_from_web=True):
         """ Load hourly TMY3 temperature data from cache, or if it is expired or hadn't been cached, fetch from NREL. """
@@ -1444,8 +1449,7 @@ class ISDStation(object):
         )
 
     def load_isd_daily_temp_data(
-        self, start, end, read_from_cache=True, write_to_cache=True,
-        fetch_from_web=True,
+        self, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
     ):
         """ Load resampled daily ISD temperature data from start date to end date (inclusive).
 
@@ -1474,8 +1478,7 @@ class ISDStation(object):
         )
 
     def load_gsod_daily_temp_data(
-        self, start, end, read_from_cache=True, write_to_cache=True,
-        fetch_from_web=True,
+        self, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
     ):
         """ Load resampled daily GSOD temperature data from start date to end date (inclusive).
 
@@ -1504,8 +1507,7 @@ class ISDStation(object):
         )
 
     def load_tmy3_hourly_temp_data(
-        self, start, end, read_from_cache=True, write_to_cache=True,
-        fetch_from_web=True,
+        self, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
     ):
         """ Load hourly TMY3 temperature data from start date to end date (inclusive).
 
@@ -1534,8 +1536,7 @@ class ISDStation(object):
         )
 
     def load_cz2010_hourly_temp_data(
-        self, start, end, read_from_cache=True, write_to_cache=True,
-        fetch_from_web=True,
+        self, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
     ):
         """ Load hourly CZ2010 temperature data from start date to end date (inclusive).
 
