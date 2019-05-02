@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.15
+------
+
 * Fix bugs around cache-only weather data pulling.
 
 0.3.14
