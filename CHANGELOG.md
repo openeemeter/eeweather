@@ -4,7 +4,12 @@ Changelog
 Development
 -----------
 
-* Add option to not fetch from NOAA and only use cache.
+* Placeholder
+
+0.3.14
+------
+
+* Add an option to not fetch from NOAA and only use cache.
 
 0.3.13
 ------
@@ -20,12 +25,12 @@ Development
 0.3.11
 ------
 
-* Bumped version due to pypi mixup.
+* Bump version due to pypi mixup.
 
 0.3.10
 ------
 
-* Added `error_on_missing_years` parameter to the model as well.
+* Add `error_on_missing_years` parameter to the model as well.
 
 0.3.9
 -----
