@@ -63,8 +63,8 @@ class CSVRequestProxy(object):
         else:
             raise RuntimeError("Could not find {}.".format(url))
 
-    def get_text(self, url):  # pragma: no cover
-        if self.response is None:
+    def get_text(self, url):
+        if self.response is None or self.response.request.url != url:
             self.make_request(url)
         return self.text
 
