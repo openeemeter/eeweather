@@ -23,14 +23,15 @@ import requests
 
 from unittest.mock import Mock
 
+
 def mock_get(url):
     get_result = Mock(status_code=200)
 
     get_result.request.url = url
 
     get_result.text = {
-        'bogus://example.com/a': 'response-a',
-        'bogus://example.com/b': 'response-b'
+        "bogus://example.com/a": "response-a",
+        "bogus://example.com/b": "response-b",
     }[url]
 
     return get_result
@@ -39,7 +40,7 @@ def mock_get(url):
 def test_csv_request_proxy_with_different_urls(mocker):
     proxy = CSVRequestProxy()
 
-    mocker.patch.object(requests, 'get', side_effect=mock_get)
+    mocker.patch.object(requests, "get", side_effect=mock_get)
 
-    assert proxy.get_text('bogus://example.com/a') == 'response-a'
-    assert proxy.get_text('bogus://example.com/b') == 'response-b'
+    assert proxy.get_text("bogus://example.com/a") == "response-a"
+    assert proxy.get_text("bogus://example.com/b") == "response-b"
