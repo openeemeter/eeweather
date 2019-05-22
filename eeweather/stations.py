@@ -28,9 +28,6 @@ import pytz
 # the fully qualified package path name is preserved
 import requests
 
-import eeweather.connections
-from eeweather.connections import metadata_db_connection_proxy
-
 from .exceptions import (
     UnrecognizedUSAFIDError,
     ISDDataNotAvailableError,
@@ -41,6 +38,9 @@ from .exceptions import (
 )
 from .validation import valid_usaf_id_or_raise
 from .warnings import EEWeatherWarning
+import eeweather.connections
+from eeweather.connections import metadata_db_connection_proxy
+import mockable
 
 DATA_EXPIRATION_DAYS = 1
 
