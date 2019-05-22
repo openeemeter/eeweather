@@ -28,10 +28,7 @@ from .cache import KeyValueStore
 
 logger = logging.getLogger(__name__)
 
-__all__ = (
-    "noaa_ftp_connection_proxy",
-    "metadata_db_connection_proxy",
-)
+__all__ = ("noaa_ftp_connection_proxy", "metadata_db_connection_proxy")
 
 
 def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
