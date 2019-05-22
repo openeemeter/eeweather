@@ -26,9 +26,10 @@ import pytz
 
 # this import allows monkeypatching noaa_ftp_connection_proxy in tests because
 # the fully qualified package path name is preserved
-import eeweather.connections
+import requests
 
-from eeweather.connections import metadata_db_connection_proxy, csv_request_proxy
+import eeweather.connections
+from eeweather.connections import metadata_db_connection_proxy
 
 from .exceptions import (
     UnrecognizedUSAFIDError,
@@ -388,11 +389,20 @@ def fetch_cz2010_hourly_temp_data(usaf_id):
     return fetch_hourly_normalized_temp_data(usaf_id, url, "CZ2010")
 
 
+@mockable.mockable()
+def request_text(url):
+    response = requests.get(url)
+    if response.ok:
+        return response.text
+    else:
+        raise RuntimeError("Could not find {}.".format(url))
+
+
 def fetch_hourly_normalized_temp_data(usaf_id, url, source_name):
     index = pd.date_range("1900-01-01 00:00", "1900-12-31 23:00", freq="H", tz=pytz.UTC)
     ts = pd.Series(None, index=index, dtype=float)
 
-    lines = eeweather.connections.csv_request_proxy.get_text(url).splitlines()
+    lines = mockable.request_text(url).splitlines()
 
     utc_offset_str = lines[0].split(",")[3]
     utc_offset = timedelta(seconds=3600 * float(utc_offset_str))

@@ -100,8 +100,8 @@ from eeweather.exceptions import (
 from eeweather.testing import (
     MockNOAAFTPConnectionProxy,
     MockKeyValueStoreProxy,
-    MockTMY3RequestProxy,
-    MockCZ2010RequestProxy,
+    mock_request_text_tmy3,
+    mock_request_text_cz2010,
 )
 
 
@@ -114,16 +114,12 @@ def monkeypatch_noaa_ftp(monkeypatch):
 
 @pytest.fixture
 def monkeypatch_tmy3_request(monkeypatch):
-    monkeypatch.setattr(
-        "eeweather.connections.csv_request_proxy", MockTMY3RequestProxy()
-    )
+    monkeypatch.setattr("mockable.request_text", mock_request_text_tmy3)
 
 
 @pytest.fixture
 def monkeypatch_cz2010_request(monkeypatch):
-    monkeypatch.setattr(
-        "eeweather.connections.csv_request_proxy", MockCZ2010RequestProxy()
-    )
+    monkeypatch.setattr("mockable.request_text", mock_request_text_cz2010)
 
 
 @pytest.fixture
