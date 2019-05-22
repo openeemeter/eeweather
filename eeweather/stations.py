@@ -390,7 +390,7 @@ def fetch_cz2010_hourly_temp_data(usaf_id):
 
 
 @eeweather.mockable.mockable()
-def request_text(url):
+def request_text(url):  # pragma: no cover
     response = requests.get(url)
     if response.ok:
         return response.text

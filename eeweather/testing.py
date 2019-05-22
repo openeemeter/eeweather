@@ -69,8 +69,6 @@ def mock_request_text_tmy3(url):
     )
     if re.match(match_url, url):
         return write_tmy3_file()
-    else:
-        raise RuntimeError()
 
 
 def mock_request_text_cz2010(url):
@@ -78,8 +76,6 @@ def mock_request_text_cz2010(url):
 
     if re.match(match_url, url):
         return write_cz2010_file()
-    else:
-        raise RuntimeError()
 
 
 class MockNOAAFTPConnectionProxy:
