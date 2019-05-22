@@ -62,24 +62,20 @@ def write_missing_gsod_file(bytes_string):
         bytes_string.write(f.read())
 
 
-class MockTMY3RequestProxy:
-    def get_text(self, url):
-
-        match_url = (
-            "http://rredc.nrel.gov/solar/old_data/nsrdb/"
-            "1991-2005/data/tmy3/722880TYA.CSV"
-        )
-        if re.match(match_url, url):
-            return write_tmy3_file()
+def mock_request_text_tmy3(url):
+    match_url = (
+        "http://rredc.nrel.gov/solar/old_data/nsrdb/"
+        "1991-2005/data/tmy3/722880TYA.CSV"
+    )
+    if re.match(match_url, url):
+        return write_tmy3_file()
 
 
-class MockCZ2010RequestProxy:
-    def get_text(self, url):
+def mock_request_text_cz2010(url):
+    match_url = "https://storage.googleapis.com/oee-cz2010/csv/722880_CZ2010.CSV"
 
-        match_url = "https://storage.googleapis.com/oee-cz2010/csv/" "722880_CZ2010.CSV"
-
-        if re.match(match_url, url):
-            return write_cz2010_file()
+    if re.match(match_url, url):
+        return write_cz2010_file()
 
 
 class MockNOAAFTPConnectionProxy:

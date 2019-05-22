@@ -4,7 +4,8 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Remove buggy global CSVRequestProxy and replace with alternate mocking
+  mechanism.
 
 0.3.15
 ------
