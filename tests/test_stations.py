@@ -114,12 +114,12 @@ def monkeypatch_noaa_ftp(monkeypatch):
 
 @pytest.fixture
 def monkeypatch_tmy3_request(monkeypatch):
-    monkeypatch.setattr("mockable.request_text", mock_request_text_tmy3)
+    monkeypatch.setattr("eeweather.mockable.request_text", mock_request_text_tmy3)
 
 
 @pytest.fixture
 def monkeypatch_cz2010_request(monkeypatch):
-    monkeypatch.setattr("mockable.request_text", mock_request_text_cz2010)
+    monkeypatch.setattr("eeweather.mockable.request_text", mock_request_text_cz2010)
 
 
 @pytest.fixture

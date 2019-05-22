@@ -40,7 +40,7 @@ from .validation import valid_usaf_id_or_raise
 from .warnings import EEWeatherWarning
 import eeweather.connections
 from eeweather.connections import metadata_db_connection_proxy
-import mockable
+import eeweather.mockable
 
 DATA_EXPIRATION_DAYS = 1
 
@@ -389,7 +389,7 @@ def fetch_cz2010_hourly_temp_data(usaf_id):
     return fetch_hourly_normalized_temp_data(usaf_id, url, "CZ2010")
 
 
-@mockable.mockable()
+@eeweather.mockable.mockable()
 def request_text(url):
     response = requests.get(url)
     if response.ok:
@@ -402,7 +402,7 @@ def fetch_hourly_normalized_temp_data(usaf_id, url, source_name):
     index = pd.date_range("1900-01-01 00:00", "1900-12-31 23:00", freq="H", tz=pytz.UTC)
     ts = pd.Series(None, index=index, dtype=float)
 
-    lines = mockable.request_text(url).splitlines()
+    lines = eeweather.mockable.request_text(url).splitlines()
 
     utc_offset_str = lines[0].split(",")[3]
     utc_offset = timedelta(seconds=3600 * float(utc_offset_str))
