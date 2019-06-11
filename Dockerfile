@@ -1,6 +1,6 @@
 FROM python:3.6.6-stretch
 
-# -- Install Pipenv:
+### install pipenv
 RUN set -ex && pip install pip pipenv --upgrade
 
 #### begin node
@@ -61,11 +61,9 @@ RUN apt-get update \
 
 RUN npm install -g mapshaper
 
-COPY Pipfile Pipfile
-COPY Pipfile.lock Pipfile.lock
+COPY requirements.txt requirements.txt
 
-RUN set -ex && pipenv install --system --deploy --dev
-
+RUN set -ex &&  pip install -r requirements.txt
 RUN set -ex && pip install cartopy jupyterlab
 
 ENV PYTHONPATH=/app
