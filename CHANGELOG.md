@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Add FTP timeout of 60 seconds.
 
 0.3.16
 ------
