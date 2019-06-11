@@ -4,7 +4,9 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Move Pipfile to requirements.txt.
+* Update cartopy terrain.
+* Add an FTP timeout.
 
 0.3.16
 ------
