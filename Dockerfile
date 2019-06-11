@@ -1,8 +1,5 @@
 FROM python:3.6.6-stretch
 
-# -- Install Pipenv:
-RUN set -ex && pip install pip pipenv --upgrade
-
 #### begin node
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
@@ -61,11 +58,9 @@ RUN apt-get update \
 
 RUN npm install -g mapshaper
 
-COPY Pipfile Pipfile
-COPY Pipfile.lock Pipfile.lock
+COPY requirements.txt requirements.txt
 
-RUN set -ex && pipenv install --system --deploy --dev
-
+RUN set -ex &&  pip install -r requirements.txt
 RUN set -ex && pip install cartopy jupyterlab
 
 ENV PYTHONPATH=/app

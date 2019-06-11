@@ -5,6 +5,9 @@ Development
 -----------
 
 * Add FTP timeout of 60 seconds.
+* Move Pipfile to requirements.txt.
+* Update cartopy terrain.
+* Add an FTP timeout.
 
 0.3.16
 ------

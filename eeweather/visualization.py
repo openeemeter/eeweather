@@ -53,7 +53,7 @@ def plot_station_mapping(
     fig = plt.figure(figsize=(16, 8))
 
     # axes
-    tiles = cimgt.StamenTerrain()
+    tiles = cimgt.Stamen('terrain-background')
     ax = plt.subplot(1, 1, 1, projection=tiles.crs)
 
     # offsets for labels
