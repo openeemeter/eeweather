@@ -1,8 +1,5 @@
 FROM python:3.6.6-stretch
 
-### install pipenv
-RUN set -ex && pip install pip pipenv --upgrade
-
 #### begin node
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
