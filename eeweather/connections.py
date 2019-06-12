@@ -31,12 +31,12 @@ logger = logging.getLogger(__name__)
 __all__ = ("noaa_ftp_connection_proxy", "metadata_db_connection_proxy")
 
 
-def _get_noaa_ftp_connection(n_tries=5):  # pragma: no cover
+def _get_noaa_ftp_connection(n_tries=5, timeout=60):  # pragma: no cover
     host = "ftp.ncdc.noaa.gov"
     for i in range(n_tries):
         # attempt anonymous connection
         try:
-            ftp = ftplib.FTP(host)
+            ftp = ftplib.FTP(host, timeout=timeout)
             ftp.login()  # default u='anonymous' p='anonymous@'
             logger.info("Connected to {}.".format(host))
             return ftp
