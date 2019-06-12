@@ -4,7 +4,8 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Blacken.
+* Add dev requirements back in.
 
 0.3.17
 ------
