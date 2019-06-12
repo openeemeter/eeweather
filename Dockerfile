@@ -59,8 +59,10 @@ RUN apt-get update \
 RUN npm install -g mapshaper
 
 COPY requirements.txt requirements.txt
+COPY dev-requirements.txt dev-requirements.txt
 
 RUN set -ex &&  pip install -r requirements.txt
+RUN set -ex &&  pip install -r dev-requirements.txt
 RUN set -ex && pip install cartopy jupyterlab
 
 ENV PYTHONPATH=/app
