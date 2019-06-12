@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.17
+------
+
 * Blacken.
 * Add dev requirements back in.
 * Add FTP timeout of 60 seconds.
