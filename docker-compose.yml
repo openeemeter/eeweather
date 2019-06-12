@@ -45,14 +45,6 @@ services:
     volumes:
       - .:/app
 
-  pipenv:
-    image: eeweather_shell
-    entrypoint: pipenv
-    environment:
-      - PIPENV_CACHE_DIR=/app/.docker-pipenv-cache
-    volumes:
-      - .:/app
-
   blacken:
     image: eeweather_shell
     entrypoint: black .

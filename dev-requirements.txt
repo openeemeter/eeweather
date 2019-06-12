@@ -1,0 +1,12 @@
+black==18.6b4; python_version>='3.6'
+coverage==4.5.3
+pytest==4.5.0
+pytest-cov==2.7.1
+pytest-xdist==1.28.0
+tox==3.12.1
+twine==1.13.0
+Sphinx==2.1.1
+sphinx-autobuild==0.7.1
+sphinxcontrib-spelling==4.2.1
+typing==3.6.6
+-e git://github.com/syrusakbary/snapshottest.git@54117098bd756c0fa6936f3bafab4bf85c58e943#egg=snapshottest
