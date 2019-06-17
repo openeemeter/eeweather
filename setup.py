@@ -30,7 +30,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 NAME = "eeweather"
-REQUIRED = ["click", "pandas", "pyproj", "requests", "shapely"]
+REQUIRED = ["click", "pandas", "pyproj==1.9.5.1", "requests", "shapely"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
