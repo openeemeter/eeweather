@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.18
+------
+
 * Pin pyproj to 1.9.5.1 version.
 
 0.3.17
