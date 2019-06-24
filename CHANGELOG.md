@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.19
+------
+
 * Update pinned version of Pyproj to allow for Python 3.7 support
 * Update to test / support Python 3.7
 
