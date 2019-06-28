@@ -23,6 +23,7 @@ import json
 try:
     from sqlalchemy import create_engine, MetaData, Table, Column, String, DateTime
     from sqlalchemy.sql import select, func
+    from sqlalchemy.exc import IntegrityError
 except ImportError:  # pragma: no cover
     has_sqlalchemy = False
 else:
@@ -94,15 +95,16 @@ class KeyValueStore(object):
     def save_json(self, key, data):
         data = json.dumps(data, separators=(",", ":"))
         updated = func.now()
-        if self.key_exists(key):
+        try:
+            s = self.items.insert().values(key=key, data=data, updated=updated)
+            s.execute()
+        except IntegrityError:
             s = (
                 self.items.update()
                 .where(self.items.c.key == key)
                 .values(key=key, data=data, updated=updated)
             )
-        else:
-            s = self.items.insert().values(key=key, data=data, updated=updated)
-        s.execute()
+            s.execute()
 
     def retrieve_json(self, key):
         s = select([self.items.c.data]).where(self.items.c.key == key)
