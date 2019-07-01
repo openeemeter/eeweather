@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Make cache insert / update more explicit. Prevents potential race condition in multi-threaded environment.
 
 0.3.19
 ------
