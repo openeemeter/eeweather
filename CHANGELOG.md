@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.21
+------
+
 * Remove thread-unsafe connection caching.
 
 0.3.20
