@@ -4,12 +4,13 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Remove thread-unsafe connection caching.
 
 0.3.20
 ------
 
-* Make cache insert / update more explicit. Prevents potential race condition in multi-threaded environment.
+* Make cache insert / update more explicit. Prevents potential race condition in
+  multi-threaded environment.
 
 0.3.19
 ------
