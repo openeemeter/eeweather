@@ -92,22 +92,14 @@ class NOAAFTPConnectionProxy(object):
 
 class MetadataDBConnectionProxy(object):
     def __init__(self):
-        self._connection = None
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(root_dir, "eeweather", "resources")
         self.db_path = os.path.join(path, "metadata.db")
 
     def get_connection(self):
-        if self._connection is None:
-            self._connection = sqlite3.connect(self.db_path)
-        return self._connection
+        return sqlite3.connect(self.db_path)
 
     def reset_database(self):  # pragma: no cover
-        if self._connection is not None:
-            self._connection.close()
-            self._connection is None
-        if os.path.exists(self.db_path):
-            os.remove(self.db_path)
         return self.get_connection()
 
 
