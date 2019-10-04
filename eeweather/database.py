@@ -172,15 +172,18 @@ def _load_isd_station_metadata(download_path):
     hasGEO = (
         isd_history.LAT.notnull() & isd_history.LON.notnull() & (isd_history.LAT != 0)
     )
+    hasUSAF = isd_history.USAF != "999999"
+
     isUS = (
         ((isd_history.CTRY == "US") & (isd_history.STATE.notnull()))
         # AQ = American Samoa, GQ = Guam, RQ = Peurto Rico, VQ = Virgin Islands
         | (isd_history.CTRY.str[1] == "Q")
     )
-    hasUSAF = isd_history.USAF != "999999"
+
+    isAus = isd_history.CTRY == "AS"
 
     metadata = {}
-    for usaf_station, group in isd_history[hasGEO & isUS & hasUSAF].groupby("USAF"):
+    for usaf_station, group in isd_history[hasGEO & hasUSAF & (isUS | isAus)].groupby("USAF"):
         # find most recent
         recent = group.loc[group.END.idxmax()]
         wban_stations = list(group.WBAN)

@@ -86,6 +86,7 @@ def test_inspect_isd_file_years():
         {"usaf_id": "722880", "wban_id": "23152", "year": "2016"},
         {"usaf_id": "722880", "wban_id": "23152", "year": "2017"},
         {"usaf_id": "722880", "wban_id": "23152", "year": "2018"},
+        {"usaf_id": "722880", "wban_id": "23152", "year": "2019"},
     ]
 
 
