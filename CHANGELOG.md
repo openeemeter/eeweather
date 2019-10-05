@@ -9,7 +9,7 @@ Development
 0.3.22
 ------
 
-* Update internal database (2019-01-02).
+* Update internal database (2019-10-04).
 
 0.3.21
 ------
