@@ -69,3 +69,24 @@ snapshots['test_get_gsod_filenames_multiple_year filenames'] = [
     '/pub/data/gsod/2018/722860-23119-2018.op.gz',
     '/pub/data/gsod/2019/722860-23119-2019.op.gz'
 ]
+
+snapshots['test_isd_station_get_gsod_filenames_with_year filenames'] = [
+    '/pub/data/gsod/2007/722860-23119-2007.op.gz'
+]
+
+snapshots['test_isd_station_get_gsod_filenames filenames'] = [
+    '/pub/data/gsod/2006/722860-23119-2006.op.gz',
+    '/pub/data/gsod/2007/722860-23119-2007.op.gz',
+    '/pub/data/gsod/2008/722860-23119-2008.op.gz',
+    '/pub/data/gsod/2009/722860-23119-2009.op.gz',
+    '/pub/data/gsod/2010/722860-23119-2010.op.gz',
+    '/pub/data/gsod/2011/722860-23119-2011.op.gz',
+    '/pub/data/gsod/2012/722860-23119-2012.op.gz',
+    '/pub/data/gsod/2013/722860-23119-2013.op.gz',
+    '/pub/data/gsod/2014/722860-23119-2014.op.gz',
+    '/pub/data/gsod/2015/722860-23119-2015.op.gz',
+    '/pub/data/gsod/2016/722860-23119-2016.op.gz',
+    '/pub/data/gsod/2017/722860-23119-2017.op.gz',
+    '/pub/data/gsod/2018/722860-23119-2018.op.gz',
+    '/pub/data/gsod/2019/722860-23119-2019.op.gz'
+]
