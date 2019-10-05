@@ -337,6 +337,7 @@ def test_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2016"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
+        {"usaf_id": "722874", "wban_id": "93134", 'year': "2019"},
     ]
 
     with pytest.raises(UnrecognizedUSAFIDError) as excinfo:
@@ -360,6 +361,7 @@ def test_isd_station_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2016"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
+        {"usaf_id": "722874", "wban_id": "93134", 'year': "2019"},
     ]
 
 

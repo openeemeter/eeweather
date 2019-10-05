@@ -58,7 +58,7 @@ def test_rank_stations_no_filter(lat_long_fresno, snapshot):
         "difference_elevation_meters",
     ]
     assert round(df.distance_meters.iloc[0]) == 3008.0
-    assert round(df.distance_meters.iloc[-10]) == 9614514.0
+    assert round(df.distance_meters.iloc[-10]) == 16565963.0
     assert pd.isnull(df.distance_meters.iloc[-1]) is True
 
 
@@ -211,13 +211,19 @@ def test_combine_ranked_stations_empty():
 
 
 def test_combine_ranked_stations(cz_candidates, naive_candidates):
-    assert list(cz_candidates.index) == ["723890", "723896", "723895", "723840"]
+    assert list(cz_candidates.index) == [
+        "723890",
+        "747020",
+        "723896",
+        "723895",
+        "723840",
+    ]
     assert list(naive_candidates.index) == [
         "723890",
+        "747020",
         "723896",
         "724815",
         "723895",
-        "723965",
     ]
 
     combined_candidates = combine_ranked_stations([cz_candidates, naive_candidates])
@@ -227,11 +233,11 @@ def test_combine_ranked_stations(cz_candidates, naive_candidates):
     assert combined_candidates["rank"].iloc[-1] == 6
     assert list(combined_candidates.index) == [
         "723890",
+        "747020",
         "723896",
         "723895",
         "723840",
         "724815",
-        "723965",
     ]
 
 
@@ -268,7 +274,7 @@ def test_select_station_full_data(cz_candidates, monkeypatch_load_isd_hourly_tem
 
     # 1st misses qualification
     station, warnings = select_station(cz_candidates, coverage_range=(start, end))
-    assert station.usaf_id == "723895"
+    assert station.usaf_id == "747020"
 
     # 1st meets qualification
     station, warnings = select_station(
@@ -291,7 +297,7 @@ def monkeypatch_load_isd_hourly_temp_data_with_error(monkeypatch):
             raise ISDDataNotAvailableError(
                 "723890", start.year
             )  # first choice not available
-        elif station.usaf_id == "723896":
+        elif station.usaf_id == "747020":
             return pd.Series(1, index=index)[: -24 * 10].reindex(index), []
         else:  # pragma: no cover - only for helping to debug failing tests
             raise ValueError(
@@ -315,7 +321,7 @@ def test_select_station_with_isd_data_not_available_error(
     station, warnings = select_station(
         cz_candidates, coverage_range=(start, end), min_fraction_coverage=0.8
     )
-    assert station.usaf_id == "723896"
+    assert station.usaf_id == "747020"
 
 
 @pytest.fixture
@@ -324,7 +330,7 @@ def monkeypatch_load_isd_hourly_temp_data_with_empty(monkeypatch):
         index = pd.date_range(start, end, freq="H", tz="UTC")
         if station.usaf_id == "723890":
             return pd.Series(1, index=index)[:0], []
-        elif station.usaf_id == "723896":
+        elif station.usaf_id == "747020":
             return pd.Series(1, index=index)[: -24 * 10].reindex(index), []
         else:  # pragma: no cover - only for helping to debug failing tests
             raise ValueError(
