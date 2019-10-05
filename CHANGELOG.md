@@ -6,6 +6,11 @@ Development
 
 * Placeholder
 
+0.3.22
+------
+
+* Update internal database (2019-01-02).
+
 0.3.21
 ------
 
