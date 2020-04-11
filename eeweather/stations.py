@@ -818,7 +818,7 @@ def load_isd_hourly_temp_data(
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
-        raise NonUTCTimezoneInfoError(start)
+        raise NonUTCTimezoneInfoError(end)
     if not error_on_missing_years:
         data = []
         for year in range(start.year, end.year + 1):
@@ -882,7 +882,7 @@ def load_isd_daily_temp_data(
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
-        raise NonUTCTimezoneInfoError(start)
+        raise NonUTCTimezoneInfoError(end)
     data = [
         load_isd_daily_temp_data_cached_proxy(
             usaf_id,
@@ -921,7 +921,7 @@ def load_gsod_daily_temp_data(
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
-        raise NonUTCTimezoneInfoError(start)
+        raise NonUTCTimezoneInfoError(end)
     data = [
         load_gsod_daily_temp_data_cached_proxy(
             usaf_id,
@@ -959,7 +959,7 @@ def load_tmy3_hourly_temp_data(
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
-        raise NonUTCTimezoneInfoError(start)
+        raise NonUTCTimezoneInfoError(end)
     single_year_data = load_tmy3_hourly_temp_data_cached_proxy(
         usaf_id,
         read_from_cache=read_from_cache,
@@ -993,7 +993,7 @@ def load_cz2010_hourly_temp_data(
     if start.tzinfo != pytz.UTC:
         raise NonUTCTimezoneInfoError(start)
     if end.tzinfo != pytz.UTC:
-        raise NonUTCTimezoneInfoError(start)
+        raise NonUTCTimezoneInfoError(end)
     single_year_data = load_cz2010_hourly_temp_data_cached_proxy(
         usaf_id,
         read_from_cache=read_from_cache,
