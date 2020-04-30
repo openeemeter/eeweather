@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Loosen pin on pyproj.
 
 0.3.22
 ------
