@@ -287,7 +287,7 @@ def fetch_isd_raw_temp_data(usaf_id, year):
                 if line[87:92].decode("utf-8") == "+9999":
                     tempC = float("nan")
                 else:
-                    tempC = float(line[87:92]) / 10.
+                    tempC = float(line[87:92]) / 10.0
                 date_str = line[15:27].decode("utf-8")
                 dt = pytz.UTC.localize(datetime.strptime(date_str, "%Y%m%d%H%M"))
                 data.append([dt, tempC])
@@ -349,7 +349,7 @@ def fetch_gsod_raw_temp_data(usaf_id, year):
                 columns = line.split()
                 date_str = columns[2].decode("utf-8")
                 tempF = float(columns[3])
-                tempC = (5. / 9.) * (tempF - 32.)
+                tempC = (5.0 / 9.0) * (tempF - 32.0)
                 dt = pytz.UTC.localize(datetime.strptime(date_str, "%Y%m%d"))
                 data.append([dt, tempC])
             gzipped.close()
@@ -370,8 +370,8 @@ def fetch_gsod_daily_temp_data(usaf_id, year):
 
 def fetch_tmy3_hourly_temp_data(usaf_id):
     url = (
-        "http://rredc.nrel.gov/solar/old_data/nsrdb/"
-        "1991-2005/data/tmy3/{}TYA.CSV".format(usaf_id)
+        "https://storage.googleapis.com/openeemeter-public-resources/"
+        "tmy3_archive/{}TYA.CSV".format(usaf_id)
     )
 
     # checks that the station has TMY3 data associated with it.

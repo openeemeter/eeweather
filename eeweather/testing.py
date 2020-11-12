@@ -64,8 +64,8 @@ def write_missing_gsod_file(bytes_string):
 
 def mock_request_text_tmy3(url):
     match_url = (
-        "http://rredc.nrel.gov/solar/old_data/nsrdb/"
-        "1991-2005/data/tmy3/722880TYA.CSV"
+        "https://storage.googleapis.com/openeemeter-public-resources/"
+        "tmy3_archive/722880TYA.CSV"
     )
     if re.match(match_url, url):
         return write_tmy3_file()
