@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.24
+------
+
 * Change TMY3 source because original source is no longer supported. Using archive of
 original source, data unchanged.
 
