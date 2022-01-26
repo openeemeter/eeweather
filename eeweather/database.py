@@ -183,7 +183,9 @@ def _load_isd_station_metadata(download_path):
     isAus = isd_history.CTRY == "AS"
 
     metadata = {}
-    for usaf_station, group in isd_history[hasGEO & hasUSAF & (isUS | isAus)].groupby("USAF"):
+    for usaf_station, group in isd_history[hasGEO & hasUSAF & (isUS | isAus)].groupby(
+        "USAF"
+    ):
         # find most recent
         recent = group.loc[group.END.idxmax()]
         wban_stations = list(group.WBAN)

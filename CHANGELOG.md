@@ -4,7 +4,8 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Update Dockerfile to remove expired keys.
+* Blacken code. 
 
 0.3.24
 ------
