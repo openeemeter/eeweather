@@ -8,7 +8,7 @@ kiwisolver==1.1.0
 matplotlib==2.2.4
 numpy==1.16.4
 pandas==0.24.2
-pillow==6.0.0
+pillow==9.0.1
 pyparsing==2.4.0
 pyproj==1.9.6
 python-dateutil==2.8.0
