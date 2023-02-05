@@ -8,6 +8,7 @@ Development
 * Install rust based on new juptyerlab requirements.
 * Update tests to deal with rounding that must be coming from new pandas.
 * Update sphinx docs based on new signatures.
+* Remove python 2.7 support.
 
 0.3.24
 ------
