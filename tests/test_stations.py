@@ -1196,7 +1196,6 @@ def test_isd_station_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(
 def test_load_isd_hourly_temp_data_cached_proxy(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     # doesn't yet guarantee that all code paths are taken,
     # except that coverage picks it up either here or elsewhere
     ts1 = load_isd_hourly_temp_data_cached_proxy("722874", 2007)
@@ -1208,7 +1207,6 @@ def test_load_isd_hourly_temp_data_cached_proxy(
 def test_load_isd_daily_temp_data_cached_proxy(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     # doesn't yet guarantee that all code paths are taken,
     # except that coverage picks it up either here or elsewhere
     ts1 = load_isd_daily_temp_data_cached_proxy("722874", 2007)
@@ -1220,7 +1218,6 @@ def test_load_isd_daily_temp_data_cached_proxy(
 def test_load_gsod_daily_temp_data_cached_proxy(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     # doesn't yet guarantee that all code paths are taken,
     # except that coverage picks it up either here or elsewhere
     ts1 = load_gsod_daily_temp_data_cached_proxy("722874", 2007)
@@ -1232,7 +1229,6 @@ def test_load_gsod_daily_temp_data_cached_proxy(
 def test_load_tmy3_hourly_temp_data_cached_proxy(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     # doesn't yet guarantee that all code paths are taken,
     # except that coverage picks it up either here or elsewhere
     ts1 = load_tmy3_hourly_temp_data_cached_proxy("722880", 2007)
@@ -1244,7 +1240,6 @@ def test_load_tmy3_hourly_temp_data_cached_proxy(
 def test_load_cz2010_hourly_temp_data_cached_proxy(
     monkeypatch_cz2010_request, monkeypatch_key_value_store
 ):
-
     # doesn't yet guarantee that all code paths are taken,
     # except that coverage picks it up either here or elsewhere
     ts1 = load_cz2010_hourly_temp_data_cached_proxy("722880", 2007)
@@ -1321,7 +1316,6 @@ def test_isd_station_load_cz2010_hourly_temp_data_cached_proxy(
 
 # load data between dates
 def test_load_isd_hourly_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_store):
-
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts, warnings = load_isd_hourly_temp_data("722874", start, end)
@@ -1334,7 +1328,6 @@ def test_load_isd_hourly_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_s
 def test_load_isd_hourly_temp_data_non_normalized_dates(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
     ts, warnings = load_isd_hourly_temp_data("722874", start, end)
@@ -1345,7 +1338,6 @@ def test_load_isd_hourly_temp_data_non_normalized_dates(
 
 
 def test_load_isd_daily_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_store):
-
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_isd_daily_temp_data("722874", start, end)
@@ -1358,7 +1350,6 @@ def test_load_isd_daily_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_st
 def test_load_isd_daily_temp_data_non_normalized_dates(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
     ts = load_isd_daily_temp_data("722874", start, end)
@@ -1369,7 +1360,6 @@ def test_load_isd_daily_temp_data_non_normalized_dates(
 
 
 def test_load_gsod_daily_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_store):
-
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_gsod_daily_temp_data("722874", start, end)
@@ -1382,7 +1372,6 @@ def test_load_gsod_daily_temp_data(monkeypatch_noaa_ftp, monkeypatch_key_value_s
 def test_load_gsod_daily_temp_data_non_normalized_dates(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     start = datetime(2006, 1, 3, 11, 12, 13, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, 12, 13, 14, tzinfo=pytz.UTC)
     ts = load_gsod_daily_temp_data("722874", start, end)
@@ -1395,7 +1384,6 @@ def test_load_gsod_daily_temp_data_non_normalized_dates(
 def test_load_tmy3_hourly_temp_data(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_tmy3_hourly_temp_data("722880", start, end)
@@ -1408,7 +1396,6 @@ def test_load_tmy3_hourly_temp_data(
 def test_load_cz2010_hourly_temp_data(
     monkeypatch_cz2010_request, monkeypatch_key_value_store
 ):
-
     start = datetime(2006, 1, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
     ts = load_cz2010_hourly_temp_data("722880", start, end)
@@ -1422,7 +1409,6 @@ def test_load_cz2010_hourly_temp_data(
 def test_isd_station_load_isd_hourly_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722874")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
@@ -1434,7 +1420,6 @@ def test_isd_station_load_isd_hourly_temp_data(
 def test_isd_station_load_isd_daily_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722874")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
@@ -1446,7 +1431,6 @@ def test_isd_station_load_isd_daily_temp_data(
 def test_isd_station_load_gsod_daily_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722874")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
@@ -1458,7 +1442,6 @@ def test_isd_station_load_gsod_daily_temp_data(
 def test_isd_station_load_tmy3_hourly_temp_data(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
@@ -1470,7 +1453,6 @@ def test_isd_station_load_tmy3_hourly_temp_data(
 def test_isd_station_load_cz2010_hourly_temp_data(
     monkeypatch_cz2010_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 3, 3, tzinfo=pytz.UTC)
     end = datetime(2007, 4, 3, tzinfo=pytz.UTC)
@@ -1483,7 +1465,6 @@ def test_isd_station_load_cz2010_hourly_temp_data(
 def test_load_cached_isd_hourly_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     ts = load_cached_isd_hourly_temp_data("722874")
     assert ts is None
 
@@ -1500,7 +1481,6 @@ def test_load_cached_isd_hourly_temp_data(
 def test_load_cached_isd_daily_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     ts = load_cached_isd_daily_temp_data("722874")
     assert ts is None
 
@@ -1517,7 +1497,6 @@ def test_load_cached_isd_daily_temp_data(
 def test_load_cached_gsod_daily_temp_data(
     monkeypatch_noaa_ftp, monkeypatch_key_value_store
 ):
-
     ts = load_cached_gsod_daily_temp_data("722874")
     assert ts is None
 
@@ -1534,7 +1513,6 @@ def test_load_cached_gsod_daily_temp_data(
 def test_load_cached_tmy3_hourly_temp_data(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     ts = load_cached_tmy3_hourly_temp_data("722880")
     assert ts is None
 
@@ -1551,7 +1529,6 @@ def test_load_cached_tmy3_hourly_temp_data(
 def test_load_cached_cz2010_hourly_temp_data(
     monkeypatch_cz2010_request, monkeypatch_key_value_store
 ):
-
     ts = load_cached_cz2010_hourly_temp_data("722880")
     assert ts is None
 
@@ -1660,7 +1637,6 @@ def test_isd_station_load_cached_cz2010_hourly_temp_data(
 def test_load_correctly_sliced_tmy3_hourly_temp_data(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     start = datetime(2015, 2, 15, tzinfo=pytz.UTC)
     end = datetime(2016, 8, 12, tzinfo=pytz.UTC)
 
@@ -1678,7 +1654,6 @@ def test_load_correctly_sliced_tmy3_hourly_temp_data(
 def test_load_correctly_sliced_cz2010_hourly_temp_data(
     monkeypatch_cz2010_request, monkeypatch_key_value_store
 ):
-
     start = datetime(2015, 2, 15, tzinfo=pytz.UTC)
     end = datetime(2016, 8, 12, tzinfo=pytz.UTC)
 
@@ -1696,7 +1671,6 @@ def test_load_correctly_sliced_cz2010_hourly_temp_data(
 def test_isd_station_load_isd_hourly_temp_data_tz_exception(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 4, 10)
     end = datetime(2007, 4, 12)
@@ -1712,7 +1686,6 @@ def test_isd_station_load_isd_hourly_temp_data_tz_exception(
 def test_isd_station_load_isd_daily_temp_data_tz_exception(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 4, 10)
     end = datetime(2007, 4, 12)
@@ -1728,7 +1701,6 @@ def test_isd_station_load_isd_daily_temp_data_tz_exception(
 def test_isd_station_load_gsod_daily_temp_data_tz_exception(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 4, 10)
     end = datetime(2007, 4, 12)
@@ -1744,7 +1716,6 @@ def test_isd_station_load_gsod_daily_temp_data_tz_exception(
 def test_isd_station_load_tmy3_hourly_temp_data_tz_exception(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 4, 10)
     end = datetime(2007, 4, 12)
@@ -1760,7 +1731,6 @@ def test_isd_station_load_tmy3_hourly_temp_data_tz_exception(
 def test_isd_station_load_cz2010_hourly_temp_data_tz_exception(
     monkeypatch_tmy3_request, monkeypatch_key_value_store
 ):
-
     station = ISDStation("722880")
     start = datetime(2007, 4, 10)
     end = datetime(2007, 4, 12)

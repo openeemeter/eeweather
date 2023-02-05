@@ -102,7 +102,7 @@ cached_data = CachedData()
 
 
 def get_lat_long_climate_zones(latitude, longitude):
-    """ Get climate zones that contain lat/long coordinates.
+    """Get climate zones that contain lat/long coordinates.
 
     Parameters
     ----------
@@ -162,7 +162,7 @@ def get_lat_long_climate_zones(latitude, longitude):
 
 
 def get_zcta_metadata(zcta):
-    """ Get metadata about a ZIP Code Tabulation Area (ZCTA).
+    """Get metadata about a ZIP Code Tabulation Area (ZCTA).
 
     Parameters
     ----------

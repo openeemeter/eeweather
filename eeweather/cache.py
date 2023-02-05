@@ -65,7 +65,6 @@ class KeyValueStore(object):
         return url
 
     def _prepare_db(self, url=None):
-
         # set url
         if url is None:  # pragma: no cover (tests always provide url)
             url = self._get_url()

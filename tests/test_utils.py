@@ -22,7 +22,6 @@ from eeweather.utils import lazy_property
 
 def test_lazy_property():
     class NotLazy(object):
-
         n_times = 1
 
         @property
@@ -32,7 +31,6 @@ def test_lazy_property():
             return times
 
     class Lazy(object):
-
         n_times = 1
 
         @lazy_property
