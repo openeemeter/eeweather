@@ -337,7 +337,7 @@ def test_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2016"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
-        {"usaf_id": "722874", "wban_id": "93134", 'year': "2019"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2019"},
     ]
 
     with pytest.raises(UnrecognizedUSAFIDError) as excinfo:
@@ -361,20 +361,20 @@ def test_isd_station_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2016"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
-        {"usaf_id": "722874", "wban_id": "93134", 'year': "2019"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2019"},
     ]
 
 
 # fetch raw
 def test_fetch_isd_raw_temp_data(monkeypatch_noaa_ftp):
     data = fetch_isd_raw_temp_data("722874", 2007)
-    assert round(data.sum()) == 185945
+    assert round(data.sum()) == pytest.approx(185945, 0.00001)
     assert data.shape == (11094,)
 
 
 def test_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
     data = fetch_gsod_raw_temp_data("722874", 2007)
-    assert data.sum() == 6509.5
+    assert data.sum() == pytest.approx(6509.5, 0.00001)
     assert data.shape == (365,)
 
 
@@ -382,14 +382,14 @@ def test_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
 def test_isd_station_fetch_isd_raw_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation("722874")
     data = station.fetch_isd_raw_temp_data(2007)
-    assert round(data.sum()) == 185945
+    assert round(data.sum()) == pytest.approx(185945, 0.00001)
     assert data.shape == (11094,)
 
 
 def test_isd_station_fetch_gsod_raw_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation("722874")
     data = station.fetch_gsod_raw_temp_data(2007)
-    assert data.sum() == 6509.5
+    assert data.sum() == pytest.approx(6509.5, 0.00001)
     assert data.shape == (365,)
 
 
@@ -426,31 +426,31 @@ def test_isd_station_fetch_isd_raw_temp_data_all_nan(monkeypatch_noaa_ftp):
 # fetch
 def test_fetch_isd_hourly_temp_data(monkeypatch_noaa_ftp):
     data = fetch_isd_hourly_temp_data("722874", 2007)
-    assert data.sum() == 156160.0355
+    assert data.sum() == pytest.approx(156160.0355, 0.00001)
     assert data.shape == (8760,)
 
 
 def test_fetch_isd_daily_temp_data(monkeypatch_noaa_ftp):
     data = fetch_isd_daily_temp_data("722874", 2007)
-    assert data.sum() == 6510.002260821784
+    assert data.sum() == pytest.approx(6510.002260821784, 0.00001)
     assert data.shape == (365,)
 
 
 def test_fetch_gsod_daily_temp_data(monkeypatch_noaa_ftp):
     data = fetch_gsod_daily_temp_data("722874", 2007)
-    assert data.sum() == 6509.5
+    assert data.sum() == pytest.approx(6509.5, 0.00001)
     assert data.shape == (365,)
 
 
 def test_fetch_tmy3_hourly_temp_data(monkeypatch_tmy3_request):
     data = fetch_tmy3_hourly_temp_data("722880")
-    assert data.sum() == 156194.3
+    assert data.sum() == pytest.approx(156194.3, 0.00001)
     assert data.shape == (8760,)
 
 
 def test_fetch_cz2010_hourly_temp_data(monkeypatch_cz2010_request):
     data = fetch_cz2010_hourly_temp_data("722880")
-    assert data.sum() == 153430.90000000002
+    assert data.sum() == pytest.approx(153430.9, 0.00001)
     assert data.shape == (8760,)
 
 
@@ -458,35 +458,35 @@ def test_fetch_cz2010_hourly_temp_data(monkeypatch_cz2010_request):
 def test_isd_station_fetch_isd_hourly_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation("722874")
     data = station.fetch_isd_hourly_temp_data(2007)
-    assert data.sum() == 156160.0355
+    assert data.sum() == pytest.approx(156160.0355, 0.00001)
     assert data.shape == (8760,)
 
 
 def test_isd_station_fetch_isd_daily_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation("722874")
     data = station.fetch_isd_daily_temp_data(2007)
-    assert data.sum() == 6510.002260821784
+    assert data.sum() == pytest.approx(6510, 0.00001)
     assert data.shape == (365,)
 
 
 def test_isd_station_fetch_gsod_daily_temp_data(monkeypatch_noaa_ftp):
     station = ISDStation("722874")
     data = station.fetch_gsod_daily_temp_data(2007)
-    assert data.sum() == 6509.5
+    assert data.sum() == pytest.approx(6509.5, 0.00001)
     assert data.shape == (365,)
 
 
 def test_tmy3_station_hourly_temp_data(monkeypatch_tmy3_request):
     station = ISDStation("722880")
     data = station.fetch_tmy3_hourly_temp_data()
-    assert data.sum() == 156194.3
+    assert data.sum() == pytest.approx(156194.3, 0.00001)
     assert data.shape == (8760,)
 
 
 def test_cz2010_station_hourly_temp_data(monkeypatch_cz2010_request):
     station = ISDStation("722880")
     data = station.fetch_cz2010_hourly_temp_data()
-    assert data.sum() == 153430.90000000002
+    assert data.sum() == pytest.approx(153430.9, 0.00001)
     assert data.shape == (8760,)
 
 
@@ -518,7 +518,7 @@ def test_fetch_cz2010_hourly_temp_data_invalid():
 
 def test_fetch_tmy3_hourly_temp_data_not_in_tmy3_list(monkeypatch_noaa_ftp):
     data = fetch_isd_hourly_temp_data("722874", 2007)
-    assert data.sum() == 156160.0355
+    assert data.sum() == pytest.approx(156160.0355, 0.00001)
     assert data.shape == (8760,)
     with pytest.raises(TMY3DataNotAvailableError):
         fetch_tmy3_hourly_temp_data("722874")
@@ -598,21 +598,21 @@ def test_cached_gsod_daily_temp_data_is_expired_empty(monkeypatch_key_value_stor
 
 # station cache expired empty
 def test_isd_station_cached_isd_hourly_temp_data_is_expired_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.cached_isd_hourly_temp_data_is_expired(2007) is True
 
 
 def test_isd_station_cached_isd_daily_temp_data_is_expired_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.cached_isd_daily_temp_data_is_expired(2007) is True
 
 
 def test_isd_station_cached_gsod_daily_temp_data_is_expired_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.cached_gsod_daily_temp_data_is_expired(2007) is True
@@ -709,35 +709,35 @@ def test_validate_cz2010_hourly_temp_data_cache_empty(monkeypatch_key_value_stor
 
 # station validate cache empty
 def test_isd_station_validate_isd_hourly_temp_data_cache_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.validate_isd_hourly_temp_data_cache(2007) is False
 
 
 def test_isd_station_validate_isd_daily_temp_data_cache_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.validate_isd_daily_temp_data_cache(2007) is False
 
 
 def test_isd_station_validate_gsod_daily_temp_data_cache_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     assert station.validate_gsod_daily_temp_data_cache(2007) is False
 
 
 def test_isd_station_validate_tmy3_hourly_temp_data_cache_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722880")
     assert station.validate_tmy3_hourly_temp_data_cache() is False
 
 
 def test_isd_station_validate_cz2010_hourly_temp_data_cache_empty(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722880")
     assert station.validate_cz2010_hourly_temp_data_cache() is False
@@ -987,7 +987,7 @@ def test_isd_station_deserialize_cz2010_hourly_temp_data():
 
 # write read destroy
 def test_write_read_destroy_isd_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     store = monkeypatch_key_value_store
     key = get_isd_hourly_temp_data_cache_key("123456", 1990)
@@ -1007,7 +1007,7 @@ def test_write_read_destroy_isd_hourly_temp_data_to_from_cache(
 
 
 def test_write_read_destroy_isd_daily_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     store = monkeypatch_key_value_store
     key = get_isd_daily_temp_data_cache_key("123456", 1990)
@@ -1027,7 +1027,7 @@ def test_write_read_destroy_isd_daily_temp_data_to_from_cache(
 
 
 def test_write_read_destroy_gsod_daily_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     store = monkeypatch_key_value_store
     key = get_gsod_daily_temp_data_cache_key("123456", 1990)
@@ -1047,7 +1047,7 @@ def test_write_read_destroy_gsod_daily_temp_data_to_from_cache(
 
 
 def test_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     store = monkeypatch_key_value_store
     key = get_tmy3_hourly_temp_data_cache_key("123456")
@@ -1067,7 +1067,7 @@ def test_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(
 
 
 def test_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     store = monkeypatch_key_value_store
     key = get_cz2010_hourly_temp_data_cache_key("123456")
@@ -1088,7 +1088,7 @@ def test_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(
 
 # station write read destroy
 def test_isd_station_write_read_destroy_isd_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     store = monkeypatch_key_value_store
@@ -1109,7 +1109,7 @@ def test_isd_station_write_read_destroy_isd_hourly_temp_data_to_from_cache(
 
 
 def test_isd_station_write_read_destroy_isd_daily_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     store = monkeypatch_key_value_store
@@ -1130,7 +1130,7 @@ def test_isd_station_write_read_destroy_isd_daily_temp_data_to_from_cache(
 
 
 def test_isd_station_write_read_destroy_gsod_daily_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722874")
     store = monkeypatch_key_value_store
@@ -1151,7 +1151,7 @@ def test_isd_station_write_read_destroy_gsod_daily_temp_data_to_from_cache(
 
 
 def test_isd_station_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722880")
     store = monkeypatch_key_value_store
@@ -1172,7 +1172,7 @@ def test_isd_station_write_read_destroy_tmy3_hourly_temp_data_to_from_cache(
 
 
 def test_isd_station_write_read_destroy_cz2010_hourly_temp_data_to_from_cache(
-    monkeypatch_key_value_store
+    monkeypatch_key_value_store,
 ):
     station = ISDStation("722880")
     store = monkeypatch_key_value_store

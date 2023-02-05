@@ -15,7 +15,7 @@ pandas = "*"
 pyproj = "*"
 requests ="*"
 Shapely = {extras = ["vectorized"]}
-SQLAlchemy = "*"
+SQLAlchemy = "<2.0.0"
 scipy = "*"
 simplejson = "*"
 
