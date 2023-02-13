@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 
-   Copyright 2018 Open Energy Efficiency, Inc.
+   Copyright 2023 Open Energy Efficiency, Inc and the Society for
+   the Reduction of Carbon, Ltd (T/A Carbon Co-op).
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -102,6 +103,7 @@ from .stations import (
     load_cached_cz2010_hourly_temp_data,
 )
 from .visualization import plot_station_mapping, plot_station_mappings
+from .international import *
 
 
 def get_version():
