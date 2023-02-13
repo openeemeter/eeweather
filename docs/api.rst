@@ -1,6 +1,15 @@
 API Docs
 ========
 
+International
+-------
+
+.. autofunction:: eeweather.get_weather_intl
+
+.. autofunction:: eeweather.get_lat_long
+
+.. autofunction:: eeweather.get_weather_intervals_for_similar_sites
+
 Ranking
 -------
 
