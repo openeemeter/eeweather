@@ -158,8 +158,7 @@ def _download_primary_sources():
 
 
 def _load_isd_station_metadata(download_path):
-    """ Collect metadata for US isd stations.
-    """
+    """Collect metadata for US isd stations."""
     from shapely.geometry import Point
 
     # load ISD history which contains metadata
@@ -183,7 +182,9 @@ def _load_isd_station_metadata(download_path):
     isAus = isd_history.CTRY == "AS"
 
     metadata = {}
-    for usaf_station, group in isd_history[hasGEO & hasUSAF & (isUS | isAus)].groupby("USAF"):
+    for usaf_station, group in isd_history[hasGEO & hasUSAF & (isUS | isAus)].groupby(
+        "USAF"
+    ):
         # find most recent
         recent = group.loc[group.END.idxmax()]
         wban_stations = list(group.WBAN)
@@ -206,8 +207,7 @@ def _load_isd_station_metadata(download_path):
 
 
 def _load_isd_file_metadata(download_path, isd_station_metadata):
-    """ Collect data counts for isd files.
-    """
+    """Collect data counts for isd files."""
 
     isd_inventory = pd.read_csv(
         os.path.join(download_path, "isd-inventory.csv"), dtype=str
@@ -1137,7 +1137,7 @@ def build_metadata_db(
     ba_climate_zone_geometry=True,
     ca_climate_zone_geometry=True,
 ):
-    """ Build database of metadata from primary sources.
+    """Build database of metadata from primary sources.
 
     Downloads primary sources, clears existing DB, and rebuilds from scratch.
 

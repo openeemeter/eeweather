@@ -23,7 +23,7 @@ __all__ = ("get_zcta_ids", "get_isd_station_usaf_ids")
 
 
 def get_zcta_ids(state=None):
-    """ Get ids of all supported ZCTAs, optionally by state.
+    """Get ids of all supported ZCTAs, optionally by state.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ def get_zcta_ids(state=None):
 
 
 def get_isd_station_usaf_ids(state=None):
-    """ Get USAF IDs of all supported ISD stations, optionally by state.
+    """Get USAF IDs of all supported ISD stations, optionally by state.
 
     Parameters
     ----------

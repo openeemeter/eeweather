@@ -121,7 +121,7 @@ def rank_stations(
     is_tmy3=None,
     is_cz2010=None,
 ):
-    """ Get a ranked, filtered set of candidate weather stations and metadata
+    """Get a ranked, filtered set of candidate weather stations and metadata
     for a particular site.
 
     Parameters
@@ -321,7 +321,7 @@ def rank_stations(
 
 
 def combine_ranked_stations(rankings):
-    """ Combine :any:`pandas.DataFrame` s of candidate weather stations to form
+    """Combine :any:`pandas.DataFrame` s of candidate weather stations to form
     a hybrid ranking dataframe.
 
     Parameters
@@ -367,7 +367,7 @@ def select_station(
     rank=1,
     fetch_from_web=True,
 ):
-    """ Select a station from a list of candidates that meets given data
+    """Select a station from a list of candidates that meets given data
     quality criteria.
 
     Parameters

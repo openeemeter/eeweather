@@ -6,6 +6,10 @@ Development
 
 * Placeholder
 
+0.3.25
+-------
+* Adding international capability to EEWeather (international.py), plus testing & new samples.
+
 0.3.24
 ------
 
