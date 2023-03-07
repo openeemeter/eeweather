@@ -1,4 +1,4 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs19-bullseye 
+FROM python:3.10.10-bullseye
 # bullseye required for GEOS>3.7.1 which is needed for newest cartopy
 
 RUN apt-get update \
@@ -10,19 +10,15 @@ RUN apt-get update \
     # unzip for rebuilding metadata.db
     unzip \
     # node for mapshaper
-    nodejs \
+    nodejs npm \
     # for access to metadata.db
-    sqlite3 libsqlite3-dev
-
-
-# Get Rust
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+    sqlite3 libsqlite3-dev 
 
 RUN npm install -g mapshaper
 
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
+RUN pip install pipenv
 RUN set -ex && pipenv install --system --deploy --dev
 ENV PYTHONPATH=/app
 
