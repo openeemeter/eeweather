@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-   Copyright 2018 Open Energy Efficiency, Inc.
+   Copyright 2018-2023 OpenEEmeter contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,4 +24,4 @@ __version__ = "0.3.24"
 __author__ = "Phil Ngo"
 __author_email__ = "phil@openee.io"
 __license__ = "Apache 2.0"
-__copyright__ = "Copyright 2018 Open Energy Efficiency, Inc."
+__copyright__ = "Copyright 2018-2023 OpenEEmeter contributors"
