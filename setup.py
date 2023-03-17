@@ -30,18 +30,8 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 NAME = "eeweather"
-REQUIRED = [
-    "click",
-    "pandas",
-    "pyproj>=1.9.6",
-    "requests",
-    "shapely",
-    "geopy",
-    "cdsapi",
-    "xarray",
-    "cfgrib",
-    "eccodes",
-]
+REQUIRED = ["click", "pandas", "pyproj>=1.9.6", "requests", "shapely"]
+EXTRAS = ["cdsapi", "xarray", "cfgrib", "eccodes"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -100,6 +90,7 @@ setup(
     packages=find_packages(exclude=("tests",)),
     entry_points={"console_scripts": ["eeweather=eeweather.cli:cli"]},
     install_requires=REQUIRED,
+    extras_require=EXTRAS,
     include_package_data=True,
     license=about["__license__"],
     classifiers=[
