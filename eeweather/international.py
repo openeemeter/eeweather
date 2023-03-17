@@ -1,23 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-
-   Copyright 2023 The Society for the Reduction of Carbon, Ltd (T/A Carbon Co-op).
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-"""
-
 import warnings
 
 import numpy as np
@@ -26,14 +6,11 @@ from dateutil.relativedelta import relativedelta
 import xarray as xr
 import cdsapi
 from datetime import datetime
-from geopy.geocoders import Nominatim
 import tempfile
 import logging
-import time
 
 __all__ = (
     "get_weather_intl",
-    "get_lat_long",
     "get_weather_intervals_for_similar_sites",
 )
 
@@ -87,55 +64,19 @@ def get_ecmwf_df(year, months, days, filename, area, latitude, longitude):
         filename,
         area,
     )
-    ds = xr.open_dataset(filename, engine="cfgrib")
-    df = _get_weather_xr(ds, latitude, longitude)
+    ds = xr.open_dataset(
+        filename, engine="cfgrib"
+    )
+    df = _get_weather_xr(
+        ds, latitude, longitude
+    )
     # Enable logging
     logging.disable(logging.NOTSET)
     return df
 
-
-def get_lat_long(areacode):
-    """Derive the latitude/longitude co-ordinates of a given areacode (postcode/zipcode).
-
-    This function makes use of the Nominatim package, available at: https://nominatim.org/. Nominatim converts any
-    postcode/zipcode to global latitude/longitude co-ordinates to facilitate weather calls via the CDS API. Nominatim
-    best practice requires that API calls do not exceed an absolute maximum of 1 per second.
-
-    Use of Nominatim is governed by the OSMF Terms of Use, available at:
-    https://wiki.osmfoundation.org/wiki/Terms_of_Use.
-
-
-    Parameters
-    ----------
-    areacode : :any:`str`
-        The postcode/zipcode relevant to a given site. For example:
-            'SW1A 2DX' for Trafalgar Square, London, UK;
-            '10117 Berlin' for Brandenburger Tor, Berlin, Germany;
-            'NY 10036' for Times Square, New York, USA.
-
-    Returns
-    -------
-    latitude : :any: 'float' between -180 and 180
-        The actual latitude of the site concerned.
-    longitude : :any: 'float' between -90 and 90
-        The actual longitude of the site concerned.
-    """
-
-    # get bounding box for location
-    locator = Nominatim(user_agent="untitled")
-    location = locator.geocode(areacode)
-    time.sleep(1)
-    location = location.raw
-    latitude = float(location["lat"])
-    longitude = float(location["lon"])
-
-    return latitude, longitude
-
-
 def round_quarter(x: float):
     quarter = round(x * 4) / 4
     return quarter
-
 
 def get_weather_intervals_for_similar_sites(df):
     """A function to identify unique co-ordinates across a DataFrame of sites
@@ -172,8 +113,8 @@ def get_weather_intervals_for_similar_sites(df):
         portfolio of sites.
     """
 
-    df["latitude"] = round_quarter(df["latitude"])
-    df["longitude"] = round_quarter(df["longitude"])
+    df['latitude'] = round_quarter(df['latitude'])
+    df['longitude'] = round_quarter(df['longitude'])
 
     df_start_sort = (
         df.sort_values(by="start_date")
@@ -195,37 +136,30 @@ def get_weather_intervals_for_similar_sites(df):
     )
 
     # Merge the two dataframes on the index column
-    merged_df = pd.merge(
-        df, df_collated, left_index=True, right_index=True, how="outer", indicator=True
-    )
+    merged_df = pd.merge(df, df_collated, left_index=True, right_index=True, how='outer', indicator=True)
     # Identify the rows that are only in df
-    dropped_sites = list(merged_df[merged_df["_merge"] == "left_only"].index)
+    dropped_sites = list(merged_df[merged_df['_merge'] == 'left_only'].index)
 
     df_shorter_intervals = df.loc[dropped_sites, :]
 
     def match_index(row):
         match = df_collated[
-            (df_collated["latitude"] == row["latitude"])
-            & (df_collated["longitude"] == row["longitude"])
-        ]
+            (df_collated['latitude'] == row['latitude']) & (df_collated['longitude'] == row['longitude'])]
         if match.empty:
             return None
         else:
             return match.index[0]
 
-    df_shorter_intervals["matching_index"] = df_shorter_intervals.apply(
-        match_index, axis=1
-    )
+    df_shorter_intervals['matching_index'] = df_shorter_intervals.apply(match_index, axis=1)
 
     return df_collated, df_shorter_intervals
 
 
 def get_weather_intl(
-    start_date,
-    end_date,
-    latitude=None,
-    longitude=None,
-    areacode: str = None,
+        start_date,
+        end_date,
+        latitude=None,
+        longitude=None,
 ):
     """Download hourly 2m temperature data from the European Centre for Medium-range Weather Forecasts (ECMWF)'s via
     its Climate Data Store (CDS) API for anywhere in the world. CDS provides temperature data from 1959 to five days
@@ -296,14 +230,6 @@ def get_weather_intl(
     if end_date > (datetime.now() - relativedelta(days=5)):
         warnings.warn("Data not available for most recent 5 days.")
 
-    if areacode is not None:
-        latitude, longitude = get_lat_long(areacode)
-
-    elif areacode is None and latitude is None and longitude is None:
-        raise ValueError(
-            "areacode cannot be None while latitude and longitude are also None. Enter either areacode or latitude and longitude values."
-        )
-
     latitude = round_quarter(latitude)
     longitude = round_quarter(longitude)
 
@@ -338,17 +264,7 @@ def get_weather_intl(
             months = [str(n).rjust(2, "0") for n in range(start_month, end_month + 1)]
 
             for month in months:
-                weather_list.append(
-                    get_ecmwf_df(
-                        year,
-                        month,
-                        all_days,
-                        filename,
-                        bounding_box,
-                        latitude,
-                        longitude,
-                    )
-                )
+                weather_list.append(get_ecmwf_df(year, month, all_days, filename, bounding_box, latitude, longitude))
 
     weather = pd.concat(weather_list)
     weather.sort_index(inplace=True)
