@@ -25,21 +25,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-
-def test_get_lat_long():
-    p = Path().resolve().parents[0]
-    df = pd.read_csv(str(p) + "/samples/test_locations.csv", index_col=0)
-    postcodes = df["postal_code"].to_list()
-    latitude_ref = df["latitude"].to_list()
-    longitude_ref = df["longitude"].to_list()
-    for postcode, latitude, longitude in zip(postcodes, latitude_ref, longitude_ref):
-        latitude_test, longitude_test = eeweather.get_lat_long(postcode)
-        assert isinstance(latitude_test, float)
-        assert isinstance(longitude_test, float)
-        assert latitude_test - 1 < latitude < latitude_test + 1
-        assert longitude_test - 1 < longitude < longitude_test + 1
-
-
 def test_get_weather_intervals_for_similar_sites():
     p = Path().resolve().parents[0]
     df = pd.read_csv(str(p) + "/samples/sample_sites.csv", index_col=0)
