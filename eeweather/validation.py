@@ -25,7 +25,7 @@ __all__ = ("valid_zcta_or_raise", "valid_usaf_id_or_raise")
 
 
 def valid_zcta_or_raise(zcta):
-    """ Check if ZCTA is valid and raise eeweather.UnrecognizedZCTAError if not. """
+    """Check if ZCTA is valid and raise eeweather.UnrecognizedZCTAError if not."""
     conn = metadata_db_connection_proxy.get_connection()
     cur = conn.cursor()
 
@@ -50,7 +50,7 @@ def valid_zcta_or_raise(zcta):
 
 
 def valid_usaf_id_or_raise(usaf_id):
-    """ Check if USAF ID is valid and raise eeweather.UnrecognizedUSAFIDError if not. """
+    """Check if USAF ID is valid and raise eeweather.UnrecognizedUSAFIDError if not."""
     conn = metadata_db_connection_proxy.get_connection()
     cur = conn.cursor()
 

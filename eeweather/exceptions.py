@@ -26,7 +26,7 @@ class EEWeatherError(Exception):
 
 
 class UnrecognizedUSAFIDError(EEWeatherError):
-    """ Raised when an unrecognized USAF station id is encountered.
+    """Raised when an unrecognized USAF station id is encountered.
 
     Attributes
     ----------
@@ -45,7 +45,7 @@ class UnrecognizedUSAFIDError(EEWeatherError):
 
 
 class UnrecognizedZCTAError(EEWeatherError):
-    """ Raised when an unrecognized ZCTA is encountered.
+    """Raised when an unrecognized ZCTA is encountered.
 
     Attributes
     ----------
@@ -57,13 +57,15 @@ class UnrecognizedZCTAError(EEWeatherError):
 
     def __init__(self, value):
         self.value = value
-        self.message = 'The value "{}" was not recognized as a valid ZCTA identifier.'.format(
-            value
+        self.message = (
+            'The value "{}" was not recognized as a valid ZCTA identifier.'.format(
+                value
+            )
         )
 
 
 class ISDDataNotAvailableError(EEWeatherError):
-    """ Raised when ISD data is not available for a particular station and year.
+    """Raised when ISD data is not available for a particular station and year.
 
     Attributes
     ----------
@@ -84,7 +86,7 @@ class ISDDataNotAvailableError(EEWeatherError):
 
 
 class GSODDataNotAvailableError(EEWeatherError):
-    """ Raised when GSOD data is not available for a particular station and year.
+    """Raised when GSOD data is not available for a particular station and year.
 
     Attributes
     ----------
@@ -101,7 +103,7 @@ class GSODDataNotAvailableError(EEWeatherError):
 
 
 class TMY3DataNotAvailableError(EEWeatherError):
-    """ Raised when TMY3 data is not available for a particular station.
+    """Raised when TMY3 data is not available for a particular station.
 
     Attributes
     ----------
@@ -117,7 +119,7 @@ class TMY3DataNotAvailableError(EEWeatherError):
 
 
 class CZ2010DataNotAvailableError(EEWeatherError):
-    """ Raised when CZ2010 data is not available for a particular station.
+    """Raised when CZ2010 data is not available for a particular station.
 
     Attributes
     ----------
@@ -133,7 +135,7 @@ class CZ2010DataNotAvailableError(EEWeatherError):
 
 
 class NonUTCTimezoneInfoError(EEWeatherError):
-    """ Raised when input start and end date aren't explicitly defined 
+    """Raised when input start and end date aren't explicitly defined
     to have a UTC timezone.
 
     Attributes

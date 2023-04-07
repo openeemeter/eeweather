@@ -20,7 +20,7 @@
 
 
 class EEWeatherWarning(object):
-    """ An object representing a warning and data associated with it.
+    """An object representing a warning and data associated with it.
 
     Attributes
     ----------
@@ -41,7 +41,7 @@ class EEWeatherWarning(object):
         return "EEWeatherWarning(qualified_name={})".format(self.qualified_name)
 
     def json(self):
-        """ Return a JSON-serializable representation of this result.
+        """Return a JSON-serializable representation of this result.
 
         The output of this function can be converted to a serialized string
         with :any:`json.dumps`.

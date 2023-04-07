@@ -33,7 +33,7 @@ def plot_station_mapping(
     distance_meters,
     target_label="target",
 ):  # pragma: no cover
-    """ Plots this mapping on a map."""
+    """Plots this mapping on a map."""
     try:
         import matplotlib.pyplot as plt
     except ImportError:
@@ -74,21 +74,21 @@ def plot_station_mapping(
     bottom = y_min - y_diff * 0.3
     top = y_max + y_diff * 0.3
 
-    width_ratio = 2.
-    height_ratio = 1.
+    width_ratio = 2.0
+    height_ratio = 1.0
 
     if (right - left) / (top - bottom) > width_ratio / height_ratio:
         # too short
         goal = (right - left) * height_ratio / width_ratio
         diff = goal - (top - bottom)
-        bottom = bottom - diff / 2.
-        top = top + diff / 2.
+        bottom = bottom - diff / 2.0
+        top = top + diff / 2.0
     else:
         # too skinny
         goal = (top - bottom) * width_ratio / height_ratio
         diff = goal - (right - left)
-        left = left - diff / 2.
-        right = right + diff / 2.
+        left = left - diff / 2.0
+        right = right + diff / 2.0
 
     ax.set_extent([left, right, bottom, top])
 
@@ -133,7 +133,7 @@ def plot_station_mapping(
 
 
 def plot_station_mappings(mapping_results):  # pragma: no cover
-    """ Plot a list of mapping results on a map.
+    """Plot a list of mapping results on a map.
 
     Requires matplotlib and cartopy.
 
@@ -196,21 +196,21 @@ def plot_station_mappings(mapping_results):  # pragma: no cover
     bottom = y_min - y_pad
     top = y_max + y_pad
 
-    width_ratio = 2.
-    height_ratio = 1.
+    width_ratio = 2.0
+    height_ratio = 1.0
 
     if (right - left) / (top - bottom) > height_ratio / width_ratio:
         # too short
         goal = (right - left) * height_ratio / width_ratio
         diff = goal - (top - bottom)
-        bottom = bottom - diff / 2.
-        top = top + diff / 2.
+        bottom = bottom - diff / 2.0
+        top = top + diff / 2.0
     else:
         # too skinny
         goal = (top - bottom) * width_ratio / height_ratio
         diff = goal - (right - left)
-        left = left - diff / 2.
-        right = right + diff / 2.
+        left = left - diff / 2.0
+        right = right + diff / 2.0
 
     left = max(left, -179.9)
     right = min(right, 179.9)
