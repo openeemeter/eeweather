@@ -556,7 +556,7 @@ def _serialize(ts, freq):
 
     return [
         [d.strftime(dt_format), round(temp, 4) if pd.notnull(temp) else None]
-        for d, temp in ts.iteritems()
+        for d, temp in ts.items()
     ]
 
 
