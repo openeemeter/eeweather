@@ -4,6 +4,8 @@ Changelog
 Development
 -----------
 
+* Update CA climate zone URL.
+* Cache tmy-stations.html file.
 * Update Pipfile and python/node versions in Dockerfile.
 * Install rust based on new juptyerlab requirements.
 * Update tests to deal with rounding that must be coming from new pandas.
