@@ -46,12 +46,12 @@ def test_inspect_isd_station():
     assert json.loads(result.output) == {
         "ba_climate_zone": "Hot-Dry",
         "ca_climate_zone": "CA_09",
-        "elevation": "+0236.2",
+        "elevation": "+0222.7",
         "icao_code": "KBUR",
         "iecc_climate_zone": "3",
         "iecc_moisture_regime": "B",
-        "latitude": "+34.201",
-        "longitude": "-118.358",
+        "latitude": "+34.200",
+        "longitude": "-118.365",
         "name": "BURBANK-GLENDALE-PASA ARPT",
         "quality": "high",
         "recent_wban_id": "23152",
@@ -87,6 +87,10 @@ def test_inspect_isd_file_years():
         {"usaf_id": "722880", "wban_id": "23152", "year": "2017"},
         {"usaf_id": "722880", "wban_id": "23152", "year": "2018"},
         {"usaf_id": "722880", "wban_id": "23152", "year": "2019"},
+        {"usaf_id": "722880", "wban_id": "23152", "year": "2020"},
+        {"usaf_id": "722880", "wban_id": "23152", "year": "2021"},
+        {"usaf_id": "722880", "wban_id": "23152", "year": "2022"},
+        {"usaf_id": "722880", "wban_id": "23152", "year": "2023"},
     ]
 
 

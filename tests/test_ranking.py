@@ -214,16 +214,15 @@ def test_combine_ranked_stations(cz_candidates, naive_candidates):
     assert list(cz_candidates.index) == [
         "723890",
         "747020",
-        "723896",
         "723895",
         "723840",
     ]
     assert list(naive_candidates.index) == [
         "723890",
         "747020",
-        "723896",
         "724815",
         "723895",
+        "723965",
     ]
 
     combined_candidates = combine_ranked_stations([cz_candidates, naive_candidates])
@@ -234,10 +233,10 @@ def test_combine_ranked_stations(cz_candidates, naive_candidates):
     assert list(combined_candidates.index) == [
         "723890",
         "747020",
-        "723896",
         "723895",
         "723840",
         "724815",
+        "723965",
     ]
 
 

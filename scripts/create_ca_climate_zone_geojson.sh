@@ -5,7 +5,7 @@ DATA_DIR=${1:-data}
 mkdir -p $DATA_DIR
 
 # download and install CA climate zone raw data
-wget -N http://ww2.energy.ca.gov/maps/renewable/CA_Building_Standards_Climate_Zones.zip -P $DATA_DIR -q --show-progress
+wget -N https://community.esri.com/ccqpr47374/attachments/ccqpr47374/coordinate-reference-systemsforum-board/1814/1/CA_Building_Standards_Climate_Zones.zip -P $DATA_DIR -q --show-progress
 unzip -q -o $DATA_DIR/CA_Building_Standards_Climate_Zones.zip -d $DATA_DIR
 
 # reproject to ESRI Shapefile
