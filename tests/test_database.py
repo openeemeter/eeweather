@@ -113,7 +113,7 @@ def test_zcta_metadata_table_content():
         "iecc_climate_zone": "1",
         "iecc_moisture_regime": "A",
         "latitude": "18.1800455429617",
-        "longitude": "-66.752178136408",
+        "longitude": "-66.7521781364081",
         "state": "PR",
         "zcta_id": "00601",
     }
