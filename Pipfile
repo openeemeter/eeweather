@@ -11,7 +11,7 @@ name = "pypi"
 Cython = "*"
 matplotlib = "*"
 Pillow = "*"
-pandas = "*"
+pandas = ">=1.0.0"
 pyproj = "*"
 requests ="*"
 Shapely = {extras = ["vectorized"]}

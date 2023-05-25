@@ -4,6 +4,7 @@ Changelog
 Development
 -----------
 
+* Update .iteritems() to .items() for pandas>=2.0.0.
 * Update shapely containment method from cascaded_union to unary_union.
 * Update db recreation code to first delete the old db.
 * Update CA climate zone URL.
