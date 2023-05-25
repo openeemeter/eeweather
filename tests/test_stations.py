@@ -184,11 +184,11 @@ def test_isd_station_with_load_metadata():
     assert station.iecc_moisture_regime == "B"
     assert station.ba_climate_zone == "Hot-Dry"
     assert station.ca_climate_zone == "CA_09"
-    assert station.elevation == 236.2
+    assert station.elevation == 222.7
     assert station.icao_code == "KBUR"
-    assert station.latitude == 34.201
-    assert station.longitude == -118.358
-    assert station.coords == (34.201, -118.358)
+    assert station.latitude == 34.2
+    assert station.longitude == -118.365
+    assert station.coords == (34.2, -118.365)
     assert station.name == "BURBANK-GLENDALE-PASA ARPT"
     assert station.quality == "high"
     assert station.wban_ids == ["23152", "99999"]
@@ -204,10 +204,10 @@ def test_isd_station_with_load_metadata():
 def test_isd_station_json():
     station = ISDStation("722880", load_metadata=True)
     assert station.json() == {
-        "elevation": 236.2,
+        "elevation": 222.7,
         "icao_code": "KBUR",
-        "latitude": 34.201,
-        "longitude": -118.358,
+        "latitude": 34.2,
+        "longitude": -118.365,
         "name": "BURBANK-GLENDALE-PASA ARPT",
         "quality": "high",
         "recent_wban_id": "23152",
@@ -338,6 +338,10 @@ def test_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2019"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2020"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2021"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2022"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2023"},
     ]
 
     with pytest.raises(UnrecognizedUSAFIDError) as excinfo:
@@ -362,6 +366,10 @@ def test_isd_station_get_isd_file_metadata():
         {"usaf_id": "722874", "wban_id": "93134", "year": "2017"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2018"},
         {"usaf_id": "722874", "wban_id": "93134", "year": "2019"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2020"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2021"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2022"},
+        {"usaf_id": "722874", "wban_id": "93134", "year": "2023"},
     ]
 
 

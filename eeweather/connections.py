@@ -100,6 +100,7 @@ class MetadataDBConnectionProxy(object):
         return sqlite3.connect(self.db_path)
 
     def reset_database(self):  # pragma: no cover
+        os.remove(self.db_path)
         return self.get_connection()
 
 

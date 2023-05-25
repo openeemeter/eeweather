@@ -40,7 +40,7 @@ wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-inventory.csv -P $DATA_DIR -q 
 
 # Scrape-friendly TMY3 station list
 echo Downloading tmy3-stations.html
-wget -O $DATA_DIR/tmy3-stations.html -N http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/by_USAFN.html -q --show-progress
+cp /app/eeweather/resources/tmy3-stations.html $DATA_DIR
 
 # Add ZIP code prefix mapping
 echo Downloading state zipcode prefixes

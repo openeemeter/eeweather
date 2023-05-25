@@ -466,7 +466,7 @@ def _load_cz2010_station_metadata():
 
 
 def _create_merged_climate_zones_metadata(county_metadata):
-    from shapely.ops import cascaded_union
+    from shapely.ops import unary_union
 
     iecc_climate_zone_polygons = defaultdict(list)
     iecc_moisture_regime_polygons = defaultdict(list)
@@ -486,7 +486,7 @@ def _create_merged_climate_zones_metadata(county_metadata):
 
     iecc_climate_zone_metadata = {}
     for iecc_climate_zone, polygons in iecc_climate_zone_polygons.items():
-        polygon = cascaded_union(polygons)
+        polygon = unary_union(polygons)
         polygon = polygon.simplify(0.01)
         iecc_climate_zone_metadata[iecc_climate_zone] = {
             "iecc_climate_zone": iecc_climate_zone,
@@ -496,7 +496,7 @@ def _create_merged_climate_zones_metadata(county_metadata):
 
     iecc_moisture_regime_metadata = {}
     for iecc_moisture_regime, polygons in iecc_moisture_regime_polygons.items():
-        polygon = cascaded_union(polygons)
+        polygon = unary_union(polygons)
         polygon = polygon.simplify(0.01)
         iecc_moisture_regime_metadata[iecc_moisture_regime] = {
             "iecc_moisture_regime": iecc_moisture_regime,
@@ -506,7 +506,7 @@ def _create_merged_climate_zones_metadata(county_metadata):
 
     ba_climate_zone_metadata = {}
     for ba_climate_zone, polygons in ba_climate_zone_polygons.items():
-        polygon = cascaded_union(polygons)
+        polygon = unary_union(polygons)
         polygon = polygon.simplify(0.01)
         ba_climate_zone_metadata[ba_climate_zone] = {
             "ba_climate_zone": ba_climate_zone,
@@ -528,8 +528,13 @@ def _compute_containment(
 
     points, lats, lons = zip(
         *[
-            (point, point["latitude"], point["longitude"])
+            (
+                point,
+                float(point["latitude"]),
+                float(point["longitude"]),
+            )
             for point in point_metadata.values()
+            if point["latitude"] and point["longitude"]
         ]
     )
 
