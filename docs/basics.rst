@@ -154,7 +154,7 @@ ISD temperature data as an hourly time series::
     >>> import pytz
     >>> start_date = datetime.datetime(2016, 6, 1, tzinfo=pytz.UTC)
     >>> end_date = datetime.datetime(2017, 9, 15, tzinfo=pytz.UTC)
-    >>> tempC = station.load_isd_hourly_temp_data(start_date, end_date)
+    >>> tempC, warnings = station.load_isd_hourly_temp_data(start_date, end_date)
     >>> tempC.head()
     2016-06-01 00:00:00+00:00    21.3692
     2016-06-01 01:00:00+00:00    20.6325
