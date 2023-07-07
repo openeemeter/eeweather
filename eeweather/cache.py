@@ -71,7 +71,11 @@ class KeyValueStore(object):
         self.url = url
 
         eng = create_engine(url)
-        metadata = MetaData(eng)
+  
+"""
+metadata requires str parameter
+"""
+       metadata = MetaData('eng')
 
         tbl_items = Table(
             "items",
