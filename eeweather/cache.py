@@ -75,8 +75,11 @@ class KeyValueStore(object):
 """
 metadata requires str parameter
 """
-         metadata = MetaData('eng')
 
+
+#metadata = MetaData('eng')
+
+        metadata = Metadata ('eng')
         tbl_items = Table(
             "items",
             metadata,
