@@ -15,7 +15,7 @@ pandas = ">=1.0.0"
 pyproj = "*"
 requests ="*"
 Shapely = {extras = ["vectorized"]}
-SQLAlchemy = "<2.0.0"
+SQLAlchemy = "*"
 scipy = "*"
 simplejson = "*"
 
