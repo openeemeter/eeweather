@@ -21,7 +21,15 @@ import os
 import json
 
 try:
-    from sqlalchemy import create_engine, MetaData, Table, Column, String, DateTime
+    from sqlalchemy import (
+        create_engine,
+        MetaData,
+        Table,
+        Column,
+        String,
+        DateTime,
+    )
+    from sqlalchemy.orm import Session
     from sqlalchemy.sql import select, func
     from sqlalchemy.exc import IntegrityError
 except ImportError:  # pragma: no cover
@@ -70,8 +78,8 @@ class KeyValueStore(object):
             url = self._get_url()
         self.url = url
 
-        eng = create_engine(url)
-        metadata = MetaData(eng)
+        self.eng = create_engine(url)
+        metadata = MetaData()
 
         tbl_items = Table(
             "items",
@@ -82,47 +90,56 @@ class KeyValueStore(object):
         )
 
         # only create if not already created
-        tbl_items.create(checkfirst=True)
+        tbl_items.create(checkfirst=True, bind=self.eng)
 
         self.items = tbl_items
 
     def key_exists(self, key):
-        s = select([self.items.c.key]).where(self.items.c.key == key)
-        result = s.execute()
-        return result.fetchone() is not None
+        s = select(self.items.c.key).where(self.items.c.key == key)
+        with Session(self.eng) as session:
+            result = session.execute(s)
+            return result.fetchone() is not None
 
     def save_json(self, key, data):
         data = json.dumps(data, separators=(",", ":"))
         updated = func.now()
         try:
             s = self.items.insert().values(key=key, data=data, updated=updated)
-            s.execute()
+            with Session(self.eng) as session:
+                session.execute(s)
+                session.commit()
         except IntegrityError:
             s = (
                 self.items.update()
                 .where(self.items.c.key == key)
                 .values(key=key, data=data, updated=updated)
             )
-            s.execute()
+            with Session(self.eng) as session:
+                session.execute(s)
+                session.commit()
 
     def retrieve_json(self, key):
-        s = select([self.items.c.data]).where(self.items.c.key == key)
-        result = s.execute()
-        data = result.fetchone()
-        if data is None:
-            return None
-        else:
-            return json.loads(data[0])
+        s = select(self.items.c.data).where(self.items.c.key == key)
+        with Session(self.eng) as session:
+            result = session.execute(s)
+            data = result.fetchone()
+            if data is None:
+                return None
+            else:
+                return json.loads(data[0])
 
     def key_updated(self, key):
-        s = select([self.items.c.updated]).where(self.items.c.key == key)
-        result = s.execute()
-        data = result.fetchone()
-        return get_datetime_if_exists(data)
+        s = select(self.items.c.updated).where(self.items.c.key == key)
+        with Session(self.eng) as session:
+            result = session.execute(s)
+            data = result.fetchone()
+            return get_datetime_if_exists(data)
 
     def clear(self, key=None):
         if key is None:
             s = self.items.delete()
         else:
             s = self.items.delete().where(self.items.c.key == key)
-        s.execute()
+        with Session(self.eng) as session:
+            session.execute(s)
+            session.commit()
