@@ -4,6 +4,7 @@ Changelog
 Development
 -----------
 
+* Fix caching compatibility for sqlalchemy 2.0
 * Update .iteritems() to .items() for pandas>=2.0.0.
 * Update shapely containment method from cascaded_union to unary_union.
 * Update db recreation code to first delete the old db.
