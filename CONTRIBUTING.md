@@ -69,7 +69,7 @@ git checkout -b feature/update-db-YYYY-MM-DD
 
 # Rebuild the internal DB
 docker-compose build
-docker-compose run --rm eeweather rebuild_db
+docker-compose run --rm eeweather rebuild-db
 git commit -am "Rebuild db YYYY-MM-DD"
 vim CHANGELOG.md  # write "Update internal database (YYYY-MM-DD)."
 
