@@ -131,3 +131,11 @@ The non-U.S. data cannot be redistributed for commercial purposes.
 Re-distribution of these data by others must provide this same notification.
 
 See `further explanation <http://weather.whiteboxtechnologies.com/faq#Q12/>`_ here. 
+
+Metadata Yearly Updates
+-----------------------
+Every year, the metadata database needs to be updated. This can be done by running:
+
+```
+docker-compose run --rm eeweather rebuild-db
+```

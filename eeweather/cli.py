@@ -40,7 +40,7 @@ def cli():
     See station metadata:
 
     \b
-        $ eeweather inspect_isd_station 722880
+        $ eeweather inspect-isd-station 722880
         {
           "usaf_id": "722880",
           "wban_ids": "23152,99999",
@@ -54,30 +54,30 @@ def cli():
     See station file data:
 
     \b
-        $ eeweather inspect_isd_file_years 722880
+        $ eeweather inspect-isd-file-years 722880
         {...}
 
     See station file names for ISD:
 
     \b
-        $ eeweather inspect_isd_filenames 722880 2017
+        $ eeweather inspect-isd-filenames 722880 2017
         ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz
 
     Or for GSOD:
 
     \b
-        $ eeweather inspect_gsod_filenames 722880 2017
+        $ eeweather inspect-gsod-filenames 722880 2017
         ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz
 
     Rebuild metadata db from primary source files:
 
     \b
-        $ eeweather rebuild_db
+        $ eeweather rebuild-db
 
     Inspect metadata db using sqlite3 CLI:
 
     \b
-        $ eeweather inspect_db
+        $ eeweather inspect-db
 
 
     """

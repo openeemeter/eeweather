@@ -7,7 +7,7 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots["test_get_isd_station_usaf_ids n_usaf_ids"] = 4918
+snapshots["test_get_isd_station_usaf_ids n_usaf_ids"] = 4821
 
 snapshots["test_get_isd_station_usaf_ids_by_state n_usaf_ids"] = 77
 

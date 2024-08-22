@@ -13,7 +13,7 @@ snapshots["test_isd_file_metadata_table_content data"] = {
     "year": "2006",
 }
 
-snapshots["test_isd_file_metadata_table_count count"] = 41950
+snapshots["test_isd_file_metadata_table_count count"] = 44816
 
 snapshots["test_isd_station_metadata_table_content data"] = {
     "ba_climate_zone": "Very Cold",
@@ -32,4 +32,4 @@ snapshots["test_isd_station_metadata_table_content data"] = {
     "wban_ids": "26492,99999",
 }
 
-snapshots["test_isd_station_metadata_table_count count"] = 4918
+snapshots["test_isd_station_metadata_table_count count"] = 4821
