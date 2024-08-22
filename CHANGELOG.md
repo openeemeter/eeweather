@@ -4,6 +4,12 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.26
+------
+
+
 * Update internal database (2024-07-03).
 * Update documentation to match required dashes instead of underscores.
 
