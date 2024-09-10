@@ -5,6 +5,7 @@ Development
 -----------
 
 * Placeholder
+* Check for UTC tzinfo datetimes in station functions without explicitly using pytz
 
 0.3.26
 ------

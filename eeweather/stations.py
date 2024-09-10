@@ -17,7 +17,7 @@
    limitations under the License.
 
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import gzip
 import json
 import pkg_resources
@@ -109,6 +109,15 @@ __all__ = (
     "load_cached_tmy3_hourly_temp_data",
     "load_cached_cz2010_hourly_temp_data",
 )
+
+
+def _datetime_is_utc(dt):
+    orig_tzinfo = dt.tzinfo
+    return (
+        False
+        if orig_tzinfo is None
+        else dt.utcoffset().seconds == 0
+    )
 
 
 def get_isd_filenames(usaf_id, target_year=None, filename_format=None, with_host=False):
@@ -811,9 +820,9 @@ def load_isd_hourly_temp_data(
 ):
     warnings = []
     # CalTRACK 2.3.3
-    if start.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(start):
         raise NonUTCTimezoneInfoError(start)
-    if end.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(end):
         raise NonUTCTimezoneInfoError(end)
     if not error_on_missing_years:
         data = []
@@ -949,9 +958,9 @@ def load_tmy3_hourly_temp_data(
     usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # CalTRACK 2.3.3
-    if start.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(start):
         raise NonUTCTimezoneInfoError(start)
-    if end.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(end):
         raise NonUTCTimezoneInfoError(end)
     single_year_data = load_tmy3_hourly_temp_data_cached_proxy(
         usaf_id,
@@ -982,9 +991,9 @@ def load_cz2010_hourly_temp_data(
     usaf_id, start, end, read_from_cache=True, write_to_cache=True, fetch_from_web=True
 ):
     # CalTRACK 2.3.3
-    if start.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(start):
         raise NonUTCTimezoneInfoError(start)
-    if end.tzinfo != pytz.UTC:
+    if not _datetime_is_utc(end):
         raise NonUTCTimezoneInfoError(end)
     single_year_data = load_cz2010_hourly_temp_data_cached_proxy(
         usaf_id,
