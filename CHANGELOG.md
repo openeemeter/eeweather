@@ -4,6 +4,11 @@ Changelog
 Development
 -----------
 
+* Placeholder
+
+0.3.28
+------
+
 * Copy shared station metadata dataframe when ranking for thread-safety
 
 0.3.27
