@@ -200,7 +200,7 @@ def rank_stations(
           available.
 
     """
-    candidates = cached_data.all_station_metadata
+    candidates = cached_data.all_station_metadata.copy()
 
     # compute distances
     candidates_defined_lat_long = candidates[
