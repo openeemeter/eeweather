@@ -61,13 +61,13 @@ def cli():
 
     \b
         $ eeweather inspect-isd-filenames 722880 2017
-        ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz
+        ftp://ftp.ncei.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz
 
     Or for GSOD:
 
     \b
         $ eeweather inspect-gsod-filenames 722880 2017
-        ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz
+        ftp://ftp.ncei.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz
 
     Rebuild metadata db from primary source files:
 

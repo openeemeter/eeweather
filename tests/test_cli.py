@@ -107,7 +107,7 @@ def test_inspect_isd_filenames():
     result = runner.invoke(inspect_isd_filenames, ["722880", "2017"])
     assert result.exit_code == 0
     assert result.output == (
-        "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz\n"
+        "ftp://ftp.ncei.noaa.gov/pub/data/noaa/2017/722880-23152-2017.gz\n"
     )
 
 
@@ -123,7 +123,7 @@ def test_inspect_gsod_filenames():
     result = runner.invoke(inspect_gsod_filenames, ["722880", "2017"])
     assert result.exit_code == 0
     assert result.output == (
-        "ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz\n"
+        "ftp://ftp.ncei.noaa.gov/pub/data/gsod/2017/722880-23152-2017.op.gz\n"
     )
 
 

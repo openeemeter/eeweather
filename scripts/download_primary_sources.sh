@@ -30,13 +30,13 @@ echo Downloading CA_Building_Standards_Climate_Zones.json
 echo Downloading climate_zones.csv
 wget -N https://gist.githubusercontent.com/philngo/d3e251040569dba67942/raw/0c98f906f452b9c80d42aec3c8c3e1aafab9add8/climate_zones.csv -P $DATA_DIR -q --show-progress
 
-# NCDC station lat lngs and metadata
+# NCEI station lat lngs and metadata
 echo Downloading isd-history.csv
-wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv -P $DATA_DIR -q --show-progress
+wget -N ftp://ftp.ncei.noaa.gov/pub/data/noaa/isd-history.csv -P $DATA_DIR -q --show-progress
 
-# NCDC weather data quality
+# NCEI weather data quality
 echo Downloading isd-inventory.csv
-wget -N ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-inventory.csv -P $DATA_DIR -q --show-progress
+wget -N ftp://ftp.ncei.noaa.gov/pub/data/noaa/isd-inventory.csv -P $DATA_DIR -q --show-progress
 
 # Scrape-friendly TMY3 station list
 echo Downloading tmy3-stations.html
