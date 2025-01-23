@@ -251,7 +251,7 @@ def test_get_isd_filenames_future_year():
 def test_get_isd_filenames_with_host():
     filenames = get_isd_filenames("722860", 2017, with_host=True)
     assert filenames == [
-        "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722860-23119-2017.gz"
+        "ftp://ftp.ncei.noaa.gov/pub/data/noaa/2017/722860-23119-2017.gz"
     ]
 
 
@@ -271,7 +271,7 @@ def test_isd_station_get_isd_filenames_with_host():
     station = ISDStation("722860")
     filenames = station.get_isd_filenames(2017, with_host=True)
     assert filenames == [
-        "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/2017/722860-23119-2017.gz"
+        "ftp://ftp.ncei.noaa.gov/pub/data/noaa/2017/722860-23119-2017.gz"
     ]
 
 
@@ -299,7 +299,7 @@ def test_get_gsod_filenames_future_year():
 def test_get_gsod_filenames_with_host():
     filenames = get_gsod_filenames("722860", 2017, with_host=True)
     assert filenames == [
-        "ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722860-23119-2017.op.gz"
+        "ftp://ftp.ncei.noaa.gov/pub/data/gsod/2017/722860-23119-2017.op.gz"
     ]
 
 
@@ -319,7 +319,7 @@ def test_isd_station_get_gsod_filenames_with_host():
     station = ISDStation("722860")
     filenames = station.get_gsod_filenames(2017, with_host=True)
     assert filenames == [
-        "ftp://ftp.ncdc.noaa.gov/pub/data/gsod/2017/722860-23119-2017.op.gz"
+        "ftp://ftp.ncei.noaa.gov/pub/data/gsod/2017/722860-23119-2017.op.gz"
     ]
 
 

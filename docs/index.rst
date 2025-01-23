@@ -18,7 +18,7 @@ EEweather: Weather station wrangling for EEmeter
 
 ---------------
 
-**EEweather** — tools for matching to and fetching data from NCDC ISD, TMY3, or CZ2010 weather stations.
+**EEweather** — tools for matching to and fetching data from NCEI ISD, TMY3, or CZ2010 weather stations.
 
 EEweather comes with a database of weather station metadata, ZCTA metadata, and GIS data that makes it easier to find the right weather station to use for a particular ZIP code or lat/long coordinate.
 
@@ -34,7 +34,7 @@ EEweather is a python package and can be installed with pip.
 Supported Sources of Weather Data
 ---------------------------------
 
-- NCDC Integrated Surface Database (ISD)
+- NCEI Integrated Surface Database (ISD)
 - Global Summary of the Day (GSOD)
 - NREL Typical Meteorological Year 3 (TMY3)
 - California Energy Commission 1998-2009 Weather Normals (CZ2010)
@@ -56,7 +56,7 @@ Features
 
   - US Census Bureau (ZCTAs, county shapefiles)
   - Building America climate zone county lists
-  - NOAA NCDC Integrated Surface Database Station History
+  - NOAA NCEI Integrated Surface Database Station History
   - NREL TMY3 site
 
 - Plot maps of outputs

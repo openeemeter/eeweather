@@ -4,7 +4,7 @@ Changelog
 Development
 -----------
 
-* Placeholder
+* Update ftp host to reflect change from ftp.ncdc.noaa.gov to ftp.ncdc.noaa.gov.
 
 0.3.28
 ------

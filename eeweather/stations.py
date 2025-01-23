@@ -113,11 +113,7 @@ __all__ = (
 
 def _datetime_is_utc(dt):
     orig_tzinfo = dt.tzinfo
-    return (
-        False
-        if orig_tzinfo is None
-        else dt.utcoffset().seconds == 0
-    )
+    return False if orig_tzinfo is None else dt.utcoffset().seconds == 0
 
 
 def get_isd_filenames(usaf_id, target_year=None, filename_format=None, with_host=False):
@@ -186,7 +182,7 @@ def get_isd_filenames(usaf_id, target_year=None, filename_format=None, with_host
             )
 
     if with_host:
-        filenames = ["ftp://ftp.ncdc.noaa.gov{}".format(f) for f in filenames]
+        filenames = ["ftp://ftp.ncei.noaa.gov{}".format(f) for f in filenames]
 
     return filenames
 
